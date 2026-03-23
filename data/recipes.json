@@ -1,0 +1,128 @@
+[
+  {
+    "id": "rec-001",
+    "title": "Garlic butter pasta",
+    "description": "Simple, comforting — you already have most of this",
+    "prepTimeMin": 20,
+    "dietTags": ["vegetarian"],
+    "cuisine": "italian",
+    "emoji": "🍝",
+    "ingredients": [
+      { "ingredientId": "ing-001", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-003", "quantity": 30, "unit": "g" },
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
+      { "ingredientId": "ing-005", "quantity": 20, "unit": "g" }
+    ]
+  },
+  {
+    "id": "rec-002",
+    "title": "Chickpea stir-fry",
+    "description": "Quick, high-protein, pantry-friendly",
+    "prepTimeMin": 25,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "asian",
+    "emoji": "🥘",
+    "ingredients": [
+      { "ingredientId": "ing-006", "quantity": 240, "unit": "g" },
+      { "ingredientId": "ing-007", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
+      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
+    ]
+  },
+  {
+    "id": "rec-003",
+    "title": "Tomato rice soup",
+    "description": "Cozy and light on budget",
+    "prepTimeMin": 30,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "french",
+    "emoji": "🍲",
+    "ingredients": [
+      { "ingredientId": "ing-010", "quantity": 400, "unit": "g" },
+      { "ingredientId": "ing-011", "quantity": 100, "unit": "g" },
+      { "ingredientId": "ing-012", "quantity": 500, "unit": "ml" },
+      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" }
+    ]
+  },
+  {
+    "id": "rec-004",
+    "title": "Spinach feta scramble",
+    "description": "Fast high-protein breakfast or dinner",
+    "prepTimeMin": 15,
+    "dietTags": ["vegetarian", "gluten-free"],
+    "cuisine": "middle-eastern",
+    "emoji": "🥚",
+    "ingredients": [
+      { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-015", "quantity": 60, "unit": "g" },
+      { "ingredientId": "ing-016", "quantity": 40, "unit": "g" },
+      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" },
+      { "ingredientId": "ing-013", "quantity": 0.5, "unit": "piece", "isOptional": true }
+    ]
+  },
+  {
+    "id": "rec-005",
+    "title": "Black bean tacos",
+    "description": "Ready in 15 minutes, crowd-pleaser",
+    "prepTimeMin": 15,
+    "dietTags": ["vegetarian", "vegan"],
+    "cuisine": "mexican",
+    "emoji": "🌮",
+    "ingredients": [
+      { "ingredientId": "ing-017", "quantity": 240, "unit": "g" },
+      { "ingredientId": "ing-018", "quantity": 4, "unit": "piece" },
+      { "ingredientId": "ing-019", "quantity": 4, "unit": "tbsp" },
+      { "ingredientId": "ing-020", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-008", "quantity": 0.5, "unit": "piece" }
+    ]
+  },
+  {
+    "id": "rec-006",
+    "title": "Lemon rice with garlic",
+    "description": "Light side dish or simple main",
+    "prepTimeMin": 25,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "indian",
+    "emoji": "🍋",
+    "ingredients": [
+      { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-013", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
+      { "ingredientId": "ing-012", "quantity": 400, "unit": "ml" }
+    ]
+  },
+  {
+    "id": "rec-007",
+    "title": "Rice and peas",
+    "description": "Caribbean comfort food classic",
+    "prepTimeMin": 30,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "caribbean",
+    "emoji": "🍚",
+    "ingredients": [
+      { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-017", "quantity": 120, "unit": "g" },
+      { "ingredientId": "ing-012", "quantity": 400, "unit": "ml" },
+      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" },
+      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
+    ]
+  },
+  {
+    "id": "rec-008",
+    "title": "Scrambled eggs and toast",
+    "description": "Classic American breakfast, under 10 minutes",
+    "prepTimeMin": 10,
+    "dietTags": ["vegetarian"],
+    "cuisine": "american",
+    "emoji": "🍳",
+    "ingredients": [
+      { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-003", "quantity": 15, "unit": "g" },
+      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
+    ]
+  }
+]

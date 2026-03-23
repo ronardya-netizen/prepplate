@@ -1,0 +1,22 @@
+[
+  { "id": "ing-001", "name": "Pasta",         "category": "grain",   "unit": "g",     "basePrice": 0.004 },
+  { "id": "ing-002", "name": "Garlic",        "category": "produce", "unit": "piece", "basePrice": 0.30 },
+  { "id": "ing-003", "name": "Butter",        "category": "dairy",   "unit": "g",     "basePrice": 0.015 },
+  { "id": "ing-004", "name": "Olive oil",     "category": "pantry",  "unit": "tbsp",  "basePrice": 0.20 },
+  { "id": "ing-005", "name": "Parmesan",      "category": "dairy",   "unit": "g",     "basePrice": 0.05 },
+  { "id": "ing-006", "name": "Chickpeas",     "category": "protein", "unit": "g",     "basePrice": 0.003 },
+  { "id": "ing-007", "name": "Bell pepper",   "category": "produce", "unit": "piece", "basePrice": 1.20 },
+  { "id": "ing-008", "name": "Onion",         "category": "produce", "unit": "piece", "basePrice": 0.50 },
+  { "id": "ing-009", "name": "Cumin",         "category": "pantry",  "unit": "tbsp",  "basePrice": 0.10 },
+  { "id": "ing-010", "name": "Canned tomato", "category": "pantry",  "unit": "g",     "basePrice": 0.002 },
+  { "id": "ing-011", "name": "Rice",          "category": "grain",   "unit": "g",     "basePrice": 0.003 },
+  { "id": "ing-012", "name": "Vegetable stock","category": "pantry", "unit": "ml",    "basePrice": 0.002 },
+  { "id": "ing-013", "name": "Lemon",         "category": "produce", "unit": "piece", "basePrice": 0.60 },
+  { "id": "ing-014", "name": "Eggs",          "category": "protein", "unit": "piece", "basePrice": 0.40 },
+  { "id": "ing-015", "name": "Spinach",       "category": "produce", "unit": "g",     "basePrice": 0.012 },
+  { "id": "ing-016", "name": "Feta cheese",   "category": "dairy",   "unit": "g",     "basePrice": 0.04 },
+  { "id": "ing-017", "name": "Black beans",   "category": "protein", "unit": "g",     "basePrice": 0.003 },
+  { "id": "ing-018", "name": "Tortillas",     "category": "grain",   "unit": "piece", "basePrice": 0.35 },
+  { "id": "ing-019", "name": "Salsa",         "category": "pantry",  "unit": "tbsp",  "basePrice": 0.15 },
+  { "id": "ing-020", "name": "Avocado",       "category": "produce", "unit": "piece", "basePrice": 1.40 }
+]

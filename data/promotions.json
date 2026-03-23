@@ -1,0 +1,23 @@
+[
+  {
+    "ingredientId": "ing-005",
+    "discountPct": 20,
+    "validFrom": "2025-01-01",
+    "validUntil": "2099-12-31",
+    "source": "mock"
+  },
+  {
+    "ingredientId": "ing-010",
+    "discountPct": 30,
+    "validFrom": "2025-01-01",
+    "validUntil": "2099-12-31",
+    "source": "mock"
+  },
+  {
+    "ingredientId": "ing-007",
+    "discountPct": 15,
+    "validFrom": "2025-01-01",
+    "validUntil": "2099-12-31",
+    "source": "mock"
+  }
+]

@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String       @id @default(uuid())
+  name           String
+  location       String?
+  dietPrefs      String[]     @default([])
+  defaultTimeMin Int          @default(30)
+  budgetTier     String       @default("mid")
+  createdAt      DateTime     @default(now())
+
+  pantryItems    PantryItem[]
+  subscription   Subscription?
+  savedMeals     SavedMeal[]
+}
+
+model PantryItem {
+  id            String     @id @default(uuid())
+  userId        String
+  ingredientId  String
+  quantityLevel String     @default("some")
+  updatedAt     DateTime   @updatedAt
+
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredient    Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([userId, ingredientId])
+}
+
+model Ingredient {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  category    String
+  unit        String
+
+  price       Price?
+  promotion   Promotion?
+  pantryItems PantryItem[]
+  recipeIngredients RecipeIngredient[]
+}
+
+model Price {
+  id           String     @id @default(uuid())
+  ingredientId String     @unique
+  basePrice    Float
+  currency     String     @default("USD")
+  updatedAt    DateTime   @updatedAt
+
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model Promotion {
+  id           String     @id @default(uuid())
+  ingredientId String     @unique
+  discountPct  Float
+  validFrom    DateTime
+  validUntil   DateTime
+  source       String?
+
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model Recipe {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  prepTimeMin Int
+  dietTags    String[]   @default([])
+  imageUrl    String?
+  emoji       String     @default("🍽️")
+
+  ingredients RecipeIngredient[]
+  savedBy     SavedMeal[]
+}
+
+model RecipeIngredient {
+  id           String     @id @default(uuid())
+  recipeId     String
+  ingredientId String
+  quantity     Float
+  unit         String
+  isOptional   Boolean    @default(false)
+
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model Subscription {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  tier         String   @default("free")
+  stripeSubId  String?
+  activeUntil  DateTime?
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SavedMeal {
+  id        String   @id @default(uuid())
+  userId    String
+  recipeId  String
+  savedAt   DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@unique([userId, recipeId])
+}
+
+model ImpactMetric {
+  id          String @id @default(uuid())
+  month       String
+  mealsFunded Int
+  partnerOrg  String
+  region      String
+}

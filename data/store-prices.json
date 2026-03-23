@@ -1,0 +1,122 @@
+[
+  {
+    "ingredientId": "ing-001",
+    "name": "Pasta",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 1.49, "unit": "500g", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 1.99, "unit": "500g", "inStock": true,  "salePrice": null },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 1.79, "unit": "500g", "inStock": true,  "salePrice": 1.49 },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 1.27, "unit": "500g", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 1.99, "unit": "500g", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 2.29, "unit": "500g", "inStock": false, "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-002",
+    "name": "Garlic",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 0.99, "unit": "head", "inStock": true,  "salePrice": 0.79 },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 1.29, "unit": "head", "inStock": true,  "salePrice": null },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 1.19, "unit": "head", "inStock": true,  "salePrice": null },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 0.88, "unit": "head", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 1.49, "unit": "head", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 1.69, "unit": "head", "inStock": true,  "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-003",
+    "name": "Butter",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 4.99, "unit": "454g", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 5.49, "unit": "454g", "inStock": true,  "salePrice": 4.99 },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 5.29, "unit": "454g", "inStock": true,  "salePrice": null },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 4.47, "unit": "454g", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 5.99, "unit": "454g", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 6.29, "unit": "454g", "inStock": false, "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-004",
+    "name": "Olive oil",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 7.99, "unit": "500ml", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 8.99, "unit": "500ml", "inStock": true,  "salePrice": 7.49 },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 8.49, "unit": "500ml", "inStock": true,  "salePrice": null },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 6.97, "unit": "500ml", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 9.49, "unit": "500ml", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 9.99, "unit": "500ml", "inStock": true,  "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-005",
+    "name": "Parmesan",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 5.99, "unit": "200g", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 6.49, "unit": "200g", "inStock": true,  "salePrice": null },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 6.29, "unit": "200g", "inStock": true,  "salePrice": 5.49 },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 4.97, "unit": "200g", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 6.99, "unit": "200g", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 7.49, "unit": "200g", "inStock": true,  "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-006",
+    "name": "Chickpeas",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 1.29, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 1.49, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 1.39, "unit": "540ml can", "inStock": true,  "salePrice": 0.99 },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 0.97, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 1.79, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 1.99, "unit": "540ml can", "inStock": false, "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-007",
+    "name": "Bell pepper",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 1.49, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 1.79, "unit": "each", "inStock": true,  "salePrice": 1.49 },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 1.69, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 1.27, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 1.99, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 2.29, "unit": "each", "inStock": true,  "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-008",
+    "name": "Onion",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 0.79, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 0.99, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 0.89, "unit": "each", "inStock": true,  "salePrice": 0.69 },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 0.67, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 1.19, "unit": "each", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 1.29, "unit": "each", "inStock": true,  "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-014",
+    "name": "Eggs",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 3.99, "unit": "12 pack", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 4.49, "unit": "12 pack", "inStock": true,  "salePrice": 3.79 },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 4.29, "unit": "12 pack", "inStock": true,  "salePrice": null },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 3.47, "unit": "12 pack", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 4.99, "unit": "12 pack", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 5.29, "unit": "12 pack", "inStock": true,  "salePrice": null }
+    ]
+  },
+  {
+    "ingredientId": "ing-017",
+    "name": "Black beans",
+    "stores": [
+      { "storeId": "maxi",    "storeName": "Maxi",           "price": 1.19, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "iga",     "storeName": "IGA",            "price": 1.39, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "metro",   "storeName": "Metro",          "price": 1.29, "unit": "540ml can", "inStock": true,  "salePrice": 0.89 },
+      { "storeId": "walmart", "storeName": "Walmart",        "price": 0.87, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "instacart","storeName": "Instacart",     "price": 1.59, "unit": "540ml can", "inStock": true,  "salePrice": null },
+      { "storeId": "amazon",  "storeName": "Amazon Fresh",   "price": 1.79, "unit": "540ml can", "inStock": false, "salePrice": null }
+    ]
+  }
+]
