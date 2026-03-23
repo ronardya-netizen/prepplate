@@ -32,9 +32,6 @@ export default function MealCard({ suggestion, isSaved, onToggleSave }: MealCard
             <div style={{ display: "flex", gap: 5, marginTop: 6, flexWrap: "wrap" }}>
               <Badge variant="neutral">{recipe.prepTimeMin} min</Badge>
               <Badge variant="neutral">🔥 {recipe.calories} kcal</Badge>
-              <Badge variant="neutral">~${pricing.totalCost.toFixed(2)}</Badge>
-              {pricing.hasSaleItems && <Badge variant="sale">Save ${pricing.totalSavings.toFixed(2)}</Badge>}
-              {missingIngredients.length > 0 && <Badge variant="missing">Buy {missingIngredients.length} item{missingIngredients.length > 1 ? "s" : ""}</Badge>}
             </div>
           </div>
           <button onClick={toggleBookmark} style={{ width: 30, height: 30, borderRadius: "50%", background: bookmarked ? "#fde8d8" : "#f5f0e8", border: "none", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", color: bookmarked ? "#e8470d" : "#d0c0b0", flexShrink: 0 }}>
