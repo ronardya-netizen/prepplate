@@ -9,6 +9,8 @@ export interface RecipeData {
   dietTags: string[];
   cuisine: string;
   emoji: string;
+  calories: number;
+  mode: string[];
   ingredients: {
     ingredientId: string;
     quantity: number;
@@ -23,6 +25,7 @@ export interface SuggestionInput {
   budgetUSD: number;
   dietPrefs: string[];
   cuisine?: string;
+  mode?: string;
 }
 
 export interface SuggestionResult {
@@ -40,7 +43,7 @@ function matchesDietPrefs(recipe: RecipeData, prefs: string[]): boolean {
 }
 
 export function getSuggestions(input: SuggestionInput): SuggestionResult[] {
-  const { pantryIngredientIds, timeMin, budgetUSD, dietPrefs, cuisine } = input;
+  const { pantryIngredientIds, timeMin, budgetUSD, dietPrefs, cuisine, mode } = input;
   const pantrySet = new Set(pantryIngredientIds);
   const recipes = recipesData as RecipeData[];
   const results: SuggestionResult[] = [];
@@ -49,6 +52,7 @@ export function getSuggestions(input: SuggestionInput): SuggestionResult[] {
     if (recipe.prepTimeMin > timeMin) continue;
     if (!matchesDietPrefs(recipe, dietPrefs)) continue;
     if (cuisine && cuisine !== "all" && recipe.cuisine !== cuisine) continue;
+    if (mode && mode !== "all" && !recipe.mode.includes(mode)) continue;
 
     const pricing = computeMealCost(recipe.ingredients);
     if (pricing.totalCost > budgetUSD) continue;

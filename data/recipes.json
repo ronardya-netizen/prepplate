@@ -7,6 +7,8 @@
     "dietTags": ["vegetarian"],
     "cuisine": "italian",
     "emoji": "🍝",
+    "calories": 520,
+    "mode": ["comfort", "quick"],
     "ingredients": [
       { "ingredientId": "ing-001", "quantity": 200, "unit": "g" },
       { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
@@ -23,6 +25,8 @@
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
     "cuisine": "asian",
     "emoji": "🥘",
+    "calories": 380,
+    "mode": ["high-protein", "healthy"],
     "ingredients": [
       { "ingredientId": "ing-006", "quantity": 240, "unit": "g" },
       { "ingredientId": "ing-007", "quantity": 1, "unit": "piece" },
@@ -39,6 +43,8 @@
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
     "cuisine": "french",
     "emoji": "🍲",
+    "calories": 290,
+    "mode": ["low-cal", "comfort"],
     "ingredients": [
       { "ingredientId": "ing-010", "quantity": 400, "unit": "g" },
       { "ingredientId": "ing-011", "quantity": 100, "unit": "g" },
@@ -55,6 +61,8 @@
     "dietTags": ["vegetarian", "gluten-free"],
     "cuisine": "middle-eastern",
     "emoji": "🥚",
+    "calories": 320,
+    "mode": ["quick", "high-protein", "low-cal"],
     "ingredients": [
       { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
       { "ingredientId": "ing-015", "quantity": 60, "unit": "g" },
@@ -71,6 +79,8 @@
     "dietTags": ["vegetarian", "vegan"],
     "cuisine": "mexican",
     "emoji": "🌮",
+    "calories": 440,
+    "mode": ["quick", "comfort"],
     "ingredients": [
       { "ingredientId": "ing-017", "quantity": 240, "unit": "g" },
       { "ingredientId": "ing-018", "quantity": 4, "unit": "piece" },
@@ -87,6 +97,8 @@
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
     "cuisine": "indian",
     "emoji": "🍋",
+    "calories": 350,
+    "mode": ["low-cal", "healthy"],
     "ingredients": [
       { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
       { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
@@ -103,6 +115,8 @@
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
     "cuisine": "caribbean",
     "emoji": "🍚",
+    "calories": 540,
+    "mode": ["comfort", "high-protein"],
     "ingredients": [
       { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
       { "ingredientId": "ing-017", "quantity": 120, "unit": "g" },
@@ -119,6 +133,8 @@
     "dietTags": ["vegetarian"],
     "cuisine": "american",
     "emoji": "🍳",
+    "calories": 280,
+    "mode": ["quick", "low-cal"],
     "ingredients": [
       { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
       { "ingredientId": "ing-003", "quantity": 15, "unit": "g" },

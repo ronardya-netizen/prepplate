@@ -8,15 +8,12 @@ export async function GET(req: NextRequest) {
   const timeMin = parseInt(searchParams.get("time") ?? "60", 10);
   const budgetUSD = parseFloat(searchParams.get("budget") ?? "50");
   const cuisine = searchParams.get("cuisine") ?? "all";
+  const mode = searchParams.get("mode") ?? "all";
 
-  if (!userId) {
-    return NextResponse.json({ error: "userId is required" }, { status: 400 });
-  }
+  if (!userId) return NextResponse.json({ error: "userId is required" }, { status: 400 });
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
+  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   const pantryItems = await prisma.pantryItem.findMany({
     where: { userId },
@@ -30,6 +27,7 @@ export async function GET(req: NextRequest) {
     budgetUSD,
     dietPrefs: user.dietPrefs,
     cuisine,
+    mode,
   });
 
   return NextResponse.json({ suggestions });
