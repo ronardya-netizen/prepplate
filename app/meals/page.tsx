@@ -6,14 +6,14 @@ import recipesData from "@/data/recipes.json";
 import storePricesData from "@/data/store-prices.json";
 import ingredientsData from "@/data/ingredients.json";
 import promotionsData from "@/data/promotions.json";
+import { getUserId } from "@/lib/user";
 
-interface Recipe { id: string; title: string; description: string; prepTimeMin: number; dietTags: string[]; cuisine: string; emoji: string; ingredients: { ingredientId: string; quantity: number; unit: string; isOptional?: boolean }[]; }
+interface Recipe { id: string; title: string; description: string; prepTimeMin: number; dietTags: string[]; cuisine: string; emoji: string; calories: number; ingredients: { ingredientId: string; quantity: number; unit: string; isOptional?: boolean }[]; }
 interface StorePrice { storeId: string; storeName: string; price: number; salePrice: number | null; effectivePrice: number; unit: string; inStock: boolean; }
 interface StorePriceData { ingredientId: string; name: string; stores: { storeId: string; storeName: string; price: number; salePrice: number | null; unit: string; inStock: boolean; }[]; }
 interface IngredientData { id: string; name: string; category: string; unit: string; basePrice: number; }
 interface Promotion { ingredientId: string; discountPct: number; validFrom: string; validUntil: string; }
 
-const PANTRY_IDS = ["ing-001","ing-002","ing-004","ing-005","ing-008","ing-010","ing-011","ing-014"];
 const STORE_URLS: Record<string, string> = { maxi: "https://www.maxi.ca/en/search?q=", iga: "https://www.iga.net/en/search?term=", metro: "https://www.metro.ca/en/search?filter=", walmart: "https://www.walmart.ca/search?q=", instacart: "https://www.instacart.ca/store/search_v3/term?term=", amazon: "https://www.amazon.ca/s?k=" };
 
 function getCheapestStore(ingredientId: string, name: string): (StorePrice & { buyUrl: string }) | null {
@@ -34,10 +34,17 @@ function getEffectivePrice(ingredientId: string): number {
 
 export default function MyMealsPage() {
   const [bookmarked, setBookmarked] = useState<string[]>([]);
+  const [pantryIds, setPantryIds] = useState<string[]>([]);
+  const [userId, setUserId] = useState("user-001");
 
   useEffect(() => {
+    const id = getUserId();
+    setUserId(id);
     const saved = localStorage.getItem("bookmarked-meals");
     if (saved) setBookmarked(JSON.parse(saved));
+    fetch(`/api/pantry?userId=${id}`)
+      .then((r) => r.json())
+      .then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
   }, []);
 
   function removeBookmark(id: string) {
@@ -48,7 +55,7 @@ export default function MyMealsPage() {
 
   const recipes = recipesData as Recipe[];
   const myMeals = recipes.filter((r) => bookmarked.includes(r.id));
-  const pantrySet = new Set(PANTRY_IDS);
+  const pantrySet = new Set(pantryIds);
 
   const allMissingIds = new Set<string>();
   myMeals.forEach((meal) => meal.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId)).forEach((i) => allMissingIds.add(i.ingredientId)));
@@ -63,7 +70,6 @@ export default function MyMealsPage() {
   }).filter(Boolean) as { id: string; name: string; category: string; effectivePrice: number; cheapest: (StorePrice & { buyUrl: string }) | null; usedInMeals: string[] }[];
 
   const totalMissingCost = missingIngredients.reduce((sum, i) => sum + (i.cheapest?.effectivePrice ?? i.effectivePrice), 0);
-
   const H = { background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 };
 
   return (
@@ -86,7 +92,6 @@ export default function MyMealsPage() {
       </div>
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
-
         {myMeals.length === 0 ? (
           <div style={{ textAlign: "center", padding: "50px 20px" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🔖</div>
@@ -96,18 +101,16 @@ export default function MyMealsPage() {
           </div>
         ) : (
           <>
-            {/* Saved meals */}
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>Saved meals</div>
             <div style={{ padding: "0 16px 16px" }}>
               {myMeals.map((meal) => {
                 const missing = meal.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
-                const cost = meal.ingredients.reduce((sum, i) => sum + getEffectivePrice(i.ingredientId) * i.quantity, 0);
                 return (
                   <div key={meal.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 8 }}>
                     <div style={{ width: 44, height: 44, borderRadius: 10, background: "#fff8f4", border: "1px solid #fad8c8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{meal.emoji}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d" }}>{meal.title}</div>
-                      <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>{meal.prepTimeMin} min · ~${cost.toFixed(2)} · {missing.length} to buy</div>
+                      <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>⏱ {meal.prepTimeMin} min · 🔥 {meal.calories} kcal · {missing.length === 0 ? "✓ Ready to cook" : `${missing.length} to buy`}</div>
                     </div>
                     <button onClick={() => removeBookmark(meal.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#e8470d" }}>🔖</button>
                   </div>
@@ -115,7 +118,6 @@ export default function MyMealsPage() {
               })}
             </div>
 
-            {/* Missing ingredients */}
             {missingIngredients.length > 0 && (
               <>
                 <div style={{ margin: "0 16px 12px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -128,7 +130,6 @@ export default function MyMealsPage() {
                     <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600 }}>best price</div>
                   </div>
                 </div>
-
                 <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>What to buy · best price today</div>
                 <div style={{ padding: "0 16px" }}>
                   {missingIngredients.map((item) => (

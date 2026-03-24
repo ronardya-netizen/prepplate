@@ -5,7 +5,8 @@ import Image from "next/image";
 import ingredientsData from "@/data/ingredients.json";
 import promotionsData from "@/data/promotions.json";
 
-const MOCK_USER_ID = "user-001";
+const MOCK_USER_ID = typeof window !== "undefined" ?
+  (localStorage.getItem("prepplate-user-id") || "user-001") : "user-001";
 const QUANTITY_LEVELS = ["lots", "some", "low"] as const;
 type QuantityLevel = typeof QUANTITY_LEVELS[number];
 
