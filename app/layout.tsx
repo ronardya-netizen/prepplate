@@ -30,10 +30,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           display: "flex",
           zIndex: 100,
         }}>
-          <NavItem href="/home"    icon="🏠" label="Home" />
-          <NavItem href="/meals"   icon="🔖" label="My Meals" />
-          <NavItem href="/pantry"  icon="🥦" label="Pantry" />
-          <NavItem href="/impact"  icon="🌱" label="Impact" />
+        <NavItem href="/home"     icon="🏠" label="Home" />
+        <NavItem href="/pantry"   icon="🥦" label="Pantry" />
+        <NavItem href="/meals"    icon="🔖" label="My Meals" />
+        <NavItem href="/trending" icon="🔥" label="Trending" />
+        <NavItem href="/settings" icon="⚙️" label="Settings" />
         </nav>
       </body>
     </html>
