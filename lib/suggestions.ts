@@ -68,9 +68,8 @@ export function getSuggestions(input: SuggestionInput): SuggestionResult[] {
       : 100;
 
     const coverageScore = coveragePct / 100;
-    const budgetScore = budgetUSD > 0 ? 1 - pricing.totalCost / budgetUSD : 0;
-    const saleBonus = pricing.hasSaleItems ? 0.2 : 0;
-    const score = coverageScore * 0.5 + budgetScore * 0.3 + saleBonus;
+    const fullyStocked = coveragePct === 100 ? 1 : 0;
+    const score = fullyStocked * 0.6 + coverageScore * 0.4;
 
     results.push({
       recipe,
