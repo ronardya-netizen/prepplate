@@ -9,13 +9,6 @@ interface PantryItem { ingredientId: string; expiryDays?: number; }
 
 const INGREDIENTS = ingredientsData as IngredientData[];
 
-function getExpiryStatus(days?: number): "red" | "yellow" | "green" {
-  if (!days) return "green";
-  if (days <= 2) return "red";
-  if (days <= 7) return "yellow";
-  return "green";
-}
-
 export default function PantryPage() {
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,11 +27,7 @@ export default function PantryPage() {
 
   async function addIngredient(ingredientId: string) {
     const res = await fetch("/api/pantry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, ingredientId, quantityLevel: 1 }) });
-    if (res.ok) {
-      setPantryItems((prev) => [...prev, { ingredientId }]);
-      setSearch("");
-      setShowAdd(false);
-    }
+    if (res.ok) { setPantryItems((prev) => [...prev, { ingredientId }]); setSearch(""); setShowAdd(false); }
   }
 
   async function removeIngredient(ingredientId: string) {
@@ -47,19 +36,16 @@ export default function PantryPage() {
   }
 
   const pantryIds = new Set(pantryItems.map((i) => i.ingredientId));
-  const redItems = pantryItems.filter((i) => getExpiryStatus(i.expiryDays) === "red");
-  const yellowItems = pantryItems.filter((i) => getExpiryStatus(i.expiryDays) === "yellow");
-  const greenItems = pantryItems.filter((i) => getExpiryStatus(i.expiryDays) === "green");
+  const redItems = pantryItems.filter((i) => i.expiryDays !== undefined && i.expiryDays <= 2);
+  const yellowItems = pantryItems.filter((i) => i.expiryDays !== undefined && i.expiryDays > 2 && i.expiryDays <= 7);
+  const greenItems = pantryItems.filter((i) => !i.expiryDays || i.expiryDays > 7);
+  const filteredIngredients = INGREDIENTS.filter((i) => !pantryIds.has(i.id) && i.name.toLowerCase().includes(search.toLowerCase())).slice(0, 8);
 
-  const filteredIngredients = INGREDIENTS.filter((i) => !pantryIds.has(i.id) && i.name.toLowerCase().includes(search.toLowerCase()));
-
-  function getIngredientName(id: string) { return INGREDIENTS.find((i) => i.id === id)?.name ?? id; }
-
-  const H = { background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 };
+  function getName(id: string) { return INGREDIENTS.find((i) => i.id === id)?.name ?? id; }
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
-      <div style={H}>
+      <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Image src="/logo.png" alt="P'tit Chef" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
@@ -78,22 +64,30 @@ export default function PantryPage() {
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        <div style={{ padding: "0 16px 12px" }}>
-          <button onClick={() => setShowAdd(!showAdd)} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px dashed #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-            + Add an ingredient
+        {/* Camera scan button */}
+        <div style={{ padding: "0 16px 12px", display: "flex", gap: 8 }}>
+          <button style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e8d8c8", background: "#fff8f4", color: "#c09878", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Scan groceries (v2)
+          </button>
+          <button onClick={() => setShowAdd(!showAdd)} style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e8470d", background: showAdd ? "#e8470d" : "#fff", color: showAdd ? "#fff" : "#e8470d", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+            + Add item
           </button>
         </div>
 
+        {/* Search dropdown */}
         {showAdd && (
-          <div style={{ padding: "0 16px 16px" }}>
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search ingredients..." style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", boxSizing: "border-box" }} />
-            <div style={{ maxHeight: 200, overflowY: "auto", marginTop: 8, borderRadius: 10, border: "1px solid #f0e8de" }}>
-              {filteredIngredients.slice(0, 10).map((ing) => (
-                <div key={ing.id} onClick={() => addIngredient(ing.id)} style={{ padding: "10px 14px", cursor: "pointer", borderBottom: "0.5px solid #f0e8de", fontSize: 13, fontWeight: 700, color: "#3a1f0d" }}>
-                  {ing.name} <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>({ing.category})</span>
-                </div>
-              ))}
-            </div>
+          <div style={{ padding: "0 16px 16px", position: "relative", zIndex: 50 }}>
+            <input autoFocus value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search ingredients..." style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8470d", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", boxSizing: "border-box" }} />
+            {filteredIngredients.length > 0 && (
+              <div style={{ position: "absolute", left: 16, right: 16, background: "#fff", borderRadius: 10, border: "1px solid #f0e8de", boxShadow: "0 4px 20px rgba(0,0,0,.1)", zIndex: 100, overflow: "hidden" }}>
+                {filteredIngredients.map((ing) => (
+                  <div key={ing.id} onMouseDown={() => addIngredient(ing.id)} style={{ padding: "12px 14px", cursor: "pointer", borderBottom: "0.5px solid #f0e8de", fontSize: 13, fontWeight: 700, color: "#3a1f0d", background: "#fff" }}>
+                    {ing.name} <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>({ing.category})</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -107,15 +101,9 @@ export default function PantryPage() {
           </div>
         ) : (
           <>
-            {redItems.length > 0 && (
-              <PantrySection label="Expiring soon" color="#e8470d" bg="#fff0ec" items={redItems} getIngredientName={getIngredientName} onRemove={removeIngredient} />
-            )}
-            {yellowItems.length > 0 && (
-              <PantrySection label="Use this week" color="#d97706" bg="#fffbeb" items={yellowItems} getIngredientName={getIngredientName} onRemove={removeIngredient} />
-            )}
-            {greenItems.length > 0 && (
-              <PantrySection label="Staples" color="#2d6a3f" bg="#f0faf3" items={greenItems} getIngredientName={getIngredientName} onRemove={removeIngredient} />
-            )}
+            {redItems.length > 0 && <ExpirySection label="Expiring soon" dot="#ef4444" items={redItems} getName={getName} onRemove={removeIngredient} />}
+            {yellowItems.length > 0 && <ExpirySection label="Use this week" dot="#f59e0b" items={yellowItems} getName={getName} onRemove={removeIngredient} />}
+            {greenItems.length > 0 && <ExpirySection label="Staples" dot="#22c55e" items={greenItems} getName={getName} onRemove={removeIngredient} />}
           </>
         )}
       </div>
@@ -123,15 +111,18 @@ export default function PantryPage() {
   );
 }
 
-function PantrySection({ label, color, bg, items, getIngredientName, onRemove }: { label: string; color: string; bg: string; items: PantryItem[]; getIngredientName: (id: string) => string; onRemove: (id: string) => void; }) {
+function ExpirySection({ label, dot, items, getName, onRemove }: { label: string; dot: string; items: { ingredientId: string }[]; getName: (id: string) => string; onRemove: (id: string) => void; }) {
   return (
     <div style={{ padding: "0 16px 16px" }}>
-      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color, marginBottom: 8 }}>{label}</div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: dot, flexShrink: 0 }} />
+        <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>{label}</div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         {items.map((item) => (
-          <div key={item.ingredientId} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: bg, borderRadius: 20, border: `1px solid ${color}22` }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#3a1f0d" }}>{getIngredientName(item.ingredientId)}</span>
-            <button onClick={() => onRemove(item.ingredientId)} style={{ background: "none", border: "none", cursor: "pointer", color, fontSize: 14, padding: 0, lineHeight: 1 }}>x</button>
+          <div key={item.ingredientId} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: 10 }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#3a1f0d" }}>{getName(item.ingredientId)}</span>
+            <button onClick={() => onRemove(item.ingredientId)} style={{ background: "none", border: "none", cursor: "pointer", color: "#c09878", fontSize: 18, padding: 0, lineHeight: 1 }}>x</button>
           </div>
         ))}
       </div>
