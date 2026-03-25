@@ -1,238 +1,120 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import ingredientsData from "@/data/ingredients.json";
-import promotionsData from "@/data/promotions.json";
+import { getUserId } from "@/lib/user";
 
-const MOCK_USER_ID = typeof window !== "undefined" ?
-  (localStorage.getItem("prepplate-user-id") || "user-001") : "user-001";
-const QUANTITY_LEVELS = ["lots", "some", "low"] as const;
-type QuantityLevel = typeof QUANTITY_LEVELS[number];
+interface IngredientData { id: string; name: string; category: string; unit: string; basePrice: number; }
+interface PantryItem { ingredientId: string; expiryDays?: number; }
 
-interface PantryItem {
-  id: string;
-  ingredientId: string;
-  quantityLevel: QuantityLevel;
-  ingredient: { id: string; name: string; category: string };
+const INGREDIENTS = ingredientsData as IngredientData[];
+
+function getExpiryStatus(days?: number): "red" | "yellow" | "green" {
+  if (!days) return "green";
+  if (days <= 2) return "red";
+  if (days <= 7) return "yellow";
+  return "green";
 }
-
-interface IngredientData {
-  id: string;
-  name: string;
-  category: string;
-  unit: string;
-  basePrice: number;
-}
-
-interface Promotion {
-  ingredientId: string;
-  discountPct: number;
-  validFrom: string;
-  validUntil: string;
-}
-
-const CATEGORY_EMOJI: Record<string, string> = {
-  produce: "🥦",
-  dairy: "🧀",
-  protein: "🥩",
-  pantry: "🧂",
-  grain: "🌾",
-};
-
-const INGREDIENT_EMOJI: Record<string, string> = {
-  "ing-001": "🍝", "ing-002": "🧄", "ing-003": "🧈",
-  "ing-004": "🫒", "ing-005": "🧀", "ing-006": "🫘",
-  "ing-007": "🫑", "ing-008": "🧅", "ing-009": "🌿",
-  "ing-010": "🥫", "ing-011": "🍚", "ing-012": "🍵",
-  "ing-013": "🍋", "ing-014": "🥚", "ing-015": "🥬",
-  "ing-016": "🧀", "ing-017": "🫘", "ing-018": "🫓",
-  "ing-019": "🍅", "ing-020": "🥑",
-};
-
-const quantityDots: Record<QuantityLevel, number> = { lots: 3, some: 2, low: 1 };
 
 export default function PantryPage() {
-  const [items, setItems] = useState<PantryItem[]>([]);
+  const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState("");
-  const [adding, setAdding] = useState(false);
+  const [userId, setUserId] = useState("");
 
-  const now = new Date();
-  const activePromos = new Map<string, number>();
-  (promotionsData as Promotion[]).forEach((p) => {
-    if (new Date(p.validFrom) <= now && new Date(p.validUntil) >= now) {
-      activePromos.set(p.ingredientId, p.discountPct);
-    }
-  });
-
-  async function loadPantry() {
-    const res = await fetch(`/api/pantry?userId=${MOCK_USER_ID}`);
-    const data = await res.json();
-    setItems(data.items ?? []);
-    setLoading(false);
-  }
-
-  useEffect(() => { loadPantry(); }, []);
-
-  async function updateQuantity(ingredientId: string, level: QuantityLevel) {
-    await fetch("/api/pantry", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: MOCK_USER_ID, ingredientId, quantityLevel: level }),
-    });
-    loadPantry();
-  }
-
-  async function removeItem(ingredientId: string) {
-    await fetch("/api/pantry", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: MOCK_USER_ID, ingredientId }),
-    });
-    loadPantry();
-  }
+  useEffect(() => {
+    const id = getUserId();
+    setUserId(id);
+    fetch(`/api/pantry?userId=${id}`)
+      .then((r) => r.json())
+      .then((data) => { setPantryItems(data.items ?? []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
 
   async function addIngredient(ingredientId: string) {
-    await fetch("/api/pantry", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: MOCK_USER_ID, ingredientId, quantityLevel: "some" }),
-    });
-    setSearch("");
-    setAdding(false);
-    loadPantry();
+    const res = await fetch("/api/pantry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, ingredientId, quantityLevel: 1 }) });
+    if (res.ok) {
+      setPantryItems((prev) => [...prev, { ingredientId }]);
+      setSearch("");
+      setShowAdd(false);
+    }
   }
 
-  const pantryIds = new Set(items.map((i) => i.ingredientId));
-  const allIngredients = ingredientsData as IngredientData[];
-  const filtered = allIngredients
-    .filter((i) => !pantryIds.has(i.id) && i.name.toLowerCase().includes(search.toLowerCase()))
-    .slice(0, 8);
+  async function removeIngredient(ingredientId: string) {
+    await fetch(`/api/pantry?userId=${userId}&ingredientId=${ingredientId}`, { method: "DELETE" });
+    setPantryItems((prev) => prev.filter((i) => i.ingredientId !== ingredientId));
+  }
 
-  const saleItems = items.filter((i) => activePromos.has(i.ingredientId));
-  const regularItems = items.filter((i) => !activePromos.has(i.ingredientId));
-  const totalSaleCount = saleItems.length;
+  const pantryIds = new Set(pantryItems.map((i) => i.ingredientId));
+  const redItems = pantryItems.filter((i) => getExpiryStatus(i.expiryDays) === "red");
+  const yellowItems = pantryItems.filter((i) => getExpiryStatus(i.expiryDays) === "yellow");
+  const greenItems = pantryItems.filter((i) => getExpiryStatus(i.expiryDays) === "green");
+
+  const filteredIngredients = INGREDIENTS.filter((i) => !pantryIds.has(i.id) && i.name.toLowerCase().includes(search.toLowerCase()));
+
+  function getIngredientName(id: string) { return INGREDIENTS.find((i) => i.id === id)?.name ?? id; }
+
+  const H = { background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 };
 
   return (
-    <main style={{ maxWidth: 480, margin: "0 auto", minHeight: "100vh", fontFamily: "'Nunito', sans-serif", paddingBottom: 80 }}>
-
-      {/* Kitchen background header */}
-      <div style={{
-        background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)",
-        paddingBottom: 16,
-      }}>
+    <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+      <div style={H}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Image src="/logo.png" alt="P'tit Chef" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
             <div>
               <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>P&apos;tit Chef</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Eat Smarter. Save More. Share More.</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Eat smart. Save more. Share more.</div>
             </div>
           </div>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
         </div>
-
         <div style={{ padding: "0 20px 4px" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 2px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>
-            Your pantry 🧺
-          </h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
-            {items.length} ingredient{items.length !== 1 ? "s" : ""}{totalSaleCount > 0 ? ` · ${totalSaleCount} on sale today` : ""}
-          </p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>My Pantry</h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>{pantryItems.length} ingredient{pantryItems.length !== 1 ? "s" : ""} tracked</p>
         </div>
       </div>
 
-      {/* White counter surface */}
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        {/* Add ingredient button */}
         <div style={{ padding: "0 16px 12px" }}>
-          {!adding ? (
-            <button onClick={() => setAdding(true)} style={{ width: "100%", padding: "11px 14px", borderRadius: 12, border: "1.5px dashed #e8d8c8", background: "transparent", color: "#c09878", fontSize: 13, fontWeight: 700, cursor: "pointer", textAlign: "left", fontFamily: "'Nunito', sans-serif" }}>
-              + Add an ingredient
-            </button>
-          ) : (
-            <div style={{ background: "#fff8f4", borderRadius: 12, padding: "12px 14px", border: "1px solid #fad8c8" }}>
-              <input autoFocus type="text" placeholder="Search ingredients…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ width: "100%", marginBottom: 8, fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 600 }} />
-              {search.length > 0 && (
-                <div>
-                  {filtered.length === 0 ? (
-                    <p style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}>No ingredients found</p>
-                  ) : (
-                    filtered.map((ing) => (
-                      <button key={ing.id} onClick={() => addIngredient(ing.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 0", background: "none", border: "none", borderBottom: "0.5px solid #f0e8de", cursor: "pointer", fontSize: 13, color: "#3a1f0d", textAlign: "left", fontFamily: "'Nunito', sans-serif", fontWeight: 600 }}>
-                        <span style={{ fontSize: 18 }}>{INGREDIENT_EMOJI[ing.id] ?? CATEGORY_EMOJI[ing.category] ?? "🍴"}</span>
-                        {ing.name}
-                        <span style={{ fontSize: 10, color: "#c09878", marginLeft: "auto", fontWeight: 700 }}>{ing.category}</span>
-                      </button>
-                    ))
-                  )}
-                </div>
-              )}
-              <button onClick={() => { setAdding(false); setSearch(""); }} style={{ marginTop: 8, fontSize: 12, color: "#c09878", background: "none", border: "none", cursor: "pointer", fontWeight: 700, fontFamily: "'Nunito', sans-serif" }}>
-                Cancel
-              </button>
-            </div>
-          )}
+          <button onClick={() => setShowAdd(!showAdd)} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px dashed #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+            + Add an ingredient
+          </button>
         </div>
 
+        {showAdd && (
+          <div style={{ padding: "0 16px 16px" }}>
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search ingredients..." style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", boxSizing: "border-box" }} />
+            <div style={{ maxHeight: 200, overflowY: "auto", marginTop: 8, borderRadius: 10, border: "1px solid #f0e8de" }}>
+              {filteredIngredients.slice(0, 10).map((ing) => (
+                <div key={ing.id} onClick={() => addIngredient(ing.id)} style={{ padding: "10px 14px", cursor: "pointer", borderBottom: "0.5px solid #f0e8de", fontSize: 13, fontWeight: 700, color: "#3a1f0d" }}>
+                  {ing.name} <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>({ing.category})</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {loading ? (
-          <p style={{ padding: "20px", color: "#c09878", fontSize: 14, fontWeight: 700 }}>Loading your pantry…</p>
+          <p style={{ padding: "20px", color: "#c09878", fontWeight: 700 }}>Loading pantry...</p>
+        ) : pantryItems.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px 20px" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🧺</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "#3a1f0d", marginBottom: 6 }}>Your pantry is empty</div>
+            <div style={{ fontSize: 13, color: "#c09878", fontWeight: 600 }}>Add ingredients to get meal suggestions</div>
+          </div>
         ) : (
           <>
-            {/* Sale items section */}
-            {saleItems.length > 0 && (
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", display: "flex", alignItems: "center", gap: 6 }}>
-                  🔥 On sale today
-                  <span style={{ background: "#e8470d", color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 7px", borderRadius: 10 }}>
-                    Save up to {Math.max(...saleItems.map(i => activePromos.get(i.ingredientId) ?? 0))}%
-                  </span>
-                </div>
-                <div style={{ padding: "0 16px" }}>
-                  {saleItems.map((item) => (
-                    <PantryItemCard
-                      key={item.id}
-                      item={item}
-                      discountPct={activePromos.get(item.ingredientId)}
-                      allIngredients={allIngredients}
-                      onUpdateQuantity={updateQuantity}
-                      onRemove={removeItem}
-                      variant="sale"
-                    />
-                  ))}
-                </div>
-              </div>
+            {redItems.length > 0 && (
+              <PantrySection label="Expiring soon" color="#e8470d" bg="#fff0ec" items={redItems} getIngredientName={getIngredientName} onRemove={removeIngredient} />
             )}
-
-            {/* Regular pantry items */}
-            {regularItems.length > 0 && (
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-                  🧺 In your pantry
-                </div>
-                <div style={{ padding: "0 16px" }}>
-                  {regularItems.map((item) => (
-                    <PantryItemCard
-                      key={item.id}
-                      item={item}
-                      allIngredients={allIngredients}
-                      onUpdateQuantity={updateQuantity}
-                      onRemove={removeItem}
-                      variant="regular"
-                    />
-                  ))}
-                </div>
-              </div>
+            {yellowItems.length > 0 && (
+              <PantrySection label="Use this week" color="#d97706" bg="#fffbeb" items={yellowItems} getIngredientName={getIngredientName} onRemove={removeIngredient} />
             )}
-
-            {items.length === 0 && (
-              <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                <div style={{ fontSize: 40, marginBottom: 8 }}>🧺</div>
-                <p style={{ color: "#c09878", fontSize: 14, fontWeight: 700, margin: 0 }}>Your pantry is empty</p>
-                <p style={{ color: "#d0c0b0", fontSize: 12, fontWeight: 600, marginTop: 4 }}>Add ingredients to get started</p>
-              </div>
+            {greenItems.length > 0 && (
+              <PantrySection label="Staples" color="#2d6a3f" bg="#f0faf3" items={greenItems} getIngredientName={getIngredientName} onRemove={removeIngredient} />
             )}
           </>
         )}
@@ -241,74 +123,19 @@ export default function PantryPage() {
   );
 }
 
-function PantryItemCard({
-  item, discountPct, allIngredients, onUpdateQuantity, onRemove, variant,
-}: {
-  item: PantryItem;
-  discountPct?: number;
-  allIngredients: IngredientData[];
-  onUpdateQuantity: (id: string, level: QuantityLevel) => void;
-  onRemove: (id: string) => void;
-  variant: "sale" | "regular";
-}) {
-  const ing = allIngredients.find((i) => i.id === item.ingredientId);
-  const dots = quantityDots[item.quantityLevel];
-  const effectivePrice = ing ? ing.basePrice * (1 - (discountPct ?? 0) / 100) : 0;
-
-  const INGREDIENT_EMOJI: Record<string, string> = {
-    "ing-001": "🍝", "ing-002": "🧄", "ing-003": "🧈",
-    "ing-004": "🫒", "ing-005": "🧀", "ing-006": "🫘",
-    "ing-007": "🫑", "ing-008": "🧅", "ing-009": "🌿",
-    "ing-010": "🥫", "ing-011": "🍚", "ing-012": "🍵",
-    "ing-013": "🍋", "ing-014": "🥚", "ing-015": "🥬",
-    "ing-016": "🧀", "ing-017": "🫘", "ing-018": "🫓",
-    "ing-019": "🍅", "ing-020": "🥑",
-  };
-
+function PantrySection({ label, color, bg, items, getIngredientName, onRemove }: { label: string; color: string; bg: string; items: PantryItem[]; getIngredientName: (id: string) => string; onRemove: (id: string) => void; }) {
   return (
-    <div style={{
-      display: "flex", alignItems: "center", gap: 10,
-      padding: "10px 14px",
-      background: variant === "sale" ? "#fff" : "#f5f8ff",
-      border: `1px solid ${variant === "sale" ? "#fad8c8" : "#dde8f5"}`,
-      borderRadius: 12,
-      marginBottom: 6,
-    }}>
-      <div style={{ width: 40, height: 40, borderRadius: 10, background: variant === "sale" ? "#fff8f4" : "#eef4ff", border: `1px solid ${variant === "sale" ? "#fad8c8" : "#c8daf5"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
-        {INGREDIENT_EMOJI[item.ingredientId] ?? "🍴"}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{item.ingredient.name}</div>
-        <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>{item.ingredient.category}</div>
-        <div style={{ display: "flex", gap: 3, marginTop: 4 }}>
-          {[1, 2, 3].map((n) => (
-            <div key={n} style={{ width: 7, height: 7, borderRadius: "50%", background: n <= dots ? "#e8470d" : "#e8d8c8" }} />
-          ))}
-        </div>
-      </div>
-
-      <div style={{ textAlign: "right", flexShrink: 0, marginRight: 6 }}>
-        {ing && (
-          <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>
-            ${effectivePrice.toFixed(3)}/{ing.unit}
+    <div style={{ padding: "0 16px 16px" }}>
+      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color, marginBottom: 8 }}>{label}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {items.map((item) => (
+          <div key={item.ingredientId} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", background: bg, borderRadius: 20, border: `1px solid ${color}22` }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#3a1f0d" }}>{getIngredientName(item.ingredientId)}</span>
+            <button onClick={() => onRemove(item.ingredientId)} style={{ background: "none", border: "none", cursor: "pointer", color, fontSize: 14, padding: 0, lineHeight: 1 }}>x</button>
           </div>
-        )}
-        {discountPct && (
-          <div style={{ fontSize: 9, fontWeight: 800, color: "#2d6a3f", background: "#e8f5ec", padding: "2px 6px", borderRadius: 4, marginTop: 2 }}>
-            -{discountPct}% off
-          </div>
-        )}
-        <div style={{ display: "flex", gap: 4, marginTop: 6, justifyContent: "flex-end" }}>
-          {QUANTITY_LEVELS.map((level) => (
-            <button key={level} onClick={() => onUpdateQuantity(item.ingredientId, level)} style={{ padding: "2px 6px", borderRadius: 4, fontSize: 9, fontWeight: 700, border: "0.5px solid", borderColor: item.quantityLevel === level ? "#e8470d" : "#e8d8c8", background: item.quantityLevel === level ? "#fff0ec" : "transparent", color: item.quantityLevel === level ? "#e8470d" : "#c09878", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-              {level}
-            </button>
-          ))}
-        </div>
+        ))}
       </div>
-
-      <button onClick={() => onRemove(item.ingredientId)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, color: "#d0c0b0", padding: "0 2px", flexShrink: 0 }}>×</button>
     </div>
   );
 }
+
