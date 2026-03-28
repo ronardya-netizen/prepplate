@@ -8,6 +8,7 @@
     "cuisine": "italian",
     "emoji": "🍝",
     "calories": 520,
+    "mealType": "dinner",
     "mode": ["comfort", "quick"],
     "ingredients": [
       { "ingredientId": "ing-001", "quantity": 200, "unit": "g" },
@@ -26,6 +27,7 @@
     "cuisine": "asian",
     "emoji": "🥘",
     "calories": 380,
+    "mealType": "lunch",
     "mode": ["high-protein", "healthy"],
     "ingredients": [
       { "ingredientId": "ing-006", "quantity": 240, "unit": "g" },
@@ -44,6 +46,7 @@
     "cuisine": "french",
     "emoji": "🍲",
     "calories": 290,
+    "mealType": "lunch",
     "mode": ["low-cal", "comfort"],
     "ingredients": [
       { "ingredientId": "ing-010", "quantity": 400, "unit": "g" },
@@ -62,6 +65,7 @@
     "cuisine": "middle-eastern",
     "emoji": "🥚",
     "calories": 320,
+    "mealType": "breakfast",
     "mode": ["quick", "high-protein", "low-cal"],
     "ingredients": [
       { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
@@ -80,6 +84,7 @@
     "cuisine": "mexican",
     "emoji": "🌮",
     "calories": 440,
+    "mealType": "dinner",
     "mode": ["quick", "comfort"],
     "ingredients": [
       { "ingredientId": "ing-017", "quantity": 240, "unit": "g" },
@@ -98,6 +103,7 @@
     "cuisine": "indian",
     "emoji": "🍋",
     "calories": 350,
+    "mealType": "lunch",
     "mode": ["low-cal", "healthy"],
     "ingredients": [
       { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
@@ -110,12 +116,13 @@
   {
     "id": "rec-007",
     "title": "Rice and peas",
-    "description": "Caribbean comfort food classic",
+    "description": "Haitian comfort food classic",
     "prepTimeMin": 30,
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "caribbean",
+    "cuisine": "haitian",
     "emoji": "🍚",
     "calories": 540,
+    "mealType": "dinner",
     "mode": ["comfort", "high-protein"],
     "ingredients": [
       { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
@@ -128,17 +135,145 @@
   {
     "id": "rec-008",
     "title": "Scrambled eggs and toast",
-    "description": "Classic American breakfast, under 10 minutes",
+    "description": "Classic breakfast, under 10 minutes",
     "prepTimeMin": 10,
     "dietTags": ["vegetarian"],
     "cuisine": "american",
     "emoji": "🍳",
     "calories": 280,
+    "mealType": "breakfast",
     "mode": ["quick", "low-cal"],
     "ingredients": [
       { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
       { "ingredientId": "ing-003", "quantity": 15, "unit": "g" },
       { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
     ]
+  },
+  {
+    "id": "rec-009",
+    "title": "Banana oat smoothie",
+    "description": "Quick energizing breakfast",
+    "prepTimeMin": 5,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "american",
+    "emoji": "🥤",
+    "calories": 220,
+    "mealType": "breakfast",
+    "mode": ["quick", "low-cal", "healthy"],
+    "ingredients": [
+      { "ingredientId": "ing-021", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-022", "quantity": 50, "unit": "g" },
+      { "ingredientId": "ing-023", "quantity": 200, "unit": "ml" }
+    ]
+  },
+  {
+    "id": "rec-010",
+    "title": "Griot (Haitian fried pork)",
+    "description": "Crispy, savory Haitian classic",
+    "prepTimeMin": 45,
+    "dietTags": ["gluten-free"],
+    "cuisine": "haitian",
+    "emoji": "🥩",
+    "calories": 620,
+    "mealType": "dinner",
+    "mode": ["comfort", "high-protein"],
+    "ingredients": [
+      { "ingredientId": "ing-024", "quantity": 500, "unit": "g" },
+      { "ingredientId": "ing-002", "quantity": 4, "unit": "piece" },
+      { "ingredientId": "ing-025", "quantity": 2, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 3, "unit": "tbsp" },
+      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
+    ]
+  },
+  {
+    "id": "rec-011",
+    "title": "Legim (Haitian vegetable stew)",
+    "description": "Hearty Haitian stew packed with vegetables",
+    "prepTimeMin": 40,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "haitian",
+    "emoji": "🫕",
+    "calories": 310,
+    "mealType": "dinner",
+    "mode": ["healthy", "comfort"],
+    "ingredients": [
+      { "ingredientId": "ing-026", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-007", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-027", "quantity": 100, "unit": "g" },
+      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" }
+    ]
+  },
+  {
+    "id": "rec-012",
+    "title": "Avocado toast",
+    "description": "Quick and nutritious morning meal",
+    "prepTimeMin": 10,
+    "dietTags": ["vegetarian", "vegan"],
+    "cuisine": "american",
+    "emoji": "🥑",
+    "calories": 290,
+    "mealType": "breakfast",
+    "mode": ["quick", "healthy", "low-cal"],
+    "ingredients": [
+      { "ingredientId": "ing-028", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-029", "quantity": 2, "unit": "piece" },
+      { "ingredientId": "ing-013", "quantity": 0.5, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
+    ]
+  },
+  {
+    "id": "rec-013",
+    "title": "Greek yogurt parfait",
+    "description": "Creamy, protein-rich snack or breakfast",
+    "prepTimeMin": 5,
+    "dietTags": ["vegetarian", "gluten-free"],
+    "cuisine": "american",
+    "emoji": "🍓",
+    "calories": 240,
+    "mealType": "snack",
+    "mode": ["quick", "high-protein", "low-cal"],
+    "ingredients": [
+      { "ingredientId": "ing-030", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-031", "quantity": 50, "unit": "g" },
+      { "ingredientId": "ing-032", "quantity": 1, "unit": "tbsp" }
+    ]
+  },
+  {
+    "id": "rec-014",
+    "title": "Chocolate banana bites",
+    "description": "Simple 3-ingredient dessert",
+    "prepTimeMin": 10,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "american",
+    "emoji": "🍫",
+    "calories": 180,
+    "mealType": "dessert",
+    "mode": ["quick", "comfort"],
+    "ingredients": [
+      { "ingredientId": "ing-021", "quantity": 2, "unit": "piece" },
+      { "ingredientId": "ing-033", "quantity": 50, "unit": "g" },
+      { "ingredientId": "ing-034", "quantity": 1, "unit": "tbsp" }
+    ]
+  },
+  {
+    "id": "rec-015",
+    "title": "Lentil soup",
+    "description": "Warming, filling and budget-friendly",
+    "prepTimeMin": 35,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "middle-eastern",
+    "emoji": "🍜",
+    "calories": 330,
+    "mealType": "lunch",
+    "mode": ["healthy", "comfort", "high-protein"],
+    "ingredients": [
+      { "ingredientId": "ing-035", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
+      { "ingredientId": "ing-012", "quantity": 800, "unit": "ml" }
+    ]
   }
 ]
+
