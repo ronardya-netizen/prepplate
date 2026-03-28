@@ -112,7 +112,7 @@ export default function OnboardingPage() {
               </button>
             ))}
           </div>
-          <div style={{ position: "fixed", bottom: 60, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, padding: "16px 20px", background: "#fff", borderTop: "1px solid #f0e8de" }}>
+          <div style={{ position: "fixed", bottom: 60, left: "50%", transform: "translateX(-50%)", width: "480px", maxWidth: 480, padding: "16px 20px", background: "#fff", borderTop: "1px solid #f0e8de" }}>
             <button onClick={finish} disabled={saving} style={{ ...btnStyle, marginTop: 0, opacity: saving ? 0.7 : 1 }}>
               {saving ? "Setting up your pantry..." : selectedIngredients.size === 0 ? "Skip — I'll add later" : `Done — I have ${selectedIngredients.size} items`}
             </button>
