@@ -1,279 +1,46 @@
-[
-  {
-    "id": "rec-001",
-    "title": "Garlic butter pasta",
-    "description": "Simple, comforting — you already have most of this",
-    "prepTimeMin": 20,
-    "dietTags": ["vegetarian"],
-    "cuisine": "italian",
-    "emoji": "🍝",
-    "calories": 520,
-    "mealType": "dinner",
-    "mode": ["comfort", "quick"],
-    "ingredients": [
-      { "ingredientId": "ing-001", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
-      { "ingredientId": "ing-003", "quantity": 30, "unit": "g" },
-      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
-      { "ingredientId": "ing-005", "quantity": 20, "unit": "g" }
-    ]
-  },
-  {
-    "id": "rec-002",
-    "title": "Chickpea stir-fry",
-    "description": "Quick, high-protein, pantry-friendly",
-    "prepTimeMin": 25,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "asian",
-    "emoji": "🥘",
-    "calories": 380,
-    "mealType": "lunch",
-    "mode": ["high-protein", "healthy"],
-    "ingredients": [
-      { "ingredientId": "ing-006", "quantity": 240, "unit": "g" },
-      { "ingredientId": "ing-007", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
-      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-003",
-    "title": "Tomato rice soup",
-    "description": "Cozy and light on budget",
-    "prepTimeMin": 30,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "french",
-    "emoji": "🍲",
-    "calories": 290,
-    "mealType": "lunch",
-    "mode": ["low-cal", "comfort"],
-    "ingredients": [
-      { "ingredientId": "ing-010", "quantity": 400, "unit": "g" },
-      { "ingredientId": "ing-011", "quantity": 100, "unit": "g" },
-      { "ingredientId": "ing-012", "quantity": 500, "unit": "ml" },
-      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" }
-    ]
-  },
-  {
-    "id": "rec-004",
-    "title": "Spinach feta scramble",
-    "description": "Fast high-protein breakfast or dinner",
-    "prepTimeMin": 15,
-    "dietTags": ["vegetarian", "gluten-free"],
-    "cuisine": "middle-eastern",
-    "emoji": "🥚",
-    "calories": 320,
-    "mealType": "breakfast",
-    "mode": ["quick", "high-protein", "low-cal"],
-    "ingredients": [
-      { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
-      { "ingredientId": "ing-015", "quantity": 60, "unit": "g" },
-      { "ingredientId": "ing-016", "quantity": 40, "unit": "g" },
-      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" },
-      { "ingredientId": "ing-013", "quantity": 0.5, "unit": "piece", "isOptional": true }
-    ]
-  },
-  {
-    "id": "rec-005",
-    "title": "Black bean tacos",
-    "description": "Ready in 15 minutes, crowd-pleaser",
-    "prepTimeMin": 15,
-    "dietTags": ["vegetarian", "vegan"],
-    "cuisine": "mexican",
-    "emoji": "🌮",
-    "calories": 440,
-    "mealType": "dinner",
-    "mode": ["quick", "comfort"],
-    "ingredients": [
-      { "ingredientId": "ing-017", "quantity": 240, "unit": "g" },
-      { "ingredientId": "ing-018", "quantity": 4, "unit": "piece" },
-      { "ingredientId": "ing-019", "quantity": 4, "unit": "tbsp" },
-      { "ingredientId": "ing-020", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-008", "quantity": 0.5, "unit": "piece" }
-    ]
-  },
-  {
-    "id": "rec-006",
-    "title": "Lemon rice with garlic",
-    "description": "Light side dish or simple main",
-    "prepTimeMin": 25,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "indian",
-    "emoji": "🍋",
-    "calories": 350,
-    "mealType": "lunch",
-    "mode": ["low-cal", "healthy"],
-    "ingredients": [
-      { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
-      { "ingredientId": "ing-013", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
-      { "ingredientId": "ing-012", "quantity": 400, "unit": "ml" }
-    ]
-  },
-  {
-    "id": "rec-007",
-    "title": "Rice and peas",
-    "description": "Haitian comfort food classic",
-    "prepTimeMin": 30,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "haitian",
-    "emoji": "🍚",
-    "calories": 540,
-    "mealType": "dinner",
-    "mode": ["comfort", "high-protein"],
-    "ingredients": [
-      { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-017", "quantity": 120, "unit": "g" },
-      { "ingredientId": "ing-012", "quantity": 400, "unit": "ml" },
-      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-008",
-    "title": "Scrambled eggs and toast",
-    "description": "Classic breakfast, under 10 minutes",
-    "prepTimeMin": 10,
-    "dietTags": ["vegetarian"],
-    "cuisine": "american",
-    "emoji": "🍳",
-    "calories": 280,
-    "mealType": "breakfast",
-    "mode": ["quick", "low-cal"],
-    "ingredients": [
-      { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
-      { "ingredientId": "ing-003", "quantity": 15, "unit": "g" },
-      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-009",
-    "title": "Banana oat smoothie",
-    "description": "Quick energizing breakfast",
-    "prepTimeMin": 5,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "american",
-    "emoji": "🥤",
-    "calories": 220,
-    "mealType": "breakfast",
-    "mode": ["quick", "low-cal", "healthy"],
-    "ingredients": [
-      { "ingredientId": "ing-021", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-022", "quantity": 50, "unit": "g" },
-      { "ingredientId": "ing-023", "quantity": 200, "unit": "ml" }
-    ]
-  },
-  {
-    "id": "rec-010",
-    "title": "Griot (Haitian fried pork)",
-    "description": "Crispy, savory Haitian classic",
-    "prepTimeMin": 45,
-    "dietTags": ["gluten-free"],
-    "cuisine": "haitian",
-    "emoji": "🥩",
-    "calories": 620,
-    "mealType": "dinner",
-    "mode": ["comfort", "high-protein"],
-    "ingredients": [
-      { "ingredientId": "ing-024", "quantity": 500, "unit": "g" },
-      { "ingredientId": "ing-002", "quantity": 4, "unit": "piece" },
-      { "ingredientId": "ing-025", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 3, "unit": "tbsp" },
-      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-011",
-    "title": "Legim (Haitian vegetable stew)",
-    "description": "Hearty Haitian stew packed with vegetables",
-    "prepTimeMin": 40,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "haitian",
-    "emoji": "🫕",
-    "calories": 310,
-    "mealType": "dinner",
-    "mode": ["healthy", "comfort"],
-    "ingredients": [
-      { "ingredientId": "ing-026", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-007", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-027", "quantity": 100, "unit": "g" },
-      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" }
-    ]
-  },
-  {
-    "id": "rec-012",
-    "title": "Avocado toast",
-    "description": "Quick and nutritious morning meal",
-    "prepTimeMin": 10,
-    "dietTags": ["vegetarian", "vegan"],
-    "cuisine": "american",
-    "emoji": "🥑",
-    "calories": 290,
-    "mealType": "breakfast",
-    "mode": ["quick", "healthy", "low-cal"],
-    "ingredients": [
-      { "ingredientId": "ing-028", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-029", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-013", "quantity": 0.5, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-013",
-    "title": "Greek yogurt parfait",
-    "description": "Creamy, protein-rich snack or breakfast",
-    "prepTimeMin": 5,
-    "dietTags": ["vegetarian", "gluten-free"],
-    "cuisine": "american",
-    "emoji": "🍓",
-    "calories": 240,
-    "mealType": "snack",
-    "mode": ["quick", "high-protein", "low-cal"],
-    "ingredients": [
-      { "ingredientId": "ing-030", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-031", "quantity": 50, "unit": "g" },
-      { "ingredientId": "ing-032", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-014",
-    "title": "Chocolate banana bites",
-    "description": "Simple 3-ingredient dessert",
-    "prepTimeMin": 10,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "american",
-    "emoji": "🍫",
-    "calories": 180,
-    "mealType": "dessert",
-    "mode": ["quick", "comfort"],
-    "ingredients": [
-      { "ingredientId": "ing-021", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-033", "quantity": 50, "unit": "g" },
-      { "ingredientId": "ing-034", "quantity": 1, "unit": "tbsp" }
-    ]
-  },
-  {
-    "id": "rec-015",
-    "title": "Lentil soup",
-    "description": "Warming, filling and budget-friendly",
-    "prepTimeMin": 35,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "middle-eastern",
-    "emoji": "🍜",
-    "calories": 330,
-    "mealType": "lunch",
-    "mode": ["healthy", "comfort", "high-protein"],
-    "ingredients": [
-      { "ingredientId": "ing-035", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
-      { "ingredientId": "ing-012", "quantity": 800, "unit": "ml" }
-    ]
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSuggestions } from "@/lib/suggestions";
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+  const timeMin = parseInt(searchParams.get("time") ?? "60", 10);
+  const budgetUSD = parseFloat(searchParams.get("budget") ?? "50");
+  const cuisine = searchParams.get("cuisine") ?? "all";
+  const mode = searchParams.get("mode") ?? "all";
+
+  if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
+
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return NextResponse.json({ suggestions: [] });
+  } catch {
+    return NextResponse.json({ suggestions: [] });
   }
-]
+
+  const pantryItems = await prisma.pantryItem.findMany({
+    where: { userId },
+    select: { ingredientId: true },
+  });
+
+  const pantryIngredientIds = pantryItems.map((p: { ingredientId: string }) => p.ingredientId);
+
+  // For now expiring = items flagged in localStorage (passed as query param)
+  const expiringParam = searchParams.get("expiring") ?? "";
+  const expiringIngredientIds = expiringParam ? expiringParam.split(",") : [];
+
+  const suggestions = getSuggestions({
+    pantryIngredientIds,
+    expiringIngredientIds,
+    timeMin,
+    budgetUSD,
+    dietPrefs: user.dietPrefs ?? [],
+    cuisine,
+    mode,
+  });
+
+  return NextResponse.json({ suggestions });
+}
 
