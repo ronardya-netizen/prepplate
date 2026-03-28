@@ -1,10 +1,9 @@
 "use client";
+import { getUserId } from "@/lib/user";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import MealCard from "@/components/MealCard";
 import { SuggestionResult } from "@/lib/suggestions";
-
-const MOCK_USER_ID = "user-001";
 
 const CUISINES = [
   { id: "all", label: "All", flag: "🍽️" },
@@ -12,7 +11,7 @@ const CUISINES = [
   { id: "french", label: "French", flag: "🥐" },
   { id: "indian", label: "Indian", flag: "🍛" },
   { id: "mexican", label: "Mexican", flag: "🌮" },
-  { id: "caribbean", label: "Caribbean", flag: "🌴" },
+  { id: "haitian", label: "Haitian", flag: "🇭🇹" },
   { id: "asian", label: "Asian", flag: "🥢" },
   { id: "middle-eastern", label: "Middle Eastern", flag: "🧆" },
   { id: "american", label: "American", flag: "🍔" },
@@ -27,32 +26,51 @@ const MODES = [
   { id: "healthy", label: "Healthy", icon: "🌿" },
 ];
 
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export default function HomePage() {
   const [suggestions, setSuggestions] = useState<SuggestionResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [cuisine, setCuisine] = useState("all");
   const [mode, setMode] = useState("all");
   const [savedMeals, setSavedMeals] = useState<Set<string>>(new Set());
+  const [pantryItems, setPantryItems] = useState<{ingredientId: string; expiryDays?: number}[]>([]);
+  const [userId, setUserId] = useState("user-001");
+
+  useEffect(() => {
+    const id = getUserId();
+    setUserId(id);
+    const saved = localStorage.getItem("bookmarked-meals");
+    if (saved) setSavedMeals(new Set(JSON.parse(saved)));
+    fetch(`/api/pantry?userId=${id}`)
+      .then((r) => r.json())
+      .then((data) => setPantryItems(data.items ?? []));
+  }, []);
+
+  useEffect(() => {
+    if (userId) fetchSuggestions(cuisine, mode);
+  }, [cuisine, mode, userId, pantryItems]);
 
   async function fetchSuggestions(c: string, m: string) {
     setLoading(true);
     try {
-      const res = await fetch(`/api/suggestions?userId=${MOCK_USER_ID}&time=60&budget=50&cuisine=${c}&mode=${m}`);
+      const id = getUserId();
+      const settings = JSON.parse(localStorage.getItem("prepplate-settings") ?? "{}");
+      const expiring = pantryItems
+        .filter((i) => i.expiryDays !== undefined && i.expiryDays <= 2)
+        .map((i) => i.ingredientId)
+        .join(",");
+      const res = await fetch(`/api/suggestions?userId=${id}&time=60&budget=${settings.budget ?? 50}&cuisine=${c}&mode=${m}&expiring=${expiring}`);
       const data = await res.json();
       setSuggestions(data.suggestions ?? []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   }
-
-  useEffect(() => { fetchSuggestions(cuisine, mode); }, [cuisine, mode]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("bookmarked-meals");
-    if (saved) setSavedMeals(new Set(JSON.parse(saved)));
-  }, []);
 
   function toggleSave(recipeId: string) {
     const next = new Set(savedMeals);
@@ -61,12 +79,10 @@ export default function HomePage() {
     localStorage.setItem("bookmarked-meals", JSON.stringify([...next]));
   }
 
-  const saleCount = suggestions.filter((s) => s.pricing.hasSaleItems).length;
+  const expiringCount = pantryItems.filter((i) => i.expiryDays !== undefined && i.expiryDays <= 2).length;
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
-
-      {/* Header */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -79,14 +95,25 @@ export default function HomePage() {
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
         </div>
         <div style={{ padding: "0 20px 4px" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>Good evening 👋</h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>What are we cooking tonight?</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>{getGreeting()} 👋</h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
+            {expiringCount > 0 ? `${expiringCount} ingredient${expiringCount > 1 ? "s" : ""} expiring soon — use them first!` : "What are we cooking today?"}
+          </p>
         </div>
       </div>
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 14 }}>
 
-        {/* Mode selector */}
+        {expiringCount > 0 && (
+          <div onClick={() => setMode("all")} style={{ margin: "0 16px 12px", padding: "10px 14px", background: "#fff0ec", border: "1.5px solid #e8470d", borderRadius: 12, display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+            <span style={{ fontSize: 18 }}>⏰</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#e8470d" }}>Use expiring ingredients first</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>Meals below prioritize what expires soon</div>
+            </div>
+          </div>
+        )}
+
         <div style={{ padding: "0 20px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>Mode</div>
         <div style={{ display: "flex", gap: 6, padding: "0 16px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
           {MODES.map((m) => (
@@ -96,7 +123,6 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Cuisine selector */}
         <div style={{ padding: "0 20px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>Cuisine</div>
         <div style={{ display: "flex", gap: 6, padding: "0 16px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
           {CUISINES.map((c) => (
@@ -106,20 +132,18 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Section label */}
         <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-          {loading ? "Finding meals…" : `${suggestions.length} suggestion${suggestions.length !== 1 ? "s" : ""}${saleCount > 0 ? ` · ${saleCount} on sale` : ""}`}
+          {loading ? "Finding meals…" : `${suggestions.length} suggestion${suggestions.length !== 1 ? "s" : ""}`}
         </div>
 
-        {/* Meal cards */}
         <div style={{ padding: "0 16px" }}>
           {loading ? (
             <p style={{ color: "#c09878", fontSize: 14, padding: "20px 0", fontWeight: 700 }}>Finding the best meals for you…</p>
           ) : suggestions.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "30px 0" }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>🍽️</div>
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>🍽️</div>
               <p style={{ color: "#c09878", fontSize: 14, fontWeight: 700, margin: 0 }}>No meals found.</p>
-              <p style={{ color: "#d0c0b0", fontSize: 12, fontWeight: 600, marginTop: 4 }}>Try a different mode or cuisine.</p>
+              <p style={{ color: "#d0c0b0", fontSize: 12, fontWeight: 600, marginTop: 4 }}>Try a different mode or add more ingredients to your pantry.</p>
             </div>
           ) : (
             suggestions.map((s) => (
