@@ -5,7 +5,7 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 const prismaClientSingleton = () => new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://postgres:TiChef20262@db.xntnjamehgqoqwcknhjf.supabase.co:5432/postgres",
+      url: "postgresql://postgres.xntnjamehgqoqwcknhjf:TiChef20262@aws-0-us-west-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1",
     },
   },
 });
