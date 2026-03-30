@@ -29,21 +29,31 @@ export default function OnboardingPage() {
   function toggleIngredient(id: string) { setSelectedIngredients((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; }); }
 
   async function finish() {
-    setSaving(true);
-    const userId = getUserId();
+  setSaving(true);
+  const userId = getUserId();
 
-    // Save preferences
     localStorage.setItem("prepplate-settings", JSON.stringify({ cuisines, nutritionGoal: "none", budget: 300, groceryFreq: "Weekly", shareActivity: true }));
 
-    // Create user and add pantry items
-    await fetch("/api/user", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId }) });
-    await Promise.all(Array.from(selectedIngredients).map((ingredientId) =>
-      fetch("/api/pantry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, ingredientId, quantityLevel: 1 }) })
-    ));
+    // Create user first and wait for it
+    await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+    });
+
+    // Then save pantry items one by one
+    for (const ingredientId of Array.from(selectedIngredients)) {
+        await fetch("/api/pantry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, ingredientId, quantityLevel: "some" }),
+        });
+    }
 
     localStorage.setItem("prepplate-onboarded", "true");
     router.push("/home");
-  }
+    }
+
 
   const btnStyle = { width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "#e8470d", color: "#fff", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif", marginTop: 8 };
   const H = { background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 100%)", paddingBottom: 24 };
