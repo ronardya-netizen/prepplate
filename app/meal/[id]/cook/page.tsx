@@ -105,7 +105,7 @@ export default function CookPage() {
       </div>
 
       {/* Navigation */}
-      <div style={{ padding: "16px 20px 32px", display: "flex", gap: 10, borderTop: "1px solid #f0e8de" }}>
+      <div style={{ padding: "16px 20px 80px", display: "flex", gap: 10, borderTop: "1px solid #f0e8de" }}>
         {currentStep > 0 && (
           <button onClick={prevStep} style={{ flex: 1, padding: "14px", borderRadius: 12, border: "1.5px solid #e8d8c8", background: "#fff", color: "#c09878", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Back</button>
         )}
