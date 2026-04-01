@@ -1,3 +1,4 @@
+
 [
   {
     "id": "rec-001",
@@ -16,6 +17,13 @@
       { "ingredientId": "ing-003", "quantity": 30, "unit": "g" },
       { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
       { "ingredientId": "ing-005", "quantity": 20, "unit": "g" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Boil water", "instruction": "Bring a large pot of salted water to a boil.", "timerSeconds": 480 },
+      { "id": 2, "title": "Cook pasta", "instruction": "Add pasta and cook for 8-10 minutes until al dente. Reserve 1 cup of pasta water before draining.", "timerSeconds": 540 },
+      { "id": 3, "title": "Sauté garlic", "instruction": "While pasta cooks, mince garlic and sauté in olive oil and butter over medium heat for 2 minutes until golden.", "timerSeconds": 120 },
+      { "id": 4, "title": "Combine", "instruction": "Add drained pasta to the pan. Toss with garlic butter, adding pasta water as needed to create a silky sauce.", "timerSeconds": 60 },
+      { "id": 5, "title": "Serve", "instruction": "Plate the pasta and top generously with grated parmesan. Serve immediately." }
     ]
   },
   {
@@ -35,6 +43,13 @@
       { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
       { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
       { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Prep vegetables", "instruction": "Dice onion and bell pepper into bite-sized pieces. Drain and rinse chickpeas." },
+      { "id": 2, "title": "Heat pan", "instruction": "Heat olive oil in a large pan over high heat until shimmering.", "timerSeconds": 60 },
+      { "id": 3, "title": "Cook onion", "instruction": "Add onion and cook for 3 minutes until softened.", "timerSeconds": 180 },
+      { "id": 4, "title": "Add chickpeas", "instruction": "Add chickpeas and bell pepper. Stir-fry for 5 minutes until slightly crispy.", "timerSeconds": 300 },
+      { "id": 5, "title": "Season and serve", "instruction": "Season with soy sauce and your preferred spices. Serve hot over rice if desired." }
     ]
   },
   {
@@ -54,6 +69,13 @@
       { "ingredientId": "ing-012", "quantity": 500, "unit": "ml" },
       { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
       { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Sauté aromatics", "instruction": "Dice onion and mince garlic. Sauté in a pot with olive oil for 3 minutes.", "timerSeconds": 180 },
+      { "id": 2, "title": "Add tomatoes", "instruction": "Add canned tomatoes and crush them with a spoon. Cook for 5 minutes.", "timerSeconds": 300 },
+      { "id": 3, "title": "Add stock and rice", "instruction": "Pour in vegetable stock and add rice. Stir well.", "timerSeconds": 30 },
+      { "id": 4, "title": "Simmer", "instruction": "Bring to a boil then reduce heat. Simmer for 18 minutes until rice is tender.", "timerSeconds": 1080 },
+      { "id": 5, "title": "Season and serve", "instruction": "Taste and adjust seasoning with salt and pepper. Serve hot." }
     ]
   },
   {
@@ -69,10 +91,13 @@
     "mode": ["quick", "high-protein", "low-cal"],
     "ingredients": [
       { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
-      { "ingredientId": "ing-015", "quantity": 60, "unit": "g" },
-      { "ingredientId": "ing-016", "quantity": 40, "unit": "g" },
-      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" },
-      { "ingredientId": "ing-013", "quantity": 0.5, "unit": "piece", "isOptional": true }
+      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Beat eggs", "instruction": "Crack 3 eggs into a bowl and beat well with a pinch of salt and pepper." },
+      { "id": 2, "title": "Heat pan", "instruction": "Heat olive oil in a non-stick pan over medium heat.", "timerSeconds": 60 },
+      { "id": 3, "title": "Cook eggs", "instruction": "Pour in eggs and gently stir with a spatula as they cook. Remove from heat when just set.", "timerSeconds": 120 },
+      { "id": 4, "title": "Serve", "instruction": "Plate immediately and serve with toast or pita bread." }
     ]
   },
   {
@@ -88,10 +113,13 @@
     "mode": ["quick", "comfort"],
     "ingredients": [
       { "ingredientId": "ing-017", "quantity": 240, "unit": "g" },
-      { "ingredientId": "ing-018", "quantity": 4, "unit": "piece" },
-      { "ingredientId": "ing-019", "quantity": 4, "unit": "tbsp" },
-      { "ingredientId": "ing-020", "quantity": 1, "unit": "piece" },
       { "ingredientId": "ing-008", "quantity": 0.5, "unit": "piece" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Warm beans", "instruction": "Drain and rinse black beans. Heat in a pan with cumin, salt, and a splash of water for 3 minutes.", "timerSeconds": 180 },
+      { "id": 2, "title": "Warm tortillas", "instruction": "Warm tortillas directly on the stovetop flame or in a dry pan for 30 seconds each side.", "timerSeconds": 60 },
+      { "id": 3, "title": "Assemble", "instruction": "Fill tortillas with beans, diced onion, and your favorite toppings like salsa, avocado, or hot sauce." },
+      { "id": 4, "title": "Serve", "instruction": "Serve immediately with lime wedges if available." }
     ]
   },
   {
@@ -108,9 +136,13 @@
     "ingredients": [
       { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
       { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
-      { "ingredientId": "ing-013", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
-      { "ingredientId": "ing-012", "quantity": 400, "unit": "ml" }
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Cook rice", "instruction": "Rinse rice and cook in 400ml water. Bring to boil then simmer covered for 15 minutes.", "timerSeconds": 900 },
+      { "id": 2, "title": "Sauté garlic", "instruction": "While rice cooks, mince garlic and sauté in olive oil for 2 minutes until golden.", "timerSeconds": 120 },
+      { "id": 3, "title": "Combine", "instruction": "Fluff cooked rice with a fork and add to the garlic pan. Squeeze lemon juice over top." },
+      { "id": 4, "title": "Serve", "instruction": "Toss everything together and serve warm. Season with salt and pepper to taste." }
     ]
   },
   {
@@ -127,9 +159,14 @@
     "ingredients": [
       { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
       { "ingredientId": "ing-017", "quantity": 120, "unit": "g" },
-      { "ingredientId": "ing-012", "quantity": 400, "unit": "ml" },
-      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
+      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Season beans", "instruction": "Heat drained black beans with minced garlic, thyme, and a pinch of salt in a pot for 3 minutes.", "timerSeconds": 180 },
+      { "id": 2, "title": "Add rice", "instruction": "Add rinsed rice to the pot and stir to coat with the bean mixture." },
+      { "id": 3, "title": "Add water", "instruction": "Pour in 400ml water. Bring to a boil then reduce to lowest heat.", "timerSeconds": 120 },
+      { "id": 4, "title": "Cook covered", "instruction": "Cover tightly and cook for 18 minutes. Do not lift the lid.", "timerSeconds": 1080 },
+      { "id": 5, "title": "Rest and serve", "instruction": "Remove from heat and let rest 5 minutes. Fluff with a fork and serve.", "timerSeconds": 300 }
     ]
   },
   {
@@ -147,134 +184,178 @@
       { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
       { "ingredientId": "ing-003", "quantity": 15, "unit": "g" },
       { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Beat eggs", "instruction": "Crack eggs into a bowl, add a pinch of salt and pepper, and beat until combined." },
+      { "id": 2, "title": "Melt butter", "instruction": "Melt butter in a non-stick pan over low heat.", "timerSeconds": 30 },
+      { "id": 3, "title": "Scramble", "instruction": "Add eggs and stir slowly with a spatula, folding as they cook. Remove while still slightly wet.", "timerSeconds": 90 },
+      { "id": 4, "title": "Toast bread", "instruction": "Toast bread to your liking." },
+      { "id": 5, "title": "Serve", "instruction": "Serve eggs on toast immediately." }
     ]
   },
   {
     "id": "rec-009",
-    "title": "Banana oat smoothie",
-    "description": "Quick energizing breakfast",
-    "prepTimeMin": 5,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "american",
-    "emoji": "🥤",
-    "calories": 220,
-    "mealType": "breakfast",
-    "mode": ["quick", "low-cal", "healthy"],
+    "title": "Pasta aglio e olio",
+    "description": "5-ingredient Italian classic",
+    "prepTimeMin": 15,
+    "dietTags": ["vegetarian", "vegan"],
+    "cuisine": "italian",
+    "emoji": "🍝",
+    "calories": 480,
+    "mealType": "dinner",
+    "mode": ["quick", "comfort"],
     "ingredients": [
-      { "ingredientId": "ing-021", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-022", "quantity": 50, "unit": "g" },
-      { "ingredientId": "ing-023", "quantity": 200, "unit": "ml" }
+      { "ingredientId": "ing-001", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-002", "quantity": 4, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 3, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Cook pasta", "instruction": "Cook pasta in well-salted boiling water until al dente. Reserve 1 cup pasta water.", "timerSeconds": 540 },
+      { "id": 2, "title": "Sauté garlic", "instruction": "Thinly slice garlic and cook in olive oil over medium-low heat until golden, about 3 minutes.", "timerSeconds": 180 },
+      { "id": 3, "title": "Combine", "instruction": "Add drained pasta to garlic oil. Toss vigorously, adding pasta water to create a sauce.", "timerSeconds": 60 },
+      { "id": 4, "title": "Serve", "instruction": "Plate immediately. Add red pepper flakes and parsley if available." }
     ]
   },
   {
     "id": "rec-010",
-    "title": "Griot (Haitian fried pork)",
-    "description": "Crispy, savory Haitian classic",
-    "prepTimeMin": 45,
-    "dietTags": ["gluten-free"],
+    "title": "Haitian rice and beans",
+    "description": "Diri ak pwa — a household staple",
+    "prepTimeMin": 35,
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
     "cuisine": "haitian",
-    "emoji": "🥩",
-    "calories": 620,
+    "emoji": "🍛",
+    "calories": 560,
     "mealType": "dinner",
     "mode": ["comfort", "high-protein"],
     "ingredients": [
-      { "ingredientId": "ing-024", "quantity": 500, "unit": "g" },
-      { "ingredientId": "ing-002", "quantity": 4, "unit": "piece" },
-      { "ingredientId": "ing-025", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 3, "unit": "tbsp" },
-      { "ingredientId": "ing-009", "quantity": 1, "unit": "tbsp" }
+      { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-006", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
+      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Sauté aromatics", "instruction": "Dice onion and mince garlic. Cook in olive oil for 3 minutes until soft.", "timerSeconds": 180 },
+      { "id": 2, "title": "Add beans", "instruction": "Add drained chickpeas. Season with thyme, salt, and pepper. Cook 2 minutes.", "timerSeconds": 120 },
+      { "id": 3, "title": "Add rice and water", "instruction": "Add rinsed rice and 400ml water. Stir once and bring to boil.", "timerSeconds": 120 },
+      { "id": 4, "title": "Simmer covered", "instruction": "Reduce to lowest heat, cover tightly, and cook for 20 minutes.", "timerSeconds": 1200 },
+      { "id": 5, "title": "Rest and serve", "instruction": "Remove from heat, rest 5 minutes with lid on, then fluff and serve.", "timerSeconds": 300 }
     ]
   },
   {
     "id": "rec-011",
-    "title": "Legim (Haitian vegetable stew)",
-    "description": "Hearty Haitian stew packed with vegetables",
-    "prepTimeMin": 40,
+    "title": "Fried plantains",
+    "description": "Sweet and crispy Haitian side",
+    "prepTimeMin": 10,
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
     "cuisine": "haitian",
-    "emoji": "🫕",
-    "calories": 310,
-    "mealType": "dinner",
-    "mode": ["healthy", "comfort"],
+    "emoji": "🍌",
+    "calories": 220,
+    "mealType": "snack",
+    "mode": ["quick", "comfort"],
     "ingredients": [
-      { "ingredientId": "ing-026", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-007", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-027", "quantity": 100, "unit": "g" },
-      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" }
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Slice plantains", "instruction": "Peel ripe plantains and slice diagonally into 1cm thick pieces." },
+      { "id": 2, "title": "Heat oil", "instruction": "Heat oil in a pan over medium-high heat.", "timerSeconds": 60 },
+      { "id": 3, "title": "Fry", "instruction": "Fry plantain slices for 2-3 minutes per side until golden and caramelized.", "timerSeconds": 180 },
+      { "id": 4, "title": "Drain and serve", "instruction": "Drain on paper towels. Sprinkle with salt and serve hot." }
     ]
   },
   {
     "id": "rec-012",
-    "title": "Avocado toast",
-    "description": "Quick and nutritious morning meal",
+    "title": "Onion omelette",
+    "description": "Simple protein-packed breakfast",
     "prepTimeMin": 10,
-    "dietTags": ["vegetarian", "vegan"],
-    "cuisine": "american",
-    "emoji": "🥑",
-    "calories": 290,
+    "dietTags": ["vegetarian", "gluten-free"],
+    "cuisine": "french",
+    "emoji": "🍳",
+    "calories": 300,
     "mealType": "breakfast",
-    "mode": ["quick", "healthy", "low-cal"],
+    "mode": ["quick", "high-protein"],
     "ingredients": [
-      { "ingredientId": "ing-028", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-029", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-013", "quantity": 0.5, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" }
+      { "ingredientId": "ing-014", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-008", "quantity": 0.5, "unit": "piece" },
+      { "ingredientId": "ing-003", "quantity": 10, "unit": "g" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Prep", "instruction": "Thinly slice half an onion. Beat 3 eggs with salt and pepper." },
+      { "id": 2, "title": "Cook onion", "instruction": "Melt butter in a pan and cook onion for 3 minutes until soft.", "timerSeconds": 180 },
+      { "id": 3, "title": "Add eggs", "instruction": "Pour beaten eggs over onions. Tilt pan to spread evenly." },
+      { "id": 4, "title": "Fold and serve", "instruction": "When edges set but center is still soft, fold in half and slide onto plate." }
     ]
   },
   {
     "id": "rec-013",
-    "title": "Greek yogurt parfait",
-    "description": "Creamy, protein-rich snack or breakfast",
+    "title": "Chickpea salad",
+    "description": "No-cook high-protein lunch",
     "prepTimeMin": 5,
-    "dietTags": ["vegetarian", "gluten-free"],
-    "cuisine": "american",
-    "emoji": "🍓",
-    "calories": 240,
-    "mealType": "snack",
-    "mode": ["quick", "high-protein", "low-cal"],
+    "dietTags": ["vegetarian", "vegan", "gluten-free"],
+    "cuisine": "middle-eastern",
+    "emoji": "🥗",
+    "calories": 290,
+    "mealType": "lunch",
+    "mode": ["quick", "high-protein", "low-cal", "healthy"],
     "ingredients": [
-      { "ingredientId": "ing-030", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-031", "quantity": 50, "unit": "g" },
-      { "ingredientId": "ing-032", "quantity": 1, "unit": "tbsp" }
+      { "ingredientId": "ing-006", "quantity": 240, "unit": "g" },
+      { "ingredientId": "ing-004", "quantity": 1, "unit": "tbsp" },
+      { "ingredientId": "ing-008", "quantity": 0.5, "unit": "piece" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Drain beans", "instruction": "Drain and rinse chickpeas thoroughly." },
+      { "id": 2, "title": "Prep vegetables", "instruction": "Finely dice half an onion. Chop any fresh herbs if available." },
+      { "id": 3, "title": "Dress", "instruction": "Combine chickpeas and onion in a bowl. Drizzle with olive oil, lemon juice, salt and pepper." },
+      { "id": 4, "title": "Serve", "instruction": "Toss well and serve immediately or refrigerate for up to 2 days." }
     ]
   },
   {
     "id": "rec-014",
-    "title": "Chocolate banana bites",
-    "description": "Simple 3-ingredient dessert",
+    "title": "Garlic fried rice",
+    "description": "Use up leftover rice in 10 minutes",
     "prepTimeMin": 10,
     "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "american",
-    "emoji": "🍫",
-    "calories": 180,
-    "mealType": "dessert",
+    "cuisine": "asian",
+    "emoji": "🍚",
+    "calories": 420,
+    "mealType": "lunch",
     "mode": ["quick", "comfort"],
     "ingredients": [
-      { "ingredientId": "ing-021", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-033", "quantity": 50, "unit": "g" },
-      { "ingredientId": "ing-034", "quantity": 1, "unit": "tbsp" }
+      { "ingredientId": "ing-011", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-002", "quantity": 3, "unit": "piece" },
+      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
+      { "ingredientId": "ing-014", "quantity": 2, "unit": "piece" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Heat oil", "instruction": "Heat oil in a wok or large pan over high heat until very hot.", "timerSeconds": 60 },
+      { "id": 2, "title": "Fry garlic", "instruction": "Add minced garlic and fry for 30 seconds until fragrant.", "timerSeconds": 30 },
+      { "id": 3, "title": "Add rice", "instruction": "Add cold cooked rice and break up any clumps. Stir-fry for 3 minutes.", "timerSeconds": 180 },
+      { "id": 4, "title": "Add eggs", "instruction": "Push rice to sides, crack eggs into center, scramble, then mix everything together.", "timerSeconds": 60 },
+      { "id": 5, "title": "Season and serve", "instruction": "Season with soy sauce and salt. Serve hot." }
     ]
   },
   {
     "id": "rec-015",
-    "title": "Lentil soup",
-    "description": "Warming, filling and budget-friendly",
-    "prepTimeMin": 35,
-    "dietTags": ["vegetarian", "vegan", "gluten-free"],
-    "cuisine": "middle-eastern",
-    "emoji": "🍜",
-    "calories": 330,
-    "mealType": "lunch",
-    "mode": ["healthy", "comfort", "high-protein"],
+    "title": "Butter pasta with parmesan",
+    "description": "Kid-friendly comfort in 15 minutes",
+    "prepTimeMin": 15,
+    "dietTags": ["vegetarian"],
+    "cuisine": "italian",
+    "emoji": "🧀",
+    "calories": 490,
+    "mealType": "dinner",
+    "mode": ["quick", "comfort"],
     "ingredients": [
-      { "ingredientId": "ing-035", "quantity": 200, "unit": "g" },
-      { "ingredientId": "ing-008", "quantity": 1, "unit": "piece" },
-      { "ingredientId": "ing-002", "quantity": 2, "unit": "piece" },
-      { "ingredientId": "ing-004", "quantity": 2, "unit": "tbsp" },
-      { "ingredientId": "ing-012", "quantity": 800, "unit": "ml" }
+      { "ingredientId": "ing-001", "quantity": 200, "unit": "g" },
+      { "ingredientId": "ing-003", "quantity": 30, "unit": "g" },
+      { "ingredientId": "ing-005", "quantity": 30, "unit": "g" }
+    ],
+    "steps": [
+      { "id": 1, "title": "Cook pasta", "instruction": "Cook pasta in salted boiling water until al dente, about 8-10 minutes.", "timerSeconds": 540 },
+      { "id": 2, "title": "Reserve water", "instruction": "Before draining, scoop out half a cup of pasta water. Then drain pasta." },
+      { "id": 3, "title": "Add butter", "instruction": "Return pasta to the pot off the heat. Add butter and toss until melted.", "timerSeconds": 30 },
+      { "id": 4, "title": "Add parmesan", "instruction": "Add grated parmesan and a splash of pasta water. Toss vigorously until creamy." },
+      { "id": 5, "title": "Serve", "instruction": "Serve immediately with extra parmesan on top." }
     ]
   }
 ]
-
-
