@@ -111,7 +111,7 @@ export default function MealPage() {
       </div>
 
       {/* Start cooking button */}
-      <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, padding: "16px 20px 24px", background: "#fff", borderTop: "1px solid #f0e8de" }}>
+      <div style={{ position: "fixed", bottom: 60, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, padding: "16px 20px 24px", background: "#fff", borderTop: "1px solid #f0e8de" }}>
         <button onClick={() => router.push(`/meal/${recipe.id}/cook`)} style={{ width: "100%", padding: "16px", borderRadius: 14, border: "none", background: "#e8470d", color: "#fff", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
           Start Cooking →
         </button>
