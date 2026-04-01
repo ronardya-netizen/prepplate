@@ -36,7 +36,7 @@ export default function PantryPage() {
 
   async function addIngredient() {
     if (!selectedIngredient) return;
-    const res = await fetch("/api/pantry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, ingredientId: selectedIngredient.id, quantityLevel: 1 }) });
+    const res = await fetch("/api/pantry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, ingredientId: selectedIngredient.id, quantityLevel: "some", expiryDays }) });
     if (res.ok) {
       setPantryItems((prev) => [...prev, { ingredientId: selectedIngredient.id, expiryDays }]);
       setSelectedIngredient(null);
