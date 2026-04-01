@@ -1,126 +1,120 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { getUserId } from "@/lib/user";
 
 interface ImpactData {
-  totalMealsFunded: number;
-  mealsThisMonth: number;
-  partners: string[];
-  recentMetrics: { month: string; mealsFunded: number; partnerOrg: string; region: string }[];
-}
-
-function formatMonth(month: string) {
-  const [year, m] = month.split("-");
-  const date = new Date(parseInt(year), parseInt(m) - 1);
-  return date.toLocaleString("default", { month: "long", year: "numeric" });
+  mealsCooked: number;
+  ingredientsSaved: number;
+  estimatedWasteKg: number;
+  peopleFed: number;
+  joinDate: string;
 }
 
 export default function ImpactPage() {
-  const [data, setData] = useState<ImpactData | null>(null);
+  const [impact, setImpact] = useState<ImpactData>({ mealsCooked: 0, ingredientsSaved: 0, estimatedWasteKg: 0, peopleFed: 0, joinDate: new Date().toISOString() });
+  const [pantryCount, setPantryCount] = useState(0);
 
   useEffect(() => {
-    fetch("/api/impact")
+    const id = getUserId();
+    const saved = localStorage.getItem("prepplate-impact");
+    if (saved) setImpact(JSON.parse(saved));
+
+    fetch(`/api/pantry?userId=${id}`)
       .then((r) => r.json())
-      .then(setData);
+      .then((data) => setPantryCount((data.items ?? []).length));
   }, []);
+
+  function logMealCooked() {
+    const updated = {
+      ...impact,
+      mealsCooked: impact.mealsCooked + 1,
+      ingredientsSaved: impact.ingredientsSaved + 3,
+      estimatedWasteKg: Math.round((impact.estimatedWasteKg + 0.4) * 10) / 10,
+      peopleFed: Math.floor((impact.mealsCooked + 1) * 0.5),
+    };
+    setImpact(updated);
+    localStorage.setItem("prepplate-impact", JSON.stringify(updated));
+  }
+
+  const daysSinceJoin = Math.max(1, Math.floor((Date.now() - new Date(impact.joinDate).getTime()) / (1000 * 60 * 60 * 24)));
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
-
-      {/* Header */}
-      <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
+      <div style={{ background: "linear-gradient(180deg, #1a3d2a 0%, #2d6a3f 60%, #3d8a52 100%)", paddingBottom: 24 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Image src="/logo.png" alt="P'tit Chef" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Nunito', sans-serif" }}>P&apos;tit Chef</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700, fontFamily: "'Nunito', sans-serif" }}>Eat Smarter. Save more. Share more.</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>P&apos;tit Chef</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Eat smart. Save more. Share more.</div>
             </div>
           </div>
-          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#fff" }}>M</div>
         </div>
         <div style={{ padding: "0 20px 4px" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)", fontFamily: "'Nunito', sans-serif" }}>
-            Your impact 🌱
-          </h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0, fontFamily: "'Nunito', sans-serif" }}>
-            Every $4.99 subscription helps fund meals for people facing food insecurity.
-          </p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>Your impact 🌱</h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>Day {daysSinceJoin} of reducing food waste</p>
         </div>
       </div>
 
-      {/* White surface */}
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 20 }}>
 
-        {/* Hero stats */}
+        {/* Main stats */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, padding: "0 16px 16px" }}>
-          <div style={{ background: "#f0faf3", border: "1px solid #b8ddc4", borderRadius: 14, padding: "16px" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#7ab88a", marginBottom: 6 }}>This month</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: "#2d6a3f", lineHeight: 1 }}>{data?.mealsThisMonth ?? "—"}</div>
-            <div style={{ fontSize: 11, color: "#5a9e6f", fontWeight: 600, marginTop: 4 }}>meals funded</div>
-          </div>
-          <div style={{background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 14, padding: "16px" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 6 }}>All time</div>
-            <div style={{ fontSize: 32, fontWeight: 800, color: "#e8470d", lineHeight: 1 }}>{data?.totalMealsFunded ?? "—"}</div>
-            <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 4 }}>meals funded</div>
+          <StatCard value={impact.mealsCooked} label="Meals cooked" unit="" color="#e8470d" bg="#fff0ec" icon="🍳" />
+          <StatCard value={impact.estimatedWasteKg} label="Food waste saved" unit="kg" color="#2d6a3f" bg="#f0faf3" icon="🌱" />
+          <StatCard value={impact.ingredientsSaved} label="Ingredients used" unit="" color="#d97706" bg="#fffbeb" icon="🧺" />
+          <StatCard value={impact.peopleFed} label="People fed" unit="" color="#7c3aed" bg="#f5f3ff" icon="🤝" />
+        </div>
+
+        {/* Pantry health */}
+        <div style={{ margin: "0 16px 16px", padding: "14px", background: "#f0faf3", border: "1px solid #b8ddc4", borderRadius: 14 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#2d6a3f", marginBottom: 8 }}>Pantry health</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: "#2d6a3f" }}>{pantryCount} ingredients</div>
+              <div style={{ fontSize: 12, color: "#5a8a6a", fontWeight: 600, marginTop: 2 }}>tracked in your pantry</div>
+            </div>
+            <div style={{ fontSize: 36 }}>🧺</div>
           </div>
         </div>
 
-        {/* How it works */}
-        <div style={{ margin: "0 16px 16px", background: "#f5f0e8", borderRadius: 14, padding: "16px" }}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d", marginBottom: 8 }}>How your subscription helps</div>
-          <p style={{ fontSize: 12, color: "#a08060", fontWeight: 600, margin: 0, lineHeight: 1.7 }}>
-            A portion of every P&apos;tit Chef subscription goes directly to trusted food partners, including food banks, school meal programs, and community kitchens. We share clear monthly numbers so you can see the real impact of your membership.
-          </p>
+        {/* Log a meal */}
+        <div style={{ margin: "0 16px 16px", padding: "14px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 14 }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d", marginBottom: 4 }}>Did you cook a meal today?</div>
+          <div style={{ fontSize: 12, color: "#c09878", fontWeight: 600, marginBottom: 12 }}>Tap to log it and track your impact</div>
+          <button onClick={logMealCooked} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "#e8470d", color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+            I cooked a meal!
+          </button>
         </div>
 
-        {/* Partner organizations */}
-        {data?.partners && data.partners.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              Partner organizations
-            </div>
-            <div style={{ padding: "0 16px" }}>
-              {data.partners.map((org) => (
-                <div key={org} style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 6 }}>
-                  <span style={{ fontSize: 22 }}>🤝</span>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{org}</div>
-                    <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>Verified food partner</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Mission */}
+        <div style={{ margin: "0 16px 16px", padding: "14px", background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: 14 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#7c3aed", marginBottom: 8 }}>Our mission</div>
+          <div style={{ fontSize: 13, color: "#4c1d95", fontWeight: 600, lineHeight: 1.6 }}>
+            Every meal cooked with what you already have reduces food waste and helps feed someone in need. P&apos;tit Chef donates a portion of every subscription to local food banks in Montreal.
           </div>
-        )}
-
-        {/* Recent impact */}
-        {data?.recentMetrics && data.recentMetrics.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              Recent impact
-            </div>
-            <div style={{ padding: "0 16px" }}>
-              {data.recentMetrics.map((m) => (
-                <div key={`${m.month}-${m.partnerOrg}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 6 }}>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{m.partnerOrg}</div>
-                    <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>
-                      {m.region} · {formatMonth(m.month)}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: "#2d6a3f" }}>{m.mealsFunded}</div>
-                    <div style={{ fontSize: 10, color: "#7ab88a", fontWeight: 700 }}>meals funded</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div style={{ marginTop: 10, padding: "8px 12px", background: "#ede9fe", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#7c3aed" }}>
+            🤝 Partner: Montreal Food Bank
           </div>
-        )}
+        </div>
 
       </div>
     </main>
   );
 }
+
+function StatCard({ value, label, unit, color, bg, icon }: { value: number; label: string; unit: string; color: string; bg: string; icon: string; }) {
+  return (
+    <div style={{ background: bg, borderRadius: 14, padding: "14px", border: `1px solid ${color}22` }}>
+      <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color, marginBottom: 6 }}>{label}</div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 4, marginBottom: 4 }}>
+        <div style={{ fontSize: 28, fontWeight: 800, color }}>{value}</div>
+        {unit && <div style={{ fontSize: 13, fontWeight: 700, color, marginBottom: 4 }}>{unit}</div>}
+      </div>
+      <div style={{ fontSize: 20 }}>{icon}</div>
+    </div>
+  );
+}
+
