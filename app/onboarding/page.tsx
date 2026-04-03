@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
+
+interface IngredientData { id: string; name: string; category: string; }
+const INGREDIENTS = ingredientsData as IngredientData[];
 
 const CUISINES = ["Haitian", "French", "Italian", "Indian", "Mexican", "Asian", "American"];
 const QUICK_PANTRY = [
@@ -11,6 +16,12 @@ const QUICK_PANTRY = [
   { id: "ing-007", name: "Bell pepper" }, { id: "ing-008", name: "Onion" },
   { id: "ing-011", name: "Rice" }, { id: "ing-014", name: "Eggs" },
   { id: "ing-017", name: "Black beans" }, { id: "ing-021", name: "Banana" },
+];
+
+const FEATURES = [
+  { icon: "🧺", desc: "Tell us what you have, add what's in your pantry" },
+  { icon: "🍳", desc: "Get meal ideas instantly, make the most out of your ingredients" },
+  { icon: "🌱", desc: "Help reduce hunger, every subscription helps fund meals for others" },
 ];
 
 export default function OnboardingPage() {
@@ -35,48 +46,35 @@ export default function OnboardingPage() {
     router.push("/home");
   }
 
-  const btnStyle: React.CSSProperties = { width: "100%", padding: "16px", borderRadius: 50, border: "none", background: "#c0440f", color: "#fff", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif", marginTop: 8 };
-
-  const PrepPlateIcon = ({ size = 28, color = "white" }: { size?: number; color?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="<http://www.w3.org/2000/svg>">
-      <circle cx="13" cy="13" r="9" fill={color}/>
-      <circle cx="27" cy="13" r="9" fill={color}/>
-      <circle cx="13" cy="27" r="9" fill={color}/>
-      <circle cx="27" cy="27" r="9" fill={color}/>
-    </svg>
-  );
+  const btnStyle: React.CSSProperties = { width: "100%", padding: "16px", borderRadius: 16, border: "none", background: "#e8470d", color: "#fff", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif", boxShadow: "0 4px 16px rgba(232,71,13,.35)", letterSpacing: "0.3px" };
 
   return (
-    <main style={{ maxWidth: 480, margin: "0 auto", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+    <main style={{ maxWidth: 480, margin: "0 auto", background: "#fdf7f2", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
 
       {/* Step 1 — Welcome */}
       {step === 1 && (
-        <div style={{ minHeight: "100vh", background: "linear-gradient(180deg, #e8823a 0%, #f5c49a 45%, #fde9d4 100%)", display: "flex", flexDirection: "column", padding: "52px 24px 36px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 48 }}>
-            <PrepPlateIcon size={28} color="white" />
-            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.3px" }}>PrepPlate</span>
+        <div>
+          {/* Hero */}
+          <div style={{ background: "linear-gradient(160deg, #c84b0c 0%, #8B5E3C 60%, #6b3a1f 100%)", paddingBottom: 32, display: "flex", flexDirection: "column", alignItems: "center", padding: "52px 24px 36px" }}>
+            <Image src="/logo.png" alt="PrepPlate" width={80} height={80} style={{ borderRadius: 20, objectFit: "cover", marginBottom: 20, boxShadow: "0 4px 20px rgba(0,0,0,.2)" }} />
+            <h1 style={{ fontSize: 32, fontWeight: 800, color: "#fff", margin: "0 0 10px", textAlign: "center", letterSpacing: "-0.5px", textShadow: "0 2px 8px rgba(0,0,0,.2)" }}>Welcome to PrepPlate</h1>
+            <p style={{ fontSize: 15, color: "rgba(255,255,255,.85)", fontWeight: 600, textAlign: "center", margin: 0, lineHeight: 1.5 }}>Cook smarter, waste less, and help fight hunger</p>
           </div>
-          <h1 style={{ fontSize: 42, fontWeight: 900, color: "#5c1a00", margin: "0 0 12px", lineHeight: 1.1, letterSpacing: "-1px" }}>
-            Welcome to<br />PrepPlate
-          </h1>
-          <p style={{ fontSize: 16, color: "#7a3a10", fontWeight: 600, margin: "0 0 40px", lineHeight: 1.5 }}>
-            Cook smarter, waste less,<br />and help fight hunger
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: "auto" }}>
-            {[
-              { bg: "#e8470d", icon: "🍅", text: "Tell us what you have, add what's in your pantry" },
-              { bg: "#d97c2a", icon: "🥗", text: "Get meal ideas instantly, make the most out of your ingredients" },
-              { bg: "#a85c30", icon: "🫙", text: "Help reduce hunger, every subscription helps fund meals for others" },
-            ].map((item) => (
-              <div key={item.text} style={{ display: "flex", alignItems: "center", gap: 16, background: "rgba(255,255,255,0.55)", borderRadius: 50, padding: "14px 20px", backdropFilter: "blur(4px)" }}>
-                <div style={{ width: 48, height: 48, borderRadius: "50%", background: <item.bg>, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
-                  {item.icon}
+
+          {/* Cards */}
+          <div style={{ padding: "28px 20px", background: "#fdf7f2" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+              {FEATURES.map((item) => (
+                <div key={item.desc} style={{ display: "flex", gap: 14, alignItems: "center", padding: "16px", background: "#fff", borderRadius: 18, boxShadow: "0 2px 12px rgba(232,71,13,.08)" }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg, #fde8d8, #fad8c8)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <span style={{ fontSize: 24 }}>{item.icon}</span>
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#3a1f0d", lineHeight: 1.5 }}>{item.desc}</div>
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: "#4a1f00", lineHeight: 1.35 }}>{item.text}</span>
-              </div>
-            ))}
+              ))}
+            </div>
+            <button onClick={() => setStep(2)} style={btnStyle}>Get started</button>
           </div>
-          <button onClick={() => setStep(2)} style={{ ...btnStyle, marginTop: 40 }}>Get started</button>
         </div>
       )}
 
@@ -84,11 +82,11 @@ export default function OnboardingPage() {
       {step === 2 && (
         <div style={{ padding: "32px 20px 24px" }}>
           <div style={{ marginBottom: 8, fontSize: 12, fontWeight: 700, color: "#c09878" }}>Step 1 of 2</div>
-          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#3a1f0d", margin: "0 0 6px" }}>What cuisines do you love?</h2>
-          <p style={{ fontSize: 13, color: "#c09878", fontWeight: 600, margin: "0 0 20px" }}>We&apos;ll prioritize these in your suggestions</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#3a1f0d", margin: "0 0 6px" }}>What cuisines do you love?</h2>
+          <p style={{ fontSize: 13, color: "#c09878", fontWeight: 600, margin: "0 0 24px" }}>We'll prioritize these in your suggestions</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
             {CUISINES.map((c) => (
-              <button key={c} onClick={() => toggleCuisine(c)} style={{ padding: "8px 16px", borderRadius: 20, fontSize: 13, fontWeight: 700, border: "1.5px solid", borderColor: cuisines.includes(c) ? "#e8470d" : "#e8d8c8", background: cuisines.includes(c) ? "#e8470d" : "#fff", color: cuisines.includes(c) ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+              <button key={c} onClick={() => toggleCuisine(c)} style={{ padding: "9px 18px", borderRadius: 22, fontSize: 13, fontWeight: 700, border: "1.5px solid", borderColor: cuisines.includes(c) ? "#e8470d" : "#e8d8c8", background: cuisines.includes(c) ? "#e8470d" : "#fff", color: cuisines.includes(c) ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
                 {c}
               </button>
             ))}
@@ -101,19 +99,19 @@ export default function OnboardingPage() {
 
       {/* Step 3 — Initial pantry */}
       {step === 3 && (
-        <div style={{ padding: "32px 20px 100px" }}>
+        <div style={{ padding: "32px 20px 160px" }}>
           <div style={{ marginBottom: 8, fontSize: 12, fontWeight: 700, color: "#c09878" }}>Step 2 of 2</div>
-          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#3a1f0d", margin: "0 0 6px" }}>What do you have at home?</h2>
-          <p style={{ fontSize: 13, color: "#c09878", fontWeight: 600, margin: "0 0 20px" }}>Tap everything you currently have. You can always update later.</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#3a1f0d", margin: "0 0 6px" }}>What do you have at home?</h2>
+          <p style={{ fontSize: 13, color: "#c09878", fontWeight: 600, margin: "0 0 24px" }}>Tap everything you currently have. You can always update later.</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {QUICK_PANTRY.map((item) => (
-              <button key={<item.id>} onClick={() => toggleIngredient(<item.id>)} style={{ padding: "8px 16px", borderRadius: 20, fontSize: 13, fontWeight: 700, border: "1.5px solid", borderColor: selectedIngredients.has(<item.id>) ? "#e8470d" : "#e8d8c8", background: selectedIngredients.has(<item.id>) ? "#e8470d" : "#fff", color: selectedIngredients.has(<item.id>) ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                {selectedIngredients.has(<item.id>) ? "✓ " : ""}{item.name}
+              <button key={item.id} onClick={() => toggleIngredient(item.id)} style={{ padding: "9px 18px", borderRadius: 22, fontSize: 13, fontWeight: 700, border: "1.5px solid", borderColor: selectedIngredients.has(item.id) ? "#e8470d" : "#e8d8c8", background: selectedIngredients.has(item.id) ? "#e8470d" : "#fff", color: selectedIngredients.has(item.id) ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                {selectedIngredients.has(item.id) ? "✓ " : ""}{item.name}
               </button>
             ))}
           </div>
-          <div style={{ position: "fixed", bottom: 60, left: "50%", transform: "translateX(-50%)", width: "480px", maxWidth: 480, padding: "16px 20px", background: "#fff", borderTop: "1px solid #f0e8de" }}>
-            <button onClick={finish} disabled={saving} style={{ ...btnStyle, marginTop: 0, opacity: saving ? 0.7 : 1 }}>
+          <div style={{ position: "fixed", bottom: 60, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, padding: "16px 20px", background: "#fdf7f2", borderTop: "1px solid #f0e8de" }}>
+            <button onClick={finish} disabled={saving} style={{ ...btnStyle, opacity: saving ? 0.7 : 1 }}>
               {saving ? "Setting up your pantry..." : selectedIngredients.size === 0 ? "Skip — I'll add later" : `Done — I have ${selectedIngredients.size} items`}
             </button>
           </div>
