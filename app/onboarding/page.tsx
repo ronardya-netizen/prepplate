@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ingredientsData from "@/data/ingredients.json";
+
 import { getUserId } from "@/lib/user";
 
-interface IngredientData { id: string; name: string; category: string; }
-const INGREDIENTS = ingredientsData as IngredientData[];
 
 const CUISINES = ["Haitian", "French", "Italian", "Indian", "Mexican", "Asian", "American"];
 const QUICK_PANTRY = [
