@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <!-- 4-petal clover/flower logo -->
+  <circle cx="13" cy="13" r="9" fill="white"/>
+  <circle cx="27" cy="13" r="9" fill="white"/>
+  <circle cx="13" cy="27" r="9" fill="white"/>
+  <circle cx="27" cy="27" r="9" fill="white"/>
+</svg>
