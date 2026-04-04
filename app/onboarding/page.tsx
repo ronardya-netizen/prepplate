@@ -19,9 +19,9 @@ const QUICK_PANTRY = [
 ];
 
 const FEATURES = [
-  { icon: "🧺", desc: "Tell us what you have, add what's in your pantry" },
-  { icon: "🍳", desc: "Get meal ideas instantly, make the most out of your ingredients" },
-  { icon: "🌱", desc: "Help reduce hunger, every subscription helps fund meals for others" },
+  { icon: "🧺", title: "Add the ingredients", desc: "from your pantry" },
+  { icon: "🔍", title: "Get instant meal suggestions", desc: "across 25+ cuisines" },
+  { icon: "❤️", title: "Support PrepPlate's mission", desc: "to fight hunger" },
 ];
 
 export default function OnboardingPage() {
@@ -56,7 +56,7 @@ export default function OnboardingPage() {
           <div style={{ background: "linear-gradient(160deg, #c84b0c 0%, #8B5E3C 60%, #6b3a1f 100%)", display: "flex", flexDirection: "column", alignItems: "center", padding: "52px 24px 36px" }}>
             <Image src="/logo.png" alt="PrepPlate" width={80} height={80} style={{ borderRadius: 20, objectFit: "cover", marginBottom: 20, boxShadow: "0 4px 20px rgba(0,0,0,.2)" }} />
             <h1 style={{ fontSize: 32, fontWeight: 800, color: "#fff", margin: "0 0 10px", textAlign: "center", letterSpacing: "-0.5px", textShadow: "0 2px 8px rgba(0,0,0,.2)" }}>Welcome to PrepPlate</h1>
-            <p style={{ fontSize: 15, color: "rgba(255,255,255,.85)", fontWeight: 600, textAlign: "center", margin: 0, lineHeight: 1.5 }}>Cook smarter, waste less, and help fight hunger</p>
+            <p style={{ fontSize: 15, color: "rgba(255,255,255,.85)", fontWeight: 600, textAlign: "center", margin: 0, lineHeight: 1.5 }}>Smarter cooking starts here</p>
           </div>
           <div style={{ padding: "28px 20px", background: "#fdf7f2" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
@@ -65,7 +65,7 @@ export default function OnboardingPage() {
                   <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg, #fde8d8, #fad8c8)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ fontSize: 24 }}>{item.icon}</span>
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#3a1f0d", lineHeight: 1.5 }}>{item.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#3a1f0d", lineHeight: 1.5 }}><strong>{item.title}</strong><br /><span style={{ fontWeight: 600, color: "#a08060" }}>{item.desc}</span></div>
                 </div>
               ))}
             </div>
@@ -114,3 +114,4 @@ export default function OnboardingPage() {
     </main>
   );
 }
+
