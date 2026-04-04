@@ -76,13 +76,10 @@ export default function PantryPage() {
 
         {/* Action buttons */}
         <div style={{ padding: "0 16px 12px", display: "flex", gap: 8 }}>
-          <button style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e8d8c8", background: "#fff8f4", color: "#c09878", fontSize: 12, fontWeight: 800, cursor: "not-allowed", fontFamily: "'Nunito', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            Scan (v2)
+          <button onClick={() => { setShowAdd(!showAdd); setSelectedIngredient(null); setSearch(""); }} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #e8470d", background: showAdd ? "#e8470d" : "#fff", color: showAdd ? "#fff" : "#e8470d", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+          + Add item
           </button>
-          <button onClick={() => { setShowAdd(!showAdd); setSelectedIngredient(null); setSearch(""); }} style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid #e8470d", background: showAdd ? "#e8470d" : "#fff", color: showAdd ? "#fff" : "#e8470d", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-            + Add item
-          </button>
+
         </div>
 
         {/* Add ingredient flow */}
