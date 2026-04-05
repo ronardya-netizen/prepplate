@@ -46,9 +46,8 @@ export default function PlanPage() {
     fetch(`/api/pantry?userId=${id}`).then((r) => r.json()).then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
     const saved = localStorage.getItem("prepplate-postal");
     if (saved) setPostalCode(saved);
-    const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
-    setGroceryList(planMeals);
   }, []);
+
 
   function savePostal() {
     const cleaned = postalInput.toUpperCase().trim();

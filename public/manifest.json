@@ -1,0 +1,23 @@
+{
+  "name": "PrepPlate",
+  "short_name": "PrepPlate",
+  "description": "Cook smarter, waste less, and help fight hunger",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf7f2",
+  "theme_color": "#e8470d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
