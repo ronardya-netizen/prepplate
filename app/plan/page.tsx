@@ -11,19 +11,15 @@ interface IngredientData { id: string; name: string; category: string; unit: str
 interface StorePriceData { ingredientId: string; name: string; stores: { storeId: string; storeName: string; price: number; salePrice: number | null; unit: string; inStock: boolean; }[]; }
 
 const STORE_URLS: Record<string, string> = { maxi: "https://www.maxi.ca/en/search?q=", iga: "https://www.iga.net/en/search?term=", metro: "https://www.metro.ca/en/search?filter=", walmart: "https://www.walmart.ca/search?q=", instacart: "https://www.instacart.ca/store/search_v3/term?term=", amazon: "https://www.amazon.ca/s?k=" };
-
 const STORE_WEBSITE: Record<string, string> = { maxi: "https://www.maxi.ca", iga: "https://www.iga.net", metro: "https://www.metro.ca", walmart: "https://www.walmart.ca", instacart: "https://www.instacart.ca", amazon: "https://www.amazon.ca" };
 
-// Map postal code prefixes to nearby stores (Quebec/Ontario focused)
 function getNearbyStores(postalCode: string): string[] {
-  const prefix = postalCode.toUpperCase().replace(/\s/g, "").substring(0, 3);
-  const qcPrefixes = ["H1", "H2", "H3", "H4", "H5", "H7", "H8", "H9", "J4", "J5", "J6", "J7", "J8", "G1", "G2", "G3"];
-  const onPrefixes = ["M1", "M2", "M3", "M4", "M5", "M6", "K1", "K2", "L1", "L2", "L3", "L4"];
-  const isQC = qcPrefixes.some((p) => prefix.startsWith(p));
-  const isON = onPrefixes.some((p) => prefix.startsWith(p));
-  if (isQC) return ["maxi", "iga", "metro", "walmart", "instacart"];
-  if (isON) return ["walmart", "metro", "instacart", "amazon"];
-  return ["walmart", "instacart", "amazon"];
+  const prefix = postalCode.toUpperCase().replace(/\s/g, "").substring(0, 2);
+  const qc = ["H1","H2","H3","H4","H5","H7","H8","H9","J4","J5","J6","J7","J8","G1","G2","G3"];
+  const on = ["M1","M2","M3","M4","M5","M6","K1","K2","L1","L2","L3","L4"];
+  if (qc.some((p) => prefix.startsWith(p))) return ["maxi","iga","metro","walmart","instacart"];
+  if (on.some((p) => prefix.startsWith(p))) return ["walmart","metro","instacart","amazon"];
+  return ["walmart","instacart","amazon"];
 }
 
 function getCheapest(ingredientId: string, name: string, allowedStores: string[]) {
@@ -36,6 +32,7 @@ function getCheapest(ingredientId: string, name: string, allowedStores: string[]
 
 export default function PlanPage() {
   const [pantryIds, setPantryIds] = useState<string[]>([]);
+  const [savedMealIds, setSavedMealIds] = useState<string[]>([]);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [postalCode, setPostalCode] = useState("");
   const [editingPostal, setEditingPostal] = useState(false);
@@ -46,8 +43,9 @@ export default function PlanPage() {
     fetch(`/api/pantry?userId=${id}`).then((r) => r.json()).then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
     const saved = localStorage.getItem("prepplate-postal");
     if (saved) setPostalCode(saved);
+    const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
+    setSavedMealIds(planMeals);
   }, []);
-
 
   function savePostal() {
     const cleaned = postalInput.toUpperCase().trim();
@@ -56,11 +54,19 @@ export default function PlanPage() {
     setEditingPostal(false);
   }
 
-  const nearbyStores = postalCode ? getNearbyStores(postalCode) : ["maxi", "iga", "metro", "walmart", "instacart", "amazon"];
+  function unsaveMeal(recipeId: string) {
+    const updated = savedMealIds.filter((id) => id !== recipeId);
+    setSavedMealIds(updated);
+    localStorage.setItem("plan-meals", JSON.stringify(updated));
+  }
+
+  const nearbyStores = postalCode ? getNearbyStores(postalCode) : ["maxi","iga","metro","walmart","instacart","amazon"];
   const recipes = recipesData as Recipe[];
   const pantrySet = new Set(pantryIds);
 
-  const plannedMeals = recipes.filter((r) => {
+  const savedMeals = recipes.filter((r) => savedMealIds.includes(r.id));
+
+  const plannedMeals = savedMeals.length > 0 ? savedMeals : recipes.filter((r) => {
     const missing = r.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
     return missing.length > 0 && missing.length <= 3;
   }).slice(0, 4);
@@ -83,33 +89,33 @@ export default function PlanPage() {
     setChecked(next);
   }
 
-  const H = { background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 10 };
-
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
-      <div style={H}>
-        <div style={{ padding: "8px 20px 4px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Image src="/logo-icon.png" alt="PrepPlate" width={120} height={120} style={{ objectFit: "contain" }} />
+      <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
+        <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Image src="/logo.png" alt="PrepPlate" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Cook smarter, waste less</div>
+            </div>
+          </div>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
         </div>
-        <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
+        <div style={{ padding: "0 20px 4px" }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>Plan your next meal</h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>See what to cook next &amp; the best prices</p>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>Your saved meals + optimized grocery list</p>
         </div>
       </div>
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        {/* Postal code section */}
+        {/* Postal code */}
         <div style={{ margin: "0 16px 16px", padding: "12px 14px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: editingPostal ? 10 : 0 }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>
-                {postalCode ? `Showing stores near ${postalCode}` : "Set your postal code"}
-              </div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>
-                {postalCode ? `${nearbyStores.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ")}` : "We'll show you the best nearby stores"}
-              </div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? `Stores near ${postalCode}` : "Set your postal code"}</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? nearbyStores.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ") : "We'll show the best nearby stores"}</div>
             </div>
             <button onClick={() => { setEditingPostal(!editingPostal); setPostalInput(postalCode); }} style={{ padding: "6px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
               {editingPostal ? "Cancel" : postalCode ? "Change" : "Add"}
@@ -137,27 +143,35 @@ export default function PlanPage() {
           </div>
         )}
 
-        <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>Meals you could cook next</div>
+        {/* Saved meals */}
+        <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
+          {savedMeals.length > 0 ? `${savedMeals.length} saved meal${savedMeals.length > 1 ? "s" : ""}` : "Suggested meals to plan"}
+        </div>
         <div style={{ padding: "0 16px 16px" }}>
           {plannedMeals.map((meal) => {
             const missing = meal.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
             const cost = missing.reduce((sum, i) => { const ing = (ingredientsData as IngredientData[]).find((x) => x.id === i.ingredientId); return sum + (ing?.basePrice ?? 0) * i.quantity; }, 0);
             const hasSale = missing.some((i) => { const c = getCheapest(i.ingredientId, "", nearbyStores); return c?.onSale; });
+            const isSaved = savedMealIds.includes(meal.id);
             return (
-              <div key={meal.id} style={{ padding: "10px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 8 }}>
+              <div key={meal.id} style={{ padding: "10px 14px", background: "#fff", border: isSaved ? "1.5px solid #e8470d" : "1px solid #f0e8de", borderRadius: 12, marginBottom: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: "#fff8f4", border: "1px solid #fad8c8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{meal.emoji}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d" }}>{meal.title}</div>
                     <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>Need {missing.length} item{missing.length > 1 ? "s" : ""} · ~${cost.toFixed(2)}{hasSale ? " · deals available" : ""}</div>
                   </div>
-                  {hasSale && <span style={{ fontSize: 9, fontWeight: 800, background: "#e8f5ec", color: "#2d6a3f", padding: "2px 7px", borderRadius: 6 }}>SALE</span>}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                    {hasSale && <span style={{ fontSize: 9, fontWeight: 800, background: "#e8f5ec", color: "#2d6a3f", padding: "2px 7px", borderRadius: 6 }}>SALE</span>}
+                    {isSaved && <button onClick={() => unsaveMeal(meal.id)} style={{ fontSize: 9, fontWeight: 800, background: "#fff0ec", color: "#e8470d", padding: "2px 7px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Remove</button>}
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
 
+        {/* Grocery list */}
         {shoppingItems.length > 0 && (
           <>
             <div style={{ margin: "0 16px 12px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -170,13 +184,12 @@ export default function PlanPage() {
                 <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600 }}>best price</div>
               </div>
             </div>
-
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>Best price today</div>
             <div style={{ padding: "0 16px" }}>
               {shoppingItems.map((item) => (
                 <div key={item.id} onClick={() => toggleChecked(item.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 6, cursor: "pointer", opacity: checked.has(item.id) ? 0.5 : 1 }}>
                   <div style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, background: checked.has(item.id) ? "#e8470d" : "#fff", border: `2px solid ${checked.has(item.id) ? "#e8470d" : "#e8d8c8"}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800 }}>
-                    {checked.has(item.id) ? "+" : ""}
+                    {checked.has(item.id) ? "✓" : ""}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d", textDecoration: checked.has(item.id) ? "line-through" : "none" }}>{item.name}</div>
@@ -192,4 +205,3 @@ export default function PlanPage() {
     </main>
   );
 }
-
