@@ -1,18 +1,34 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import recipesData from "@/data/recipes.json";
+
+interface Recipe { id: string; title: string; emoji: string; cuisine: string; }
 
 const COMMUNITY_MEALS = [
-  { id: "1", title: "Rice and peas", emoji: "🍚", cuisine: "Haitian", likes: 47, sharedBy: "Marie L.", timeAgo: "2h ago", note: "My grandma's recipe, so comforting!" },
-  { id: "2", title: "Garlic butter pasta", emoji: "🍝", cuisine: "Italian", likes: 38, sharedBy: "Jean P.", timeAgo: "4h ago", note: "Under 20 min and the whole family loved it" },
-  { id: "3", title: "Spinach feta scramble", emoji: "🥚", cuisine: "Middle Eastern", likes: 31, sharedBy: "Sophie T.", timeAgo: "6h ago", note: "Perfect high protein breakfast" },
-  { id: "4", title: "Haitian rice and beans", emoji: "🍛", cuisine: "Haitian", likes: 28, sharedBy: "Marc A.", timeAgo: "1d ago", note: "Classic diri ak pwa, never disappoints" },
-  { id: "5", title: "Chickpea stir-fry", emoji: "🥘", cuisine: "Asian", likes: 22, sharedBy: "Lea M.", timeAgo: "1d ago", note: "Great way to use up pantry staples" },
+  { id: "1", recipeId: "rec-007", title: "Rice and peas", emoji: "🍚", cuisine: "Haitian", likes: 47, sharedBy: "Marie L.", timeAgo: "2h ago", note: "My grandma's recipe, so comforting!" },
+  { id: "2", recipeId: "rec-001", title: "Garlic butter pasta", emoji: "🍝", cuisine: "Italian", likes: 38, sharedBy: "Jean P.", timeAgo: "4h ago", note: "Under 20 min and the whole family loved it" },
+  { id: "3", recipeId: "rec-004", title: "Spinach feta scramble", emoji: "🥚", cuisine: "Middle Eastern", likes: 31, sharedBy: "Sophie T.", timeAgo: "6h ago", note: "Perfect high protein breakfast" },
+  { id: "4", recipeId: "rec-010", title: "Haitian rice and beans", emoji: "🍛", cuisine: "Haitian", likes: 28, sharedBy: "Marc A.", timeAgo: "1d ago", note: "Classic diri ak pwa, never disappoints" },
+  { id: "5", recipeId: "rec-002", title: "Chickpea stir-fry", emoji: "🥘", cuisine: "Asian", likes: 22, sharedBy: "Lea M.", timeAgo: "1d ago", note: "Great way to use up pantry staples" },
+];
+
+const FILTERS = [
+  { id: "all", label: "All" },
+  { id: "haitian", label: "Haitian" },
+  { id: "popular", label: "Popular" },
 ];
 
 export default function DiscoverPage() {
   const [liked, setLiked] = useState<Set<string>>(new Set());
+  const [saved, setSaved] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState("all");
+  const [showShare, setShowShare] = useState(false);
+  const [shareRecipeId, setShareRecipeId] = useState("");
+  const [shareNote, setShareNote] = useState("");
+  const [shared, setShared] = useState(false);
+
+  const recipes = recipesData as Recipe[];
 
   function toggleLike(id: string) {
     const next = new Set(liked);
@@ -20,14 +36,23 @@ export default function DiscoverPage() {
     setLiked(next);
   }
 
-  const FILTERS = [
-    { id: "all", label: "All" },
-    { id: "haitian", label: "Haitian" },
-    { id: "quick", label: "Quick" },
-    { id: "popular", label: "Popular" },
-  ];
+  function saveToPlan(recipeId: string, mealId: string) {
+    const next = new Set(saved);
+    next.add(mealId);
+    setSaved(next);
+    const existing = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
+    if (!existing.includes(recipeId)) {
+      localStorage.setItem("plan-meals", JSON.stringify([...existing, recipeId]));
+    }
+  }
 
-  const filtered = filter === "all" ? COMMUNITY_MEALS : filter === "haitian" ? COMMUNITY_MEALS.filter((m) => m.cuisine === "Haitian") : filter === "popular" ? [...COMMUNITY_MEALS].sort((a, b) => b.likes - a.likes) : COMMUNITY_MEALS;
+  function submitShare() {
+    if (!shareRecipeId) return;
+    setShared(true);
+    setTimeout(() => { setShowShare(false); setShared(false); setShareRecipeId(""); setShareNote(""); }, 2000);
+  }
+
+  const filtered = filter === "haitian" ? COMMUNITY_MEALS.filter((m) => m.cuisine === "Haitian") : filter === "popular" ? [...COMMUNITY_MEALS].sort((a, b) => b.likes - a.likes) : COMMUNITY_MEALS;
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
@@ -50,7 +75,7 @@ export default function DiscoverPage() {
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        {/* Community stats */}
+        {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, padding: "0 16px 16px" }}>
           <div style={{ background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "10px", textAlign: "center" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#e8470d" }}>142</div>
@@ -94,19 +119,51 @@ export default function DiscoverPage() {
                 <button onClick={() => toggleLike(meal.id)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700, color: liked.has(meal.id) ? "#e8470d" : "#c09878", fontFamily: "'Nunito', sans-serif" }}>
                   {liked.has(meal.id) ? "❤️" : "🤍"} {meal.likes + (liked.has(meal.id) ? 1 : 0)} likes
                 </button>
-                <button style={{ padding: "5px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                  Cook this
+                <button onClick={() => saveToPlan(meal.recipeId, meal.id)} style={{ padding: "6px 12px", borderRadius: 8, border: "none", background: saved.has(meal.id) ? "#2d6a3f" : "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                  {saved.has(meal.id) ? "✓ Saved to Plan" : "Save to Plan"}
                 </button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Share CTA */}
-        <div style={{ margin: "0 16px 16px", padding: "14px", background: "#f0faf3", border: "1px solid #b8ddc4", borderRadius: 14, textAlign: "center" }}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#2d6a3f", marginBottom: 4 }}>Cook something great?</div>
-          <div style={{ fontSize: 12, color: "#7ab88a", fontWeight: 600, marginBottom: 12 }}>Share it with your community!</div>
-          <button style={{ padding: "10px 24px", borderRadius: 10, border: "none", background: "#2d6a3f", color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Share a meal</button>
+        {/* Share a meal */}
+        <div style={{ margin: "0 16px 16px", padding: "14px", background: "#f0faf3", border: "1px solid #b8ddc4", borderRadius: 14 }}>
+          {!showShare ? (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#2d6a3f", marginBottom: 4 }}>Cook something great?</div>
+              <div style={{ fontSize: 12, color: "#7ab88a", fontWeight: 600, marginBottom: 12 }}>Share it with your community!</div>
+              <button onClick={() => setShowShare(true)} style={{ padding: "10px 24px", borderRadius: 10, border: "none", background: "#2d6a3f", color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                Share a meal
+              </button>
+            </div>
+          ) : shared ? (
+            <div style={{ textAlign: "center", padding: "8px 0" }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🎉</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#2d6a3f" }}>Shared with your community!</div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#2d6a3f", marginBottom: 12 }}>Share a meal</div>
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#c09878", marginBottom: 6 }}>Pick a recipe</div>
+                <select value={shareRecipeId} onChange={(e) => setShareRecipeId(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", background: "#fff" }}>
+                  <option value="">Select a recipe...</option>
+                  {recipes.map((r) => (
+                    <option key={r.id} value={r.id}>{r.emoji} {r.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#c09878", marginBottom: 6 }}>Add a note (optional)</div>
+                <textarea value={shareNote} onChange={(e) => setShareNote(e.target.value)} placeholder="What did you love about it?" style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", resize: "none", height: 70, boxSizing: "border-box" }} />
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => setShowShare(false)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1.5px solid #e8d8c8", background: "#fff", color: "#a08060", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Cancel</button>
+                <button onClick={submitShare} disabled={!shareRecipeId} style={{ flex: 2, padding: "10px", borderRadius: 10, border: "none", background: shareRecipeId ? "#2d6a3f" : "#e8d8c8", color: "#fff", fontSize: 13, fontWeight: 800, cursor: shareRecipeId ? "pointer" : "not-allowed", fontFamily: "'Nunito', sans-serif" }}>Share</button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
