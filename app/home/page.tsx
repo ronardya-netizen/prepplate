@@ -144,7 +144,7 @@ export default function HomePage() {
               <p style={{ color: "#d0c0b0", fontSize: 12, fontWeight: 600, marginTop: 4 }}>Try a different mode or add more ingredients to your pantry.</p>
             </div>
           ) : (
-            suggestions.map((s) => (
+            suggestions.slice(0,3).map((s) => (
               <MealCard key={s.recipe.id} suggestion={s} isSaved={savedMeals.has(s.recipe.id)} onToggleSave={toggleSave} />
             ))
           )}

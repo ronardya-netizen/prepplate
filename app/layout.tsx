@@ -18,8 +18,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <nav style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: "#fff", borderTop: "1px solid #f0e8de", display: "flex", zIndex: 100 }}>
           <NavItem href="/home" label="Home" />
           <NavItem href="/pantry" label="Pantry" />
-          <NavItem href="/plan" label="Plan" />
           <NavItem href="/discover" label="Discover" />
+          <NavItem href="/plan" label="Plan" />
           <NavItem href="/profile" label="Profile" />
         </nav>
       </body>
