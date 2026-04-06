@@ -3,18 +3,12 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
+import { getLang, t } from "@/lib/i18n";
 
 interface IngredientData { id: string; name: string; category: string; }
 interface PantryItem { ingredientId: string; expiryDays?: number; }
 
 const INGREDIENTS = ingredientsData as IngredientData[];
-const EXPIRY_OPTIONS = [
-  { label: "Today", days: 0, color: "#ef4444" },
-  { label: "2 days", days: 2, color: "#ef4444" },
-  { label: "This week", days: 7, color: "#f59e0b" },
-  { label: "2 weeks", days: 14, color: "#22c55e" },
-  { label: "Staple", days: 999, color: "#22c55e" },
-];
 
 export default function PantryPage() {
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
@@ -24,10 +18,14 @@ export default function PantryPage() {
   const [selectedIngredient, setSelectedIngredient] = useState<IngredientData | null>(null);
   const [expiryDays, setExpiryDays] = useState(999);
   const [userId, setUserId] = useState("");
+  const [lang, setLang] = useState<"en" | "fr">("en");
+
+  const T = t[lang].pantry;
 
   useEffect(() => {
     const id = getUserId();
     setUserId(id);
+    setLang(getLang());
     fetch(`/api/pantry?userId=${id}`)
       .then((r) => r.json())
       .then((data) => { setPantryItems(data.items ?? []); setLoading(false); })
@@ -70,27 +68,26 @@ export default function PantryPage() {
           <a href="/profile" style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, textDecoration: "none", cursor: "pointer" }}>👤</a>
         </div>
         <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>My Pantry</h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>{pantryItems.length} ingredient{pantryItems.length !== 1 ? "s" : ""} · {redItems.length > 0 ? `${redItems.length} expiring soon` : "all fresh"}</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>{T.title}</h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
+            {pantryItems.length} {lang === "fr" ? "ingrédient" : "ingredient"}{pantryItems.length !== 1 ? "s" : ""} · {redItems.length > 0 ? T.expiringSoon(redItems.length) : T.allFresh}
+          </p>
         </div>
       </div>
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        {/* Action buttons */}
-        <div style={{ padding: "0 16px 12px", display: "flex", gap: 8 }}>
+        <div style={{ padding: "0 16px 12px" }}>
           <button onClick={() => { setShowAdd(!showAdd); setSelectedIngredient(null); setSearch(""); }} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #e8470d", background: showAdd ? "#e8470d" : "#fff", color: showAdd ? "#fff" : "#e8470d", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-          + Add item
+            {T.addItem}
           </button>
-
         </div>
 
-        {/* Add ingredient flow */}
         {showAdd && (
           <div style={{ margin: "0 16px 16px", padding: 14, background: "#fff8f4", borderRadius: 12, border: "1px solid #fad8c8" }}>
             {!selectedIngredient ? (
               <>
-                <input autoFocus value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search ingredients..." style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", boxSizing: "border-box", marginBottom: 8 }} />
+                <input autoFocus value={search} onChange={(e) => setSearch(e.target.value)} placeholder={T.search} style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", boxSizing: "border-box", marginBottom: 8 }} />
                 <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #f0e8de" }}>
                   {filteredIngredients.map((ing) => (
                     <div key={ing.id} onClick={() => setSelectedIngredient(ing)} style={{ padding: "10px 14px", cursor: "pointer", borderBottom: "0.5px solid #f0e8de", fontSize: 13, fontWeight: 700, color: "#3a1f0d", background: "#fff" }}>
@@ -101,37 +98,39 @@ export default function PantryPage() {
               </>
             ) : (
               <>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 12 }}>When does {selectedIngredient.name} expire?</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 12 }}>{T.whenExpires(selectedIngredient.name)}</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-                  {EXPIRY_OPTIONS.map((opt) => (
-                    <button key={opt.days} onClick={() => setExpiryDays(opt.days)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: expiryDays === opt.days ? opt.color : "#e8d8c8", background: expiryDays === opt.days ? opt.color : "#fff", color: expiryDays === opt.days ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                      {opt.label}
-                    </button>
-                  ))}
+                  {T.expiry.map((opt) => {
+                    const color = opt.days <= 2 ? "#ef4444" : opt.days <= 7 ? "#f59e0b" : "#22c55e";
+                    return (
+                      <button key={opt.days} onClick={() => setExpiryDays(opt.days)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: expiryDays === opt.days ? color : "#e8d8c8", background: expiryDays === opt.days ? color : "#fff", color: expiryDays === opt.days ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                        {opt.label}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => setSelectedIngredient(null)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1.5px solid #e8d8c8", background: "#fff", color: "#a08060", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Back</button>
-                  <button onClick={addIngredient} style={{ flex: 2, padding: "10px", borderRadius: 10, border: "none", background: "#e8470d", color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Add to pantry</button>
+                  <button onClick={() => setSelectedIngredient(null)} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1.5px solid #e8d8c8", background: "#fff", color: "#a08060", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{T.back}</button>
+                  <button onClick={addIngredient} style={{ flex: 2, padding: "10px", borderRadius: 10, border: "none", background: "#e8470d", color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{T.addToPantry}</button>
                 </div>
               </>
             )}
           </div>
         )}
 
-        {/* Pantry items */}
         {loading ? (
-          <p style={{ padding: "20px", color: "#c09878", fontWeight: 700 }}>Loading pantry...</p>
+          <p style={{ padding: "20px", color: "#c09878", fontWeight: 700 }}>{lang === "fr" ? "Chargement..." : "Loading pantry..."}</p>
         ) : pantryItems.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 20px" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🧺</div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: "#3a1f0d", marginBottom: 6 }}>Your pantry is empty</div>
-            <div style={{ fontSize: 13, color: "#c09878", fontWeight: 600 }}>Add ingredients to get meal suggestions</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "#3a1f0d", marginBottom: 6 }}>{T.empty}</div>
+            <div style={{ fontSize: 13, color: "#c09878", fontWeight: 600 }}>{T.emptySub}</div>
           </div>
         ) : (
           <>
-            {redItems.length > 0 && <ExpirySection dot="#ef4444" label="Expiring soon" items={redItems} getName={getName} onRemove={removeIngredient} />}
-            {yellowItems.length > 0 && <ExpirySection dot="#f59e0b" label="Use this week" items={yellowItems} getName={getName} onRemove={removeIngredient} />}
-            {greenItems.length > 0 && <ExpirySection dot="#22c55e" label="Staples" items={greenItems} getName={getName} onRemove={removeIngredient} />}
+            {redItems.length > 0 && <ExpirySection dot="#ef4444" label={T.sections.red} items={redItems} getName={getName} onRemove={removeIngredient} expiresDay={T.expiresDay} daysLeft={T.daysLeft} />}
+            {yellowItems.length > 0 && <ExpirySection dot="#f59e0b" label={T.sections.yellow} items={yellowItems} getName={getName} onRemove={removeIngredient} expiresDay={T.expiresDay} daysLeft={T.daysLeft} />}
+            {greenItems.length > 0 && <ExpirySection dot="#22c55e" label={T.sections.green} items={greenItems} getName={getName} onRemove={removeIngredient} expiresDay={T.expiresDay} daysLeft={T.daysLeft} />}
           </>
         )}
       </div>
@@ -139,7 +138,7 @@ export default function PantryPage() {
   );
 }
 
-function ExpirySection({ dot, label, items, getName, onRemove }: { dot: string; label: string; items: PantryItem[]; getName: (id: string) => string; onRemove: (id: string) => void; }) {
+function ExpirySection({ dot, label, items, getName, onRemove, expiresDay, daysLeft }: { dot: string; label: string; items: PantryItem[]; getName: (id: string) => string; onRemove: (id: string) => void; expiresDay: string; daysLeft: (n: number) => string; }) {
   return (
     <div style={{ padding: "0 16px 16px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
@@ -151,7 +150,11 @@ function ExpirySection({ dot, label, items, getName, onRemove }: { dot: string; 
           <div key={item.ingredientId} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: 10 }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#3a1f0d" }}>{getName(item.ingredientId)}</div>
-              {item.expiryDays !== undefined && item.expiryDays < 999 && <div style={{ fontSize: 11, color: dot === "#ef4444" ? "#ef4444" : "#c09878", fontWeight: 600, marginTop: 2 }}>{item.expiryDays === 0 ? "Expires today" : `${item.expiryDays} days left`}</div>}
+              {item.expiryDays !== undefined && item.expiryDays < 999 && (
+                <div style={{ fontSize: 11, color: dot === "#ef4444" ? "#ef4444" : "#c09878", fontWeight: 600, marginTop: 2 }}>
+                  {item.expiryDays === 0 ? expiresDay : daysLeft(item.expiryDays)}
+                </div>
+              )}
             </div>
             <button onClick={() => onRemove(item.ingredientId)} style={{ background: "none", border: "none", cursor: "pointer", color: "#c09878", fontSize: 18, padding: 0 }}>×</button>
           </div>
@@ -160,4 +163,3 @@ function ExpirySection({ dot, label, items, getName, onRemove }: { dot: string; 
     </div>
   );
 }
-

@@ -5,6 +5,7 @@ import recipesData from "@/data/recipes.json";
 import storePricesData from "@/data/store-prices.json";
 import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
+import { getLang, t } from "@/lib/i18n";
 
 interface Recipe { id: string; title: string; emoji: string; calories: number; prepTimeMin: number; ingredients: { ingredientId: string; quantity: number; unit: string; isOptional?: boolean }[]; }
 interface IngredientData { id: string; name: string; category: string; unit: string; basePrice: number; }
@@ -37,9 +38,13 @@ export default function PlanPage() {
   const [postalCode, setPostalCode] = useState("");
   const [editingPostal, setEditingPostal] = useState(false);
   const [postalInput, setPostalInput] = useState("");
+  const [lang, setLang] = useState<"en" | "fr">("en");
+
+  const T = t[lang].plan;
 
   useEffect(() => {
     const id = getUserId();
+    setLang(getLang());
     fetch(`/api/pantry?userId=${id}`).then((r) => r.json()).then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
     const saved = localStorage.getItem("prepplate-postal");
     if (saved) setPostalCode(saved);
@@ -63,9 +68,7 @@ export default function PlanPage() {
   const nearbyStores = postalCode ? getNearbyStores(postalCode) : ["maxi","iga","metro","walmart","instacart","amazon"];
   const recipes = recipesData as Recipe[];
   const pantrySet = new Set(pantryIds);
-
   const savedMeals = recipes.filter((r) => savedMealIds.includes(r.id));
-
   const plannedMeals = savedMeals.length > 0 ? savedMeals : recipes.filter((r) => {
     const missing = r.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
     return missing.length > 0 && missing.length <= 3;
@@ -100,27 +103,28 @@ export default function PlanPage() {
           <a href="/profile" style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, textDecoration: "none", cursor: "pointer" }}>👤</a>
         </div>
         <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>Plan your next meal</h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>See what to cook and what to buy at the best price</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>{T.title}</h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>{T.subtitle}</p>
         </div>
       </div>
+
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
         {/* Postal code */}
         <div style={{ margin: "0 16px 16px", padding: "12px 14px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: editingPostal ? 10 : 0 }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? `Stores near ${postalCode}` : "Set your postal code"}</div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? nearbyStores.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ") : "We'll show the best nearby stores"}</div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? T.postalSet(postalCode) : T.postalEmpty}</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? nearbyStores.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ") : T.postalSub}</div>
             </div>
             <button onClick={() => { setEditingPostal(!editingPostal); setPostalInput(postalCode); }} style={{ padding: "6px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-              {editingPostal ? "Cancel" : postalCode ? "Change" : "Add"}
+              {editingPostal ? T.cancel : postalCode ? T.change : T.add}
             </button>
           </div>
           {editingPostal && (
             <div style={{ display: "flex", gap: 8 }}>
               <input value={postalInput} onChange={(e) => setPostalInput(e.target.value)} placeholder="e.g. H3A 1B1" maxLength={7} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", textTransform: "uppercase" }} />
-              <button onClick={savePostal} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#e8470d", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Save</button>
+              <button onClick={savePostal} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#e8470d", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{T.save}</button>
             </div>
           )}
         </div>
@@ -128,7 +132,7 @@ export default function PlanPage() {
         {/* Nearby stores */}
         {postalCode && (
           <div style={{ padding: "0 16px 16px" }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>Stores near you</div>
+            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>{T.storesNear}</div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {nearbyStores.map((storeId) => (
                 <a key={storeId} href={STORE_WEBSITE[storeId]} target="_blank" rel="noopener noreferrer" style={{ padding: "6px 12px", borderRadius: 20, background: "#fff8f4", border: "1px solid #fad8c8", fontSize: 12, fontWeight: 700, color: "#e8470d", textDecoration: "none" }}>
@@ -139,9 +143,9 @@ export default function PlanPage() {
           </div>
         )}
 
-        {/* Saved meals */}
+        {/* Meals */}
         <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-          {savedMeals.length > 0 ? `${savedMeals.length} saved meal${savedMeals.length > 1 ? "s" : ""}` : "Suggested meals to plan"}
+          {savedMeals.length > 0 ? `${savedMeals.length} ${lang === "fr" ? "repas sauvegardé" : "saved meal"}${savedMeals.length > 1 ? "s" : ""}` : T.mealsNext}
         </div>
         <div style={{ padding: "0 16px 16px" }}>
           {plannedMeals.map((meal) => {
@@ -155,11 +159,11 @@ export default function PlanPage() {
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: "#fff8f4", border: "1px solid #fad8c8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{meal.emoji}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d" }}>{meal.title}</div>
-                    <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>Need {missing.length} item{missing.length > 1 ? "s" : ""} · ~${cost.toFixed(2)}{hasSale ? " · deals available" : ""}</div>
+                    <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>{T.need(missing.length)} · ~${cost.toFixed(2)}{hasSale ? ` · ${T.dealsAvailable}` : ""}</div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
                     {hasSale && <span style={{ fontSize: 9, fontWeight: 800, background: "#e8f5ec", color: "#2d6a3f", padding: "2px 7px", borderRadius: 6 }}>SALE</span>}
-                    {isSaved && <button onClick={() => unsaveMeal(meal.id)} style={{ fontSize: 9, fontWeight: 800, background: "#fff0ec", color: "#e8470d", padding: "2px 7px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Remove</button>}
+                    {isSaved && <button onClick={() => unsaveMeal(meal.id)} style={{ fontSize: 9, fontWeight: 800, background: "#fff0ec", color: "#e8470d", padding: "2px 7px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{lang === "fr" ? "Retirer" : "Remove"}</button>}
                   </div>
                 </div>
               </div>
@@ -172,15 +176,15 @@ export default function PlanPage() {
           <>
             <div style={{ margin: "0 16px 12px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>Grocery list</div>
-                <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{shoppingItems.length - checked.size} items remaining</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{T.groceryList}</div>
+                <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{T.itemsRemaining(shoppingItems.length - checked.size)}</div>
               </div>
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontSize: 20, fontWeight: 800, color: "#e8470d" }}>${totalCost.toFixed(2)}</div>
-                <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600 }}>best price</div>
+                <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600 }}>{T.bestPrice}</div>
               </div>
             </div>
-            <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>Best price today</div>
+            <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>{T.bestPriceToday}</div>
             <div style={{ padding: "0 16px" }}>
               {shoppingItems.map((item) => (
                 <div key={item.id} onClick={() => toggleChecked(item.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 6, cursor: "pointer", opacity: checked.has(item.id) ? 0.5 : 1 }}>
@@ -189,9 +193,9 @@ export default function PlanPage() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d", textDecoration: checked.has(item.id) ? "line-through" : "none" }}>{item.name}</div>
-                    {item.cheapest && <div style={{ fontSize: 11, color: "#2d6a3f", fontWeight: 700, marginTop: 1 }}>{item.cheapest.storeName} · ${item.cheapest.effectivePrice.toFixed(2)}{item.cheapest.onSale ? " (sale)" : ""}</div>}
+                    {item.cheapest && <div style={{ fontSize: 11, color: "#2d6a3f", fontWeight: 700, marginTop: 1 }}>{item.cheapest.storeName} · ${item.cheapest.effectivePrice.toFixed(2)}{item.cheapest.onSale ? ` (${T.sale})` : ""}</div>}
                   </div>
-                  {item.cheapest && <a href={item.cheapest.buyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ padding: "6px 10px", borderRadius: 8, background: "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, textDecoration: "none", flexShrink: 0 }}>Buy</a>}
+                  {item.cheapest && <a href={item.cheapest.buyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ padding: "6px 10px", borderRadius: 8, background: "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, textDecoration: "none", flexShrink: 0 }}>{T.buy}</a>}
                 </div>
               ))}
             </div>
