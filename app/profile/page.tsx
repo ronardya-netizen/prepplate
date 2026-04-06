@@ -4,10 +4,24 @@ import Image from "next/image";
 import { getUserId } from "@/lib/user";
 import { getLang, t, Lang } from "@/lib/i18n";
 
-const CUISINES = ["Haitian", "French", "Italian", "Indian", "Mexican", "Asian", "Middle Eastern", "American"];
+const CUISINES = ["Haitian", "French", "Italian", "Indian", "Mexican", "Asian", "Middle Eastern", "American", "African"];
+
+const DIETARY_PREFS = {
+  en: [
+    { id: "vegetarian", label: "🥦 Vegetarian" },
+    { id: "vegan", label: "🌱 Vegan" },
+    { id: "gluten-free", label: "🌾 Gluten-free" },
+  ],
+  fr: [
+    { id: "vegetarian", label: "🥦 Végétarien" },
+    { id: "vegan", label: "🌱 Végétalien" },
+    { id: "gluten-free", label: "🌾 Sans gluten" },
+  ],
+};
 
 export default function ProfilePage() {
   const [nutritionGoal, setNutritionGoal] = useState("none");
+  const [dietaryPrefs, setDietaryPrefs] = useState<string[]>([]);
   const [cuisines, setCuisines] = useState<string[]>(["Haitian", "French"]);
   const [budget, setBudget] = useState(300);
   const [groceryFreq, setGroceryFreq] = useState("Weekly");
@@ -24,6 +38,7 @@ export default function ProfilePage() {
     if (s) {
       const p = JSON.parse(s);
       setNutritionGoal(p.nutritionGoal ?? "none");
+      setDietaryPrefs(p.dietaryPrefs ?? []);
       setCuisines(p.cuisines ?? ["Haitian", "French"]);
       setBudget(p.budget ?? 300);
       setGroceryFreq(p.groceryFreq ?? "Weekly");
@@ -33,9 +48,10 @@ export default function ProfilePage() {
   }, []);
 
   function toggleCuisine(c: string) { setCuisines((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]); }
+  function toggleDietaryPref(id: string) { setDietaryPrefs((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]); }
 
   function saveSettings() {
-    localStorage.setItem("prepplate-settings", JSON.stringify({ nutritionGoal, cuisines, budget, groceryFreq, shareActivity, lang }));
+    localStorage.setItem("prepplate-settings", JSON.stringify({ nutritionGoal, dietaryPrefs, cuisines, budget, groceryFreq, shareActivity, lang }));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -88,6 +104,23 @@ export default function ProfilePage() {
                 {g.label}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Dietary preferences */}
+        <div style={{ padding: "0 16px 16px" }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 10 }}>
+            {lang === "fr" ? "Préférences alimentaires" : "Dietary preferences"}
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {DIETARY_PREFS[lang].map((d) => (
+              <button key={d.id} onClick={() => toggleDietaryPref(d.id)} style={{ padding: "8px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: dietaryPrefs.includes(d.id) ? "#2d6a3f" : "#e8d8c8", background: dietaryPrefs.includes(d.id) ? "#2d6a3f" : "#fff", color: dietaryPrefs.includes(d.id) ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                {d.label}
+              </button>
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 8 }}>
+            {lang === "fr" ? "Nous filtrerons les recettes selon vos restrictions" : "We'll filter recipes based on your restrictions"}
           </div>
         </div>
 

@@ -12,9 +12,9 @@ export const t = {
       finding: "Finding meals…", findingLong: "Finding the best meals for you…",
       noMeals: "No meals found.", noMealsSub: "Try a different mode or add more ingredients to your pantry.",
       modes: [{ id: "all", label: "All" }, { id: "quick", label: "Quick" }, { id: "low-cal", label: "Low cal" }, { id: "high-protein", label: "High protein" }, { id: "comfort", label: "Comfort" }, { id: "healthy", label: "Healthy" }],
-      cuisines: [{ id: "all", label: "All" }, { id: "italian", label: "Italian" }, { id: "french", label: "French" }, { id: "indian", label: "Indian" }, { id: "mexican", label: "Mexican" }, { id: "haitian", label: "Haitian" }, { id: "asian", label: "Asian" }, { id: "middle-eastern", label: "Middle Eastern" }, { id: "american", label: "American" }],
+     cuisines: [ { id: "all", label: "All" }, { id: "italian", label: "Italian" },{ id: "french", label: "French" },{ id: "indian", label: "Indian" },{ id: "mexican", label: "Mexican" },{ id: "haitian", label: "Haitian" }, { id: "asian", label: "Asian" },{ id: "middle-eastern", label: "Middle Eastern" },{ id: "american", label: "American" }, { id: "african", label: "African" }],
     },
-    pantry: {
+     pantry: {
       title: "My Pantry", allFresh: "all fresh", expiringSoon: (n: number) => `${n} expiring soon`,
       addItem: "+ Add item", search: "Search ingredients…", back: "Back", addToPantry: "Add to pantry",
       whenExpires: (name: string) => `When does ${name} expire?`,
@@ -62,7 +62,7 @@ export const t = {
       finding: "Recherche de repas…", findingLong: "Recherche des meilleurs repas pour vous…",
       noMeals: "Aucun repas trouvé.", noMealsSub: "Essayez un mode différent ou ajoutez plus d'ingrédients.",
       modes: [{ id: "all", label: "Tous" }, { id: "quick", label: "Rapide" }, { id: "low-cal", label: "Faible cal." }, { id: "high-protein", label: "Haute protéine" }, { id: "comfort", label: "Réconfort" }, { id: "healthy", label: "Santé" }],
-      cuisines: [{ id: "all", label: "Toutes" }, { id: "italian", label: "Italienne" }, { id: "french", label: "Française" }, { id: "indian", label: "Indienne" }, { id: "mexican", label: "Mexicaine" }, { id: "haitian", label: "Haïtienne" }, { id: "asian", label: "Asiatique" }, { id: "middle-eastern", label: "Moyen-Orient" }, { id: "american", label: "Américaine" }],
+      cuisines: [{ id: "all", label: "Toutes" },{ id: "italian", label: "Italienne" },{ id: "french", label: "Française" },{ id: "indian", label: "Indienne" },{ id: "mexican", label: "Mexicaine" },{ id: "haitian", label: "Haïtienne" },{ id: "asian", label: "Asiatique" },{ id: "middle-eastern", label: "Moyen-Orient" },{ id: "american", label: "Américaine" },{ id: "african", label: "Africaine" }],
     },
     pantry: {
       title: "Mon Garde-manger", allFresh: "tout frais", expiringSoon: (n: number) => `${n} expire${n > 1 ? "nt" : ""} bientôt`,
