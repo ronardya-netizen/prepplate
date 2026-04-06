@@ -4609,5 +4609,10 @@
       {
         "id": 4,
         "title": "Bake",
-        "instruction": "Cover and bake at 180\u00b0C for 45 minutes. Uncover for last 15 minutes.",
+        "instruction": "Cover and bake at 180\u00b0C for 45 minutes. Uncover for last 15 minutes.","timerSeconds": 3600
+      }
+    ]
+  }
+]
+
        
