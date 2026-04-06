@@ -49,12 +49,17 @@ export default function DiscoverPage() {
 
   function saveToPlan(recipeId: string, postId: string) {
     const next = new Set(saved);
-    next.add(postId);
-    setSaved(next);
     const existing = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
-    if (!existing.includes(recipeId)) {
-      localStorage.setItem("plan-meals", JSON.stringify([...existing, recipeId]));
+    if (next.has(postId)) {
+      next.delete(postId);
+      localStorage.setItem("plan-meals", JSON.stringify(existing.filter((id: string) => id !== recipeId)));
+    } else {
+      next.add(postId);
+      if (!existing.includes(recipeId)) {
+        localStorage.setItem("plan-meals", JSON.stringify([...existing, recipeId]));
+      }
     }
+    setSaved(next);
   }
 
   function submitShare() {
@@ -74,8 +79,7 @@ export default function DiscoverPage() {
     };
     const updatedFeed = [newPost, ...feed];
     setFeed(updatedFeed);
-    const userPosts = updatedFeed.filter(p => p.sharedBy === "You");
-    localStorage.setItem("discover-feed", JSON.stringify(userPosts));
+    localStorage.setItem("discover-feed", JSON.stringify(updatedFeed.filter(p => p.sharedBy === "You")));
     setShared(true);
     setTimeout(() => { setShowShare(false); setShared(false); setShareRecipeId(""); }, 2000);
   }
@@ -83,21 +87,17 @@ export default function DiscoverPage() {
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
 
-      {/* Header — consistent with other pages */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Image src="/logo.png" alt="PrepPlate" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Cook smarter, waste less</div>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <Image src="/logo-icon.png" alt="PrepPlate" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
           </div>
           <button onClick={() => setShowShare(true)} style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid rgba(255,255,255,.6)", background: "transparent", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
             + Share
           </button>
         </div>
-        <div style={{ padding: "0 20px 4px" }}>
+        <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>Discover</h1>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>#letmecook — see what your community is making</p>
         </div>
@@ -171,7 +171,7 @@ export default function DiscoverPage() {
                     {liked.has(post.id) ? "❤️" : "🤍"} {post.likes + (liked.has(post.id) ? 1 : 0)}
                   </button>
                   <button onClick={() => saveToPlan(post.recipeId, post.id)} style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: saved.has(post.id) ? "#2d6a3f" : "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                    {saved.has(post.id) ? "✓ Saved to Plan" : "Save to Plan"}
+                    {saved.has(post.id) ? "✓ Saved · Unsave" : "Save to Plan"}
                   </button>
                 </div>
               </div>
@@ -182,4 +182,3 @@ export default function DiscoverPage() {
     </main>
   );
 }
-
