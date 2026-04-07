@@ -11,7 +11,7 @@ interface IngredientData { id: string; name: string; category: string; unit: str
 interface GroceryResult { title: string; price: string; store: string; link: string; thumbnail: string; }
 interface CachedResults { results: GroceryResult[]; timestamp: number; }
 
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+const CACHE_TTL = 24 * 60 * 60 * 1000;
 
 function StoreLogo({ store }: { store: string }) {
   const [error, setError] = useState(false);
@@ -45,7 +45,6 @@ export default function PlanPage() {
   }, []);
 
   async function fetchGroceryResults(ingredientName: string, ingredientId: string) {
-    // Check cache first
     const cacheKey = `grocery-${ingredientId}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -55,7 +54,6 @@ export default function PlanPage() {
         return;
       }
     }
-
     setLoadingItems((prev) => new Set(prev).add(ingredientId));
     try {
       const res = await fetch(`/api/grocery-search?ingredient=${encodeURIComponent(ingredientName)}&postal=${postalCode || "H3A1B1"}`);
@@ -64,7 +62,9 @@ export default function PlanPage() {
       setGroceryData((prev) => ({ ...prev, [ingredientId]: results }));
       localStorage.setItem(cacheKey, JSON.stringify({ results, timestamp: Date.now() }));
     } catch (e) { console.error(e); }
-    finally { setLoadingItems((prev) => { const next = new Set(prev); next.delete(ingredientId); return next; }); }
+    finally {
+      setLoadingItems((prev) => { const next = new Set(prev); next.delete(ingredientId); return next; });
+    }
   }
 
   function savePostal() {
@@ -74,7 +74,8 @@ export default function PlanPage() {
     setEditingPostal(false);
   }
 
-  function unsaveMeal(recipeId: string) {
+  function unsaveMeal(recipeId: string, e: React.MouseEvent) {
+    e.stopPropagation();
     const updated = savedMealIds.filter((id) => id !== recipeId);
     setSavedMealIds(updated);
     localStorage.setItem("plan-meals", JSON.stringify(updated));
@@ -126,7 +127,9 @@ export default function PlanPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: editingPostal ? 10 : 0 }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? T.postalSet(postalCode) : T.postalEmpty}</div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? lang === "fr" ? "Résultats adaptés à votre région" : "Results tailored to your area" : T.postalSub}</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>
+                {postalCode ? (lang === "fr" ? "Résultats adaptés à votre région" : "Results tailored to your area") : T.postalSub}
+              </div>
             </div>
             <button onClick={() => { setEditingPostal(!editingPostal); setPostalInput(postalCode); }} style={{ padding: "6px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
               {editingPostal ? T.cancel : postalCode ? T.change : T.add}
@@ -149,14 +152,18 @@ export default function PlanPage() {
             const missing = meal.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
             const isSaved = savedMealIds.includes(meal.id);
             return (
-              <div key={meal.id} style={{ padding: "10px 14px", background: "#fff", border: isSaved ? "1.5px solid #e8470d" : "1px solid #f0e8de", borderRadius: 12, marginBottom: 8 }}>
+              <div key={meal.id} onClick={() => window.location.href = `/meal/${meal.id}`} style={{ padding: "10px 14px", background: "#fff", border: isSaved ? "1.5px solid #e8470d" : "1px solid #f0e8de", borderRadius: 12, marginBottom: 8, cursor: "pointer" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: "#fff8f4", border: "1px solid #fad8c8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{meal.emoji}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d" }}>{meal.title}</div>
                     <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>{T.need(missing.length)}</div>
                   </div>
-                  {isSaved && <button onClick={() => unsaveMeal(meal.id)} style={{ fontSize: 9, fontWeight: 800, background: "#fff0ec", color: "#e8470d", padding: "2px 7px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{lang === "fr" ? "Retirer" : "Remove"}</button>}
+                  {isSaved && (
+                    <button onClick={(e) => unsaveMeal(meal.id, e)} style={{ fontSize: 9, fontWeight: 800, background: "#fff0ec", color: "#e8470d", padding: "2px 7px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                      {lang === "fr" ? "Retirer" : "Remove"}
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -172,7 +179,7 @@ export default function PlanPage() {
             </div>
 
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              {lang === "fr" ? "Tap pour voir les prix en temps réel" : "Tap an item to see real-time prices"}
+              {lang === "fr" ? "Appuyez pour voir les prix en temps réel" : "Tap an item to see real-time prices"}
             </div>
 
             <div style={{ padding: "0 16px" }}>
@@ -180,10 +187,8 @@ export default function PlanPage() {
                 const results = groceryData[item.id];
                 const isLoading = loadingItems.has(item.id);
                 const cheapest = results?.[0];
-
                 return (
                   <div key={item.id} style={{ marginBottom: 10 }}>
-                    {/* Item row */}
                     <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: results ? "12px 12px 0 0" : 12, opacity: checked.has(item.id) ? 0.5 : 1 }}>
                       <div onClick={() => toggleChecked(item.id)} style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, background: checked.has(item.id) ? "#e8470d" : "#fff", border: `2px solid ${checked.has(item.id) ? "#e8470d" : "#e8d8c8"}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
                         {checked.has(item.id) ? "✓" : ""}
@@ -193,11 +198,10 @@ export default function PlanPage() {
                         {cheapest && <div style={{ fontSize: 11, color: "#2d6a3f", fontWeight: 700, marginTop: 1 }}>Best: {cheapest.price} @ {cheapest.store}</div>}
                       </div>
                       <button onClick={() => fetchGroceryResults(item.name, item.id)} disabled={isLoading} style={{ padding: "6px 10px", borderRadius: 8, background: results ? "#2d6a3f" : "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, cursor: "pointer", border: "none", fontFamily: "'Nunito', sans-serif", flexShrink: 0 }}>
-                        {isLoading ? "..." : results ? lang === "fr" ? "Voir" : "View" : lang === "fr" ? "Prix →" : "Prices →"}
+                        {isLoading ? "..." : results ? (lang === "fr" ? "Voir" : "View") : (lang === "fr" ? "Prix →" : "Prices →")}
                       </button>
                     </div>
 
-                    {/* Results dropdown */}
                     {results && results.length > 0 && (
                       <div style={{ border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", overflow: "hidden" }}>
                         {results.slice(0, 4).map((r, i) => (

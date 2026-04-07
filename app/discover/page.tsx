@@ -4,13 +4,15 @@ import Image from "next/image";
 import recipesData from "@/data/recipes.json";
 import { getLang } from "@/lib/i18n";
 
-interface Recipe { id: string; title: string; emoji: string; cuisine: string; }
+interface Recipe { id: string; title: string; emoji: string; cuisine: string; prepTimeMin: number; calories: number; description: string; }
 
 const DEFAULT_FEED = [
   { id: "1", recipeId: "rec-007", title: "Rice and peas", emoji: "🍚", bg: "linear-gradient(135deg, #f59e0b, #d97706)", sharedBy: "Marie L.", avatar: "M", likes: 47, timeAgo: "2h ago" },
   { id: "2", recipeId: "rec-001", title: "Garlic butter pasta", emoji: "🍝", bg: "linear-gradient(135deg, #e8470d, #c84b0c)", sharedBy: "Jean P.", avatar: "J", likes: 38, timeAgo: "4h ago" },
   { id: "3", recipeId: "rec-004", title: "Spinach feta scramble", emoji: "🥚", bg: "linear-gradient(135deg, #2d6a3f, #1a3d2a)", sharedBy: "Sophie T.", avatar: "S", likes: 31, timeAgo: "6h ago" },
   { id: "4", recipeId: "rec-010", title: "Haitian rice and beans", emoji: "🍛", bg: "linear-gradient(135deg, #7c3aed, #5b21b6)", sharedBy: "Marc A.", avatar: "M", likes: 28, timeAgo: "1d ago" },
+  { id: "5", recipeId: "rec-011", title: "Fried plantains", emoji: "🍌", bg: "linear-gradient(135deg, #d97706, #92400e)", sharedBy: "Claudette R.", avatar: "C", likes: 52, timeAgo: "1d ago" },
+  { id: "6", recipeId: "rec-050", title: "Maafe peanut stew", emoji: "🥜", bg: "linear-gradient(135deg, #0891b2, #0e7490)", sharedBy: "Aminata D.", avatar: "A", likes: 19, timeAgo: "2d ago" },
 ];
 
 const BG_COLORS = [
@@ -19,21 +21,39 @@ const BG_COLORS = [
   "linear-gradient(135deg, #0891b2, #0e7490)",
   "linear-gradient(135deg, #7c3aed, #5b21b6)",
   "linear-gradient(135deg, #f59e0b, #d97706)",
+  "linear-gradient(135deg, #d97706, #92400e)",
 ];
 
 const T = {
-  en: { title: "Discover", subtitle: "#letmecook — see what your community is making", share: "+ Share", shareTitle: "Share to #letmecook", whatCook: "What did you cook?", selectRecipe: "Select a recipe...", hashtagNote: "will be added automatically", cancel: "Cancel", post: "Post", posted: "Posted to #letmecook!", postedSub: "Your meal is now on the feed", savePlan: "Save to Plan", saved: "✓ Saved · Unsave", yourPost: "Your post" },
-  fr: { title: "Découvrir", subtitle: "#letmecook — voyez ce que votre communauté cuisine", share: "+ Partager", shareTitle: "Partager sur #letmecook", whatCook: "Qu'avez-vous cuisiné?", selectRecipe: "Choisir une recette...", hashtagNote: "sera ajouté automatiquement", cancel: "Annuler", post: "Publier", posted: "Publié sur #letmecook!", postedSub: "Votre repas est maintenant sur le fil", savePlan: "Sauvegarder", saved: "✓ Sauvegardé · Retirer", yourPost: "Votre publication" },
+  en: {
+    title: "Discover", subtitle: "#letmecook — see what your community is making",
+    share: "+ Share", shareTitle: "Share to #letmecook", whatCook: "What did you cook?",
+    selectRecipe: "Select a recipe...", hashtagNote: "will be added automatically",
+    cancel: "Cancel", post: "Post", posted: "Posted to #letmecook!", postedSub: "Your meal is now on the feed",
+    pin: "📌 Pin", pinned: "📌 Pinned", yourPost: "Your post",
+    pinnedToast: "Pinned to your Plan page!",
+    unpinnedToast: "Removed from Plan page",
+  },
+  fr: {
+    title: "Découvrir", subtitle: "#letmecook — voyez ce que votre communauté cuisine",
+    share: "+ Partager", shareTitle: "Partager sur #letmecook", whatCook: "Qu'avez-vous cuisiné?",
+    selectRecipe: "Choisir une recette...", hashtagNote: "sera ajouté automatiquement",
+    cancel: "Annuler", post: "Publier", posted: "Publié sur #letmecook!", postedSub: "Votre repas est sur le fil",
+    pin: "📌 Épingler", pinned: "📌 Épinglé", yourPost: "Votre publication",
+    pinnedToast: "Épinglé sur votre page Plan!",
+    unpinnedToast: "Retiré de la page Plan",
+  },
 };
 
 export default function DiscoverPage() {
   const [feed, setFeed] = useState(DEFAULT_FEED);
   const [liked, setLiked] = useState<Set<string>>(new Set());
-  const [saved, setSaved] = useState<Set<string>>(new Set());
+  const [pinned, setPinned] = useState<Set<string>>(new Set());
   const [showShare, setShowShare] = useState(false);
   const [shareRecipeId, setShareRecipeId] = useState("");
   const [shared, setShared] = useState(false);
   const [lang, setLang] = useState<"en" | "fr">("en");
+  const [toast, setToast] = useState("");
 
   const recipes = recipesData as Recipe[];
   const tx = T[lang];
@@ -42,13 +62,15 @@ export default function DiscoverPage() {
     setLang(getLang());
     const savedFeed = localStorage.getItem("discover-feed");
     if (savedFeed) setFeed([...JSON.parse(savedFeed), ...DEFAULT_FEED]);
-    const savedPlan = localStorage.getItem("plan-meals");
-    if (savedPlan) {
-      const planMeals = JSON.parse(savedPlan);
-      const savedIds = new Set<string>(DEFAULT_FEED.filter(p => planMeals.includes(p.recipeId)).map(p => p.id));
-      setSaved(savedIds);
-    }
+    const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
+    const pinnedIds = new Set<string>(DEFAULT_FEED.filter((p) => planMeals.includes(p.recipeId)).map((p) => p.id));
+    setPinned(pinnedIds);
   }, []);
+
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2500);
+  }
 
   function toggleLike(id: string) {
     const next = new Set(liked);
@@ -56,33 +78,54 @@ export default function DiscoverPage() {
     setLiked(next);
   }
 
-  function saveToPlan(recipeId: string, postId: string) {
-    const next = new Set(saved);
+  function togglePin(recipeId: string, postId: string) {
+    const next = new Set(pinned);
     const existing = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
     if (next.has(postId)) {
       next.delete(postId);
       localStorage.setItem("plan-meals", JSON.stringify(existing.filter((id: string) => id !== recipeId)));
+      showToast(tx.unpinnedToast);
     } else {
       next.add(postId);
       if (!existing.includes(recipeId)) localStorage.setItem("plan-meals", JSON.stringify([...existing, recipeId]));
+      showToast(tx.pinnedToast);
     }
-    setSaved(next);
+    setPinned(next);
   }
 
   function submitShare() {
     if (!shareRecipeId) return;
     const recipe = recipes.find((r) => r.id === shareRecipeId);
     if (!recipe) return;
-    const newPost = { id: `user-${Date.now()}`, recipeId: recipe.id, title: recipe.title, emoji: recipe.emoji, bg: BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)], sharedBy: "You", avatar: "Y", likes: 0, timeAgo: "Just now" };
+    const newPost = {
+      id: `user-${Date.now()}`,
+      recipeId: recipe.id,
+      title: recipe.title,
+      emoji: recipe.emoji,
+      bg: BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)],
+      sharedBy: "You",
+      avatar: "Y",
+      likes: 0,
+      timeAgo: "Just now",
+    };
     const updatedFeed = [newPost, ...feed];
     setFeed(updatedFeed);
-    localStorage.setItem("discover-feed", JSON.stringify(updatedFeed.filter(p => p.sharedBy === "You")));
+    localStorage.setItem("discover-feed", JSON.stringify(updatedFeed.filter((p) => p.sharedBy === "You")));
     setShared(true);
     setTimeout(() => { setShowShare(false); setShared(false); setShareRecipeId(""); }, 2000);
   }
 
   return (
-    <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+    <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fdf7f2", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+
+      {/* Toast */}
+      {toast && (
+        <div style={{ position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", background: "#3a1f0d", color: "#fff", padding: "10px 20px", borderRadius: 20, fontSize: 13, fontWeight: 800, zIndex: 300, whiteSpace: "nowrap", boxShadow: "0 4px 16px rgba(0,0,0,.2)" }}>
+          {toast}
+        </div>
+      )}
+
+      {/* Header */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -99,8 +142,9 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
+      <div style={{ background: "#fdf7f2", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
+        {/* Share modal */}
         {showShare && (
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
             <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", padding: "24px 20px 40px", width: "100%", maxWidth: 480 }}>
@@ -137,43 +181,60 @@ export default function DiscoverPage() {
           </div>
         )}
 
+        {/* Feed */}
         <div style={{ padding: "0 16px" }}>
-          {feed.map((post) => (
-            <div key={post.id} style={{ marginBottom: 16, borderRadius: 16, overflow: "hidden", border: "1px solid #f0e8de" }}>
-              <div style={{ height: 200, background: post.bg, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                <span style={{ fontSize: 80 }}>{post.emoji}</span>
-                <div style={{ position: "absolute", bottom: 10, left: 12, background: "rgba(0,0,0,.4)", borderRadius: 20, padding: "3px 10px" }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: "#fff" }}>#letmecook</span>
-                </div>
-                {post.sharedBy === "You" && (
-                  <div style={{ position: "absolute", top: 10, right: 12, background: "#e8470d", borderRadius: 20, padding: "3px 10px" }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "#fff" }}>{tx.yourPost}</span>
+          {feed.map((post) => {
+            const recipe = recipes.find((r) => r.id === post.recipeId);
+            return (
+              <div key={post.id} style={{ marginBottom: 16, borderRadius: 16, overflow: "hidden", border: "1px solid #f0e8de", background: "#fff" }}>
+
+                {/* Image area */}
+                <div style={{ height: 220, background: post.bg, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }} onClick={() => recipe && (window.location.href = `/meal/${recipe.id}`)}>
+                  <span style={{ fontSize: 90 }}>{post.emoji}</span>
+                  <div style={{ position: "absolute", bottom: 10, left: 12, background: "rgba(0,0,0,.4)", borderRadius: 20, padding: "3px 10px" }}>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: "#fff" }}>#letmecook</span>
                   </div>
-                )}
-              </div>
-              <div style={{ padding: "10px 14px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d", flexShrink: 0 }}>{post.avatar}</div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{post.sharedBy}</div>
-                    <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{post.timeAgo}</div>
+                  {recipe && (
+                    <div style={{ position: "absolute", bottom: 10, right: 12, background: "rgba(0,0,0,.4)", borderRadius: 20, padding: "3px 10px" }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>⏱ {recipe.prepTimeMin}min · 🔥 {recipe.calories}kcal</span>
+                    </div>
+                  )}
+                  {post.sharedBy === "You" && (
+                    <div style={{ position: "absolute", top: 10, right: 12, background: "#e8470d", borderRadius: 20, padding: "3px 10px" }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: "#fff" }}>{tx.yourPost}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Post info */}
+                <div style={{ padding: "12px 14px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d", flexShrink: 0 }}>{post.avatar}</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{post.sharedBy}</div>
+                      <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{post.timeAgo}</div>
+                    </div>
+                  </div>
+
+                  <div onClick={() => recipe && (window.location.href = `/meal/${recipe.id}`)} style={{ fontSize: 16, fontWeight: 800, color: "#3a1f0d", marginBottom: 10, cursor: recipe ? "pointer" : "default" }}>
+                    {post.title}
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <button onClick={() => toggleLike(post.id)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, color: liked.has(post.id) ? "#e8470d" : "#c09878", fontFamily: "'Nunito', sans-serif" }}>
+                      {liked.has(post.id) ? "❤️" : "🤍"} {post.likes + (liked.has(post.id) ? 1 : 0)}
+                    </button>
+                    <button onClick={() => togglePin(post.recipeId, post.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", borderRadius: 10, border: "none", background: pinned.has(post.id) ? "#3a1f0d" : "#e8470d", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                      {pinned.has(post.id) ? tx.pinned : tx.pin}
+                    </button>
                   </div>
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 10 }}>{post.title}</div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <button onClick={() => toggleLike(post.id)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, color: liked.has(post.id) ? "#e8470d" : "#c09878", fontFamily: "'Nunito', sans-serif" }}>
-                    {liked.has(post.id) ? "❤️" : "🤍"} {post.likes + (liked.has(post.id) ? 1 : 0)}
-                  </button>
-                  <button onClick={() => saveToPlan(post.recipeId, post.id)} style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: saved.has(post.id) ? "#2d6a3f" : "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                    {saved.has(post.id) ? tx.saved : tx.savePlan}
-                  </button>
-                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </main>
   );
 }
-
