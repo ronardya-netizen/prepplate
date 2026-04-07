@@ -5,10 +5,13 @@ import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
 import { getLang, t } from "@/lib/i18n";
 
-interface IngredientData { id: string; name: string; category: string; }
+
+interface IngredientData { id: string; name: string; nameFr?: string; category: string; }
 interface PantryItem { ingredientId: string; expiryDays?: number; }
 
+
 const INGREDIENTS = ingredientsData as IngredientData[];
+
 
 export default function PantryPage() {
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
@@ -20,7 +23,9 @@ export default function PantryPage() {
   const [userId, setUserId] = useState("");
   const [lang, setLang] = useState<"en" | "fr">("en");
 
+
   const T = t[lang].pantry;
+
 
   useEffect(() => {
     const id = getUserId();
@@ -31,6 +36,7 @@ export default function PantryPage() {
       .then((data) => { setPantryItems(data.items ?? []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
 
   async function addIngredient() {
     if (!selectedIngredient) return;
@@ -44,10 +50,12 @@ export default function PantryPage() {
     }
   }
 
+
   async function removeIngredient(ingredientId: string) {
     await fetch(`/api/pantry?userId=${userId}&ingredientId=${ingredientId}`, { method: "DELETE" });
     setPantryItems((prev) => prev.filter((i) => i.ingredientId !== ingredientId));
   }
+
 
   const pantryIds = new Set(pantryItems.map((i) => i.ingredientId));
   const redItems = pantryItems.filter((i) => i.expiryDays !== undefined && i.expiryDays <= 2);
@@ -55,7 +63,18 @@ export default function PantryPage() {
   const greenItems = pantryItems.filter((i) => !i.expiryDays || i.expiryDays > 7);
   const filteredIngredients = INGREDIENTS.filter((i) => !pantryIds.has(i.id) && i.name.toLowerCase().includes(search.toLowerCase())).slice(0, 6);
 
-  function getName(id: string) { return INGREDIENTS.find((i) => i.id === id)?.name ?? id; }
+
+  function getName(id: string) {
+    const ing = INGREDIENTS.find((i) => i.id === id);
+    if (!ing) return id;
+    return lang === "fr" ? ing.nameFr ?? ing.name : ing.name;
+  }
+
+
+  function getDisplayName(ing: IngredientData) {
+    return lang === "fr" ? ing.nameFr ?? ing.name : ing.name;
+  }
+
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
@@ -75,13 +94,16 @@ export default function PantryPage() {
         </div>
       </div>
 
+
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
+
 
         <div style={{ padding: "0 16px 12px" }}>
           <button onClick={() => { setShowAdd(!showAdd); setSelectedIngredient(null); setSearch(""); }} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #e8470d", background: showAdd ? "#e8470d" : "#fff", color: showAdd ? "#fff" : "#e8470d", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
             {T.addItem}
           </button>
         </div>
+
 
         {showAdd && (
           <div style={{ margin: "0 16px 16px", padding: 14, background: "#fff8f4", borderRadius: 12, border: "1px solid #fad8c8" }}>
@@ -91,14 +113,16 @@ export default function PantryPage() {
                 <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #f0e8de" }}>
                   {filteredIngredients.map((ing) => (
                     <div key={ing.id} onClick={() => setSelectedIngredient(ing)} style={{ padding: "10px 14px", cursor: "pointer", borderBottom: "0.5px solid #f0e8de", fontSize: 13, fontWeight: 700, color: "#3a1f0d", background: "#fff" }}>
-                      {ing.name} <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>({ing.category})</span>
+                      {getDisplayName(ing)} <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>({ing.category})</span>
                     </div>
                   ))}
                 </div>
               </>
             ) : (
               <>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 12 }}>{T.whenExpires(selectedIngredient.name)}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 12 }}>
+                  {T.whenExpires(getDisplayName(selectedIngredient))}
+                </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
                   {T.expiry.map((opt) => {
                     const color = opt.days <= 2 ? "#ef4444" : opt.days <= 7 ? "#f59e0b" : "#22c55e";
@@ -117,6 +141,7 @@ export default function PantryPage() {
             )}
           </div>
         )}
+
 
         {loading ? (
           <p style={{ padding: "20px", color: "#c09878", fontWeight: 700 }}>{lang === "fr" ? "Chargement..." : "Loading pantry..."}</p>
@@ -137,6 +162,7 @@ export default function PantryPage() {
     </main>
   );
 }
+
 
 function ExpirySection({ dot, label, items, getName, onRemove, expiresDay, daysLeft }: { dot: string; label: string; items: PantryItem[]; getName: (id: string) => string; onRemove: (id: string) => void; expiresDay: string; daysLeft: (n: number) => string; }) {
   return (
