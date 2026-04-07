@@ -8,31 +8,17 @@ import { getLang, t } from "@/lib/i18n";
 
 interface Recipe { id: string; title: string; emoji: string; calories: number; prepTimeMin: number; ingredients: { ingredientId: string; quantity: number; unit: string; isOptional?: boolean }[]; }
 interface IngredientData { id: string; name: string; category: string; unit: string; basePrice: number; }
+interface GroceryResult { title: string; price: string; store: string; link: string; thumbnail: string; }
+interface CachedResults { results: GroceryResult[]; timestamp: number; }
 
-const MONTREAL_STORES = [
-  { id: "maxi",     name: "Maxi",           searchUrl: "https://www.maxi.ca/en/search?q=",                    logo: "https://www.maxi.ca/favicon.ico",                          bestFor: ["grain", "pantry", "dairy"] },
-  { id: "iga",      name: "IGA",            searchUrl: "https://www.iga.net/en/search?term=",                  logo: "https://www.iga.net/favicon.ico",                          bestFor: ["produce", "dairy", "protein"] },
-  { id: "metro",    name: "Metro",          searchUrl: "https://www.metro.ca/en/search?filter=",               logo: "https://www.metro.ca/favicon.ico",                         bestFor: ["produce", "dairy"] },
-  { id: "superc",   name: "Super C",        searchUrl: "https://www.superc.ca/en/search?q=",                   logo: "https://www.superc.ca/favicon.ico",                        bestFor: ["grain", "pantry"] },
-  { id: "provigo",  name: "Provigo",        searchUrl: "https://www.provigo.ca/en/search?filter=",             logo: "https://www.provigo.ca/favicon.ico",                       bestFor: ["dairy", "grain"] },
-  { id: "walmart",  name: "Walmart",        searchUrl: "https://www.walmart.ca/search?q=",                     logo: "https://i5.walmartimages.ca/favicon.ico",                  bestFor: ["pantry", "grain"] },
-  { id: "costco",   name: "Costco",         searchUrl: "https://www.costco.ca/CatalogSearch?keyword=",         logo: "https://www.costco.ca/favicon.ico",                        bestFor: ["protein", "grain", "dairy"] },
-  { id: "pa",       name: "PA Supermarché", searchUrl: "https://www.pasupermarche.com/search?q=",              logo: "https://www.pasupermarche.com/favicon.ico",                bestFor: ["produce", "pantry"] },
-  { id: "adonis",   name: "Adonis",         searchUrl: "https://www.marcheadonis.com/en/search?q=",            logo: "https://www.marcheadonis.com/favicon.ico",                 bestFor: ["produce", "protein"] },
-  { id: "avril",    name: "Avril",          searchUrl: "https://www.avril.ca/en/search?q=",                    logo: "https://www.avril.ca/favicon.ico",                         bestFor: ["produce", "dairy"] },
-  { id: "rachelle", name: "Rachelle-Béry",  searchUrl: "https://www.rachelle-bery.com/recherche?q=",           logo: "https://www.rachelle-bery.com/favicon.ico",                bestFor: ["produce"] },
-  { id: "instacart","name": "Instacart",    searchUrl: "https://www.instacart.ca/store/search_v3/term?term=",  logo: "https://www.instacart.ca/favicon.ico",                     bestFor: ["grain", "pantry", "produce", "dairy", "protein"] },
-];
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-function StoreLogo({ store }: { store: typeof MONTREAL_STORES[0] }) {
+function StoreLogo({ store }: { store: string }) {
   const [error, setError] = useState(false);
-  if (error) return <div style={{ width: 24, height: 24, borderRadius: 4, background: "#f0e8de", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#c09878" }}>{store.name[0]}</div>;
-  return <img src={store.logo} alt={store.name} width={24} height={24} style={{ borderRadius: 4, objectFit: "contain" }} onError={() => setError(true)} />;
-}
-
-function getSuggestedStore(category: string, preferredStoreId: string) {
-  if (preferredStoreId) return MONTREAL_STORES.find((s) => s.id === preferredStoreId) ?? MONTREAL_STORES[0];
-  return MONTREAL_STORES.find((s) => s.bestFor.includes(category)) ?? MONTREAL_STORES[0];
+  const domain = store.toLowerCase().replace(/\s/g, "").replace(".ca", "").replace(".com", "");
+  const logoUrl = `https://logo.clearbit.com/${domain}.ca`;
+  if (error) return <div style={{ width: 20, height: 20, borderRadius: 4, background: "#f0e8de", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 800, color: "#c09878" }}>{store[0]}</div>;
+  return <img src={logoUrl} alt={store} width={20} height={20} style={{ borderRadius: 4, objectFit: "contain" }} onError={() => setError(true)} />;
 }
 
 export default function PlanPage() {
@@ -42,8 +28,9 @@ export default function PlanPage() {
   const [postalCode, setPostalCode] = useState("");
   const [editingPostal, setEditingPostal] = useState(false);
   const [postalInput, setPostalInput] = useState("");
-  const [preferredStoreId, setPreferredStoreId] = useState("");
   const [lang, setLang] = useState<"en" | "fr">("en");
+  const [groceryData, setGroceryData] = useState<Record<string, GroceryResult[]>>({});
+  const [loadingItems, setLoadingItems] = useState<Set<string>>(new Set());
 
   const T = t[lang].plan;
 
@@ -53,11 +40,32 @@ export default function PlanPage() {
     fetch(`/api/pantry?userId=${id}`).then((r) => r.json()).then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
     const savedPostal = localStorage.getItem("prepplate-postal");
     if (savedPostal) setPostalCode(savedPostal);
-    const savedStore = localStorage.getItem("prepplate-store");
-    if (savedStore) setPreferredStoreId(savedStore);
     const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
     setSavedMealIds(planMeals);
   }, []);
+
+  async function fetchGroceryResults(ingredientName: string, ingredientId: string) {
+    // Check cache first
+    const cacheKey = `grocery-${ingredientId}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed: CachedResults = JSON.parse(cached);
+      if (Date.now() - parsed.timestamp < CACHE_TTL) {
+        setGroceryData((prev) => ({ ...prev, [ingredientId]: parsed.results }));
+        return;
+      }
+    }
+
+    setLoadingItems((prev) => new Set(prev).add(ingredientId));
+    try {
+      const res = await fetch(`/api/grocery-search?ingredient=${encodeURIComponent(ingredientName)}&postal=${postalCode || "H3A1B1"}`);
+      const data = await res.json();
+      const results = data.results ?? [];
+      setGroceryData((prev) => ({ ...prev, [ingredientId]: results }));
+      localStorage.setItem(cacheKey, JSON.stringify({ results, timestamp: Date.now() }));
+    } catch (e) { console.error(e); }
+    finally { setLoadingItems((prev) => { const next = new Set(prev); next.delete(ingredientId); return next; }); }
+  }
 
   function savePostal() {
     const cleaned = postalInput.toUpperCase().trim();
@@ -92,9 +100,8 @@ export default function PlanPage() {
   const shoppingItems = Array.from(allMissingIds).map((id) => {
     const ing = (ingredientsData as IngredientData[]).find((i) => i.id === id);
     if (!ing) return null;
-    const suggestedStore = getSuggestedStore(ing.category, preferredStoreId);
-    return { id, name: ing.name, category: ing.category, suggestedStore };
-  }).filter(Boolean) as { id: string; name: string; category: string; suggestedStore: typeof MONTREAL_STORES[0] }[];
+    return { id, name: ing.name, category: ing.category };
+  }).filter(Boolean) as { id: string; name: string; category: string }[];
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
@@ -119,7 +126,7 @@ export default function PlanPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: editingPostal ? 10 : 0 }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? T.postalSet(postalCode) : T.postalEmpty}</div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? `${MONTREAL_STORES.length} ${lang === "fr" ? "magasins disponibles" : "stores available"}` : T.postalSub}</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? lang === "fr" ? "Résultats adaptés à votre région" : "Results tailored to your area" : T.postalSub}</div>
             </div>
             <button onClick={() => { setEditingPostal(!editingPostal); setPostalInput(postalCode); }} style={{ padding: "6px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
               {editingPostal ? T.cancel : postalCode ? T.change : T.add}
@@ -129,26 +136,6 @@ export default function PlanPage() {
             <div style={{ display: "flex", gap: 8 }}>
               <input value={postalInput} onChange={(e) => setPostalInput(e.target.value)} placeholder="e.g. H3A 1B1" maxLength={7} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", textTransform: "uppercase" }} />
               <button onClick={savePostal} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#e8470d", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{T.save}</button>
-            </div>
-          )}
-        </div>
-
-        {/* Preferred store */}
-        <div style={{ padding: "0 16px 16px" }}>
-          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
-            {lang === "fr" ? "Votre magasin préféré" : "Your preferred store"}
-          </div>
-          <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
-            {MONTREAL_STORES.map((store) => (
-              <button key={store.id} onClick={() => { const next = preferredStoreId === store.id ? "" : store.id; setPreferredStoreId(next); localStorage.setItem("prepplate-store", next); }} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "8px 10px", borderRadius: 12, border: "1.5px solid", borderColor: preferredStoreId === store.id ? "#e8470d" : "#e8d8c8", background: preferredStoreId === store.id ? "#fff0ec" : "#fff", cursor: "pointer", fontFamily: "'Nunito', sans-serif", whiteSpace: "nowrap", flexShrink: 0, minWidth: 60 }}>
-                <StoreLogo store={store} />
-                <span style={{ fontSize: 9, fontWeight: 800, color: preferredStoreId === store.id ? "#e8470d" : "#a08060" }}>{store.name}</span>
-              </button>
-            ))}
-          </div>
-          {!preferredStoreId && (
-            <div style={{ marginTop: 8, fontSize: 11, color: "#c09878", fontWeight: 600 }}>
-              {lang === "fr" ? "Sélectionnez un magasin ou nous suggérerons le meilleur par catégorie" : "Select a store or we'll suggest the best one per category"}
             </div>
           )}
         </div>
@@ -185,27 +172,59 @@ export default function PlanPage() {
             </div>
 
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              {lang === "fr" ? "Appuyez sur Acheter pour voir les prix en temps réel" : "Tap Buy to see real-time prices"}
+              {lang === "fr" ? "Tap pour voir les prix en temps réel" : "Tap an item to see real-time prices"}
             </div>
+
             <div style={{ padding: "0 16px" }}>
               {shoppingItems.map((item) => {
-                const buyUrl = `${item.suggestedStore.searchUrl}${encodeURIComponent(item.name)}`;
+                const results = groceryData[item.id];
+                const isLoading = loadingItems.has(item.id);
+                const cheapest = results?.[0];
+
                 return (
-                  <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 6, opacity: checked.has(item.id) ? 0.5 : 1 }}>
-                    <div onClick={() => toggleChecked(item.id)} style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, background: checked.has(item.id) ? "#e8470d" : "#fff", border: `2px solid ${checked.has(item.id) ? "#e8470d" : "#e8d8c8"}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
-                      {checked.has(item.id) ? "✓" : ""}
-                    </div>
-                    <div onClick={() => toggleChecked(item.id)} style={{ flex: 1, cursor: "pointer" }}>
-                      <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d", textDecoration: checked.has(item.id) ? "line-through" : "none" }}>{item.name}</div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 2 }}>
-                        <StoreLogo store={item.suggestedStore} />
-                        <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{item.suggestedStore.name}</span>
-                        {!preferredStoreId && <span style={{ fontSize: 9, color: "#2d6a3f", fontWeight: 700, background: "#f0faf3", padding: "1px 5px", borderRadius: 4 }}>{lang === "fr" ? "suggéré" : "suggested"}</span>}
+                  <div key={item.id} style={{ marginBottom: 10 }}>
+                    {/* Item row */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: results ? "12px 12px 0 0" : 12, opacity: checked.has(item.id) ? 0.5 : 1 }}>
+                      <div onClick={() => toggleChecked(item.id)} style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, background: checked.has(item.id) ? "#e8470d" : "#fff", border: `2px solid ${checked.has(item.id) ? "#e8470d" : "#e8d8c8"}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
+                        {checked.has(item.id) ? "✓" : ""}
                       </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d", textDecoration: checked.has(item.id) ? "line-through" : "none" }}>{item.name}</div>
+                        {cheapest && <div style={{ fontSize: 11, color: "#2d6a3f", fontWeight: 700, marginTop: 1 }}>Best: {cheapest.price} @ {cheapest.store}</div>}
+                      </div>
+                      <button onClick={() => fetchGroceryResults(item.name, item.id)} disabled={isLoading} style={{ padding: "6px 10px", borderRadius: 8, background: results ? "#2d6a3f" : "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, cursor: "pointer", border: "none", fontFamily: "'Nunito', sans-serif", flexShrink: 0 }}>
+                        {isLoading ? "..." : results ? lang === "fr" ? "Voir" : "View" : lang === "fr" ? "Prix →" : "Prices →"}
+                      </button>
                     </div>
-                    <a href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ padding: "6px 10px", borderRadius: 8, background: "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, textDecoration: "none", flexShrink: 0 }}>
-                      {T.buy} →
-                    </a>
+
+                    {/* Results dropdown */}
+                    {results && results.length > 0 && (
+                      <div style={{ border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", overflow: "hidden" }}>
+                        {results.slice(0, 4).map((r, i) => (
+                          <a key={i} href={r.link} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", background: i === 0 ? "#f0faf3" : "#fff", borderTop: "0.5px solid #f0e8de", textDecoration: "none" }}>
+                            {r.thumbnail && <img src={r.thumbnail} alt={r.title} width={36} height={36} style={{ borderRadius: 6, objectFit: "contain", flexShrink: 0 }} />}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: "#3a1f0d", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</div>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+                                <StoreLogo store={r.store} />
+                                <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{r.store}</span>
+                                {i === 0 && <span style={{ fontSize: 9, fontWeight: 800, background: "#e8f5ec", color: "#2d6a3f", padding: "1px 5px", borderRadius: 4 }}>BEST</span>}
+                              </div>
+                            </div>
+                            <div style={{ textAlign: "right", flexShrink: 0 }}>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: i === 0 ? "#2d6a3f" : "#3a1f0d" }}>{r.price}</div>
+                              <div style={{ fontSize: 10, color: "#e8470d", fontWeight: 700 }}>{lang === "fr" ? "Acheter →" : "Buy →"}</div>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+
+                    {results && results.length === 0 && (
+                      <div style={{ padding: "8px 14px", background: "#fff8f4", border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", fontSize: 12, color: "#c09878", fontWeight: 600 }}>
+                        {lang === "fr" ? "Aucun résultat trouvé" : "No results found"}
+                      </div>
+                    )}
                   </div>
                 );
               })}
