@@ -1,234 +1,170 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import recipesData from "@/data/recipes.json";
-import { getLang } from "@/lib/i18n";
+import { getUserId } from "@/lib/user";
 
-interface Recipe { id: string; title: string; emoji: string; cuisine: string; prepTimeMin: number; calories: number; description: string; }
 
-const DEFAULT_FEED = [
-  { id: "1", recipeId: "rec-007", title: "Rice and peas", emoji: "🍚", bg: "linear-gradient(135deg, #f59e0b, #d97706)", sharedBy: "Marie L.", avatar: "M", likes: 47, timeAgo: "2h ago" },
-  { id: "2", recipeId: "rec-001", title: "Garlic butter pasta", emoji: "🍝", bg: "linear-gradient(135deg, #e8470d, #c84b0c)", sharedBy: "Jean P.", avatar: "J", likes: 38, timeAgo: "4h ago" },
-  { id: "3", recipeId: "rec-004", title: "Spinach feta scramble", emoji: "🥚", bg: "linear-gradient(135deg, #2d6a3f, #1a3d2a)", sharedBy: "Sophie T.", avatar: "S", likes: 31, timeAgo: "6h ago" },
-  { id: "4", recipeId: "rec-010", title: "Haitian rice and beans", emoji: "🍛", bg: "linear-gradient(135deg, #7c3aed, #5b21b6)", sharedBy: "Marc A.", avatar: "M", likes: 28, timeAgo: "1d ago" },
-  { id: "5", recipeId: "rec-011", title: "Fried plantains", emoji: "🍌", bg: "linear-gradient(135deg, #d97706, #92400e)", sharedBy: "Claudette R.", avatar: "C", likes: 52, timeAgo: "1d ago" },
-  { id: "6", recipeId: "rec-050", title: "Maafe peanut stew", emoji: "🥜", bg: "linear-gradient(135deg, #0891b2, #0e7490)", sharedBy: "Aminata D.", avatar: "A", likes: 19, timeAgo: "2d ago" },
+interface Recipe { id: string; title: string; description: string; prepTimeMin: number; calories: number; cuisine: string; emoji: string; mealType: string; mode: string[]; dietTags: string[]; ingredients: { ingredientId: string }[]; }
+
+
+const RECIPES = recipesData as Recipe[];
+
+
+const CUISINE_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "italian", label: "🍕 Italian" },
+  { id: "haitian", label: "🇭🇹 Haitian" },
+  { id: "french", label: "🥐 French" },
+  { id: "asian", label: "🥢 Asian" },
+  { id: "mexican", label: "🌮 Mexican" },
+  { id: "indian", label: "🍛 Indian" },
+  { id: "middle-eastern", label: "🧆 Middle Eastern" },
+  { id: "american", label: "🍔 American" },
 ];
 
-const BG_COLORS = [
-  "linear-gradient(135deg, #e8470d, #c84b0c)",
-  "linear-gradient(135deg, #2d6a3f, #1a3d2a)",
-  "linear-gradient(135deg, #0891b2, #0e7490)",
-  "linear-gradient(135deg, #7c3aed, #5b21b6)",
-  "linear-gradient(135deg, #f59e0b, #d97706)",
-  "linear-gradient(135deg, #d97706, #92400e)",
-];
-
-const T = {
-  en: {
-    title: "Discover", subtitle: "See what your friends are making!",
-    share: "+ Share", shareTitle: "Share to #letmecook", whatCook: "What did you cook?",
-    selectRecipe: "Select a recipe...", hashtagNote: "will be added automatically",
-    cancel: "Cancel", post: "Post", posted: "Posted to #letmecook!", postedSub: "Your meal is now on the feed",
-    pin: "📌 Pin", pinned: "📌 Pinned", yourPost: "Your post",
-    pinnedToast: "Pinned to your Plan page!",
-    unpinnedToast: "Removed from Plan page",
-  },
-  fr: {
-    title: "Découvrir", subtitle: "#letmecook — voyez ce que votre communauté cuisine",
-    share: "+ Partager", shareTitle: "Partager sur #letmecook", whatCook: "Qu'avez-vous cuisiné?",
-    selectRecipe: "Choisir une recette...", hashtagNote: "sera ajouté automatiquement",
-    cancel: "Annuler", post: "Publier", posted: "Publié sur #letmecook!", postedSub: "Votre repas est sur le fil",
-    pin: "📌 Épingler", pinned: "📌 Épinglé", yourPost: "Votre publication",
-    pinnedToast: "Épinglé sur votre page Plan!",
-    unpinnedToast: "Retiré de la page Plan",
-  },
-};
 
 export default function DiscoverPage() {
-  const [feed, setFeed] = useState(DEFAULT_FEED);
-  const [liked, setLiked] = useState<Set<string>>(new Set());
+  const [pantryIds, setPantryIds] = useState<Set<string>>(new Set());
   const [pinned, setPinned] = useState<Set<string>>(new Set());
-  const [showShare, setShowShare] = useState(false);
-  const [shareRecipeId, setShareRecipeId] = useState("");
-  const [shared, setShared] = useState(false);
-  const [lang, setLang] = useState<"en" | "fr">("en");
-  const [toast, setToast] = useState("");
+  const [cuisine, setCuisine] = useState("all");
+  const [lang, setLang] = useState("en");
+  const router = useRouter();
 
-  const recipes = recipesData as Recipe[];
-  const tx = T[lang];
 
   useEffect(() => {
-    setLang(getLang());
-    const savedFeed = localStorage.getItem("discover-feed");
-    if (savedFeed) setFeed([...JSON.parse(savedFeed), ...DEFAULT_FEED]);
-    const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
-    const pinnedIds = new Set<string>(DEFAULT_FEED.filter((p) => planMeals.includes(p.recipeId)).map((p) => p.id));
-    setPinned(pinnedIds);
+    const id = getUserId();
+    setLang(localStorage.getItem("prepplate-lang") ?? "en");
+    const saved = localStorage.getItem("prepplate-pinned") ?? "[]";
+    setPinned(new Set(JSON.parse(saved)));
+
+
+    fetch(`/api/pantry?userId=${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const ids = new Set<string>((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId));
+        setPantryIds(ids);
+      });
   }, []);
 
-  function showToast(msg: string) {
-    setToast(msg);
-    setTimeout(() => setToast(""), 2500);
-  }
 
-  function toggleLike(id: string) {
-    const next = new Set(liked);
-    next.has(id) ? next.delete(id) : next.add(id);
-    setLiked(next);
-  }
-
-  function togglePin(recipeId: string, postId: string) {
+  function togglePin(id: string) {
     const next = new Set(pinned);
-    const existing = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
-    if (next.has(postId)) {
-      next.delete(postId);
-      localStorage.setItem("plan-meals", JSON.stringify(existing.filter((id: string) => id !== recipeId)));
-      showToast(tx.unpinnedToast);
-    } else {
-      next.add(postId);
-      if (!existing.includes(recipeId)) localStorage.setItem("plan-meals", JSON.stringify([...existing, recipeId]));
-      showToast(tx.pinnedToast);
-    }
+    next.has(id) ? next.delete(id) : next.add(id);
     setPinned(next);
+    localStorage.setItem("prepplate-pinned", JSON.stringify([...next]));
   }
 
-  function submitShare() {
-    if (!shareRecipeId) return;
-    const recipe = recipes.find((r) => r.id === shareRecipeId);
-    if (!recipe) return;
-    const newPost = {
-      id: `user-${Date.now()}`,
-      recipeId: recipe.id,
-      title: recipe.title,
-      emoji: recipe.emoji,
-      bg: BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)],
-      sharedBy: "You",
-      avatar: "Y",
-      likes: 0,
-      timeAgo: "Just now",
-    };
-    const updatedFeed = [newPost, ...feed];
-    setFeed(updatedFeed);
-    localStorage.setItem("discover-feed", JSON.stringify(updatedFeed.filter((p) => p.sharedBy === "You")));
-    setShared(true);
-    setTimeout(() => { setShowShare(false); setShared(false); setShareRecipeId(""); }, 2000);
-  }
+
+  // Only show recipes where user is MISSING 1-3 ingredients
+  const discoverRecipes = RECIPES.filter((r) => {
+    const missing = (r.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
+    return missing >= 1 && missing <= 3;
+  }).filter((r) => cuisine === "all" || r.cuisine === cuisine);
+
 
   return (
-    <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fdf7f2", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+    <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
 
-      {/* Toast */}
-      {toast && (
-        <div style={{ position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", background: "#3a1f0d", color: "#fff", padding: "10px 20px", borderRadius: 20, fontSize: 13, fontWeight: 800, zIndex: 300, whiteSpace: "nowrap", boxShadow: "0 4px 16px rgba(0,0,0,.2)" }}>
-          {toast}
-        </div>
-      )}
 
       {/* Header */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <Image src="/logo-icon.png" alt="PrepPlate" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
+            <Image src="/logo-icon.png" alt="PrepPlate" width={36} height={36} style={{ borderRadius: 10, objectFit: "cover" }} />
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</span>
           </div>
-          <button onClick={() => setShowShare(true)} style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid rgba(255,255,255,.6)", background: "transparent", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-            {tx.share}
-          </button>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
         </div>
         <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>{tx.title}</h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>{tx.subtitle}</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>
+            {lang === "fr" ? "Découvrir" : "Discover"}
+          </h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
+            {lang === "fr"
+              ? `${discoverRecipes.length} recettes à 1-3 ingrédients près • ${pinned.size} épinglée${pinned.size !== 1 ? "s" : ""}`
+              : `${discoverRecipes.length} recipes within 1-3 ingredients • ${pinned.size} pinned`}
+          </p>
         </div>
       </div>
 
-      <div style={{ background: "#fdf7f2", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        {/* Share modal */}
-        {showShare && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-            <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", padding: "24px 20px 40px", width: "100%", maxWidth: 480 }}>
-              {shared ? (
-                <div style={{ textAlign: "center", padding: "20px 0" }}>
-                  <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: "#2d6a3f" }}>{tx.posted}</div>
-                  <div style={{ fontSize: 13, color: "#7ab88a", fontWeight: 600, marginTop: 6 }}>{tx.postedSub}</div>
+      <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 14 }}>
+
+
+        {/* Cuisine filter */}
+        <div style={{ display: "flex", gap: 6, padding: "0 16px 14px", overflowX: "auto", scrollbarWidth: "none" }}>
+          {CUISINE_FILTERS.map((c) => (
+            <button key={c.id} onClick={() => setCuisine(c.id)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: cuisine === c.id ? "#e8470d" : "#e8d8c8", background: cuisine === c.id ? "#e8470d" : "#fff", color: cuisine === c.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+
+        {/* Pinned strip */}
+        {pinned.size > 0 && (
+          <div style={{ padding: "0 16px 12px" }}>
+            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
+              📌 {lang === "fr" ? "Épinglées" : "Pinned"}
+            </div>
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none" }}>
+              {RECIPES.filter((r) => pinned.has(r.id)).map((r) => (
+                <div key={r.id} onClick={() => router.push(`/meal/${r.id}`)} style={{ flexShrink: 0, width: 110, padding: "10px 12px", background: "#fff8f4", border: "1.5px solid #e8470d", borderRadius: 12, cursor: "pointer" }}>
+                  <div style={{ fontSize: 22, marginBottom: 4 }}>{r.emoji}</div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: "#3a1f0d", lineHeight: 1.2 }}>{r.title}</div>
                 </div>
-              ) : (
-                <>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: "#3a1f0d" }}>{tx.shareTitle}</div>
-                    <button onClick={() => setShowShare(false)} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "#c09878" }}>×</button>
-                  </div>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#c09878", marginBottom: 6 }}>{tx.whatCook}</div>
-                    <select value={shareRecipeId} onChange={(e) => setShareRecipeId(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", background: "#fff" }}>
-                      <option value="">{tx.selectRecipe}</option>
-                      {recipes.map((r) => (<option key={r.id} value={r.id}>{r.emoji} {r.title}</option>))}
-                    </select>
-                  </div>
-                  <div style={{ marginBottom: 14, padding: "10px 12px", background: "#fff8f4", borderRadius: 10, border: "1px solid #fad8c8" }}>
-                    <span style={{ fontSize: 13, fontWeight: 800, color: "#e8470d" }}>#letmecook</span>
-                    <span style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}> {tx.hashtagNote}</span>
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={() => setShowShare(false)} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "1.5px solid #e8d8c8", background: "#fff", color: "#a08060", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{tx.cancel}</button>
-                    <button onClick={submitShare} disabled={!shareRecipeId} style={{ flex: 2, padding: "12px", borderRadius: 10, border: "none", background: shareRecipeId ? "#e8470d" : "#e8d8c8", color: "#fff", fontSize: 13, fontWeight: 800, cursor: shareRecipeId ? "pointer" : "not-allowed", fontFamily: "'Nunito', sans-serif" }}>{tx.post}</button>
-                  </div>
-                </>
-              )}
+              ))}
             </div>
           </div>
         )}
 
-        {/* Feed */}
-        <div style={{ padding: "0 16px" }}>
-          {feed.map((post) => {
-            const recipe = recipes.find((r) => r.id === post.recipeId);
+
+        {/* Recipe cards */}
+        <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+          {discoverRecipes.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ fontSize: 40, marginBottom: 10 }}>🛒</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 4 }}>
+                {lang === "fr" ? "Votre garde-manger est bien rempli!" : "Your pantry is well stocked!"}
+              </div>
+              <div style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}>
+                {lang === "fr" ? "Allez sur Accueil pour voir vos recettes disponibles." : "Head to Home to see recipes you can cook now."}
+              </div>
+            </div>
+          ) : discoverRecipes.map((recipe) => {
+            const isPinned = pinned.has(recipe.id);
+            const missing = (recipe.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
+
+
             return (
-              <div key={post.id} style={{ marginBottom: 16, borderRadius: 16, overflow: "hidden", border: "1px solid #f0e8de", background: "#fff" }}>
-
-                {/* Image area */}
-                <div style={{ height: 220, background: post.bg, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }} onClick={() => recipe && (window.location.href = `/meal/${recipe.id}`)}>
-                  <span style={{ fontSize: 90 }}>{post.emoji}</span>
-                  <div style={{ position: "absolute", bottom: 10, left: 12, background: "rgba(0,0,0,.4)", borderRadius: 20, padding: "3px 10px" }}>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: "#fff" }}>#letmecook</span>
-                  </div>
-                  {recipe && (
-                    <div style={{ position: "absolute", bottom: 10, right: 12, background: "rgba(0,0,0,.4)", borderRadius: 20, padding: "3px 10px" }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>⏱ {recipe.prepTimeMin}min · 🔥 {recipe.calories}kcal</span>
+              <div key={recipe.id} style={{ background: "#fff", border: `1.5px solid ${isPinned ? "#e8470d" : "#f0e8de"}`, borderRadius: 14, overflow: "hidden" }}>
+                <div onClick={() => router.push(`/meal/${recipe.id}`)} style={{ padding: "14px 14px 10px", cursor: "pointer" }}>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: "#fff8f4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>
+                      {recipe.emoji}
                     </div>
-                  )}
-                  {post.sharedBy === "You" && (
-                    <div style={{ position: "absolute", top: 10, right: 12, background: "#e8470d", borderRadius: 20, padding: "3px 10px" }}>
-                      <span style={{ fontSize: 11, fontWeight: 800, color: "#fff" }}>{tx.yourPost}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Post info */}
-                <div style={{ padding: "12px 14px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d", flexShrink: 0 }}>{post.avatar}</div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{post.sharedBy}</div>
-                      <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{post.timeAgo}</div>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 2 }}>{recipe.title}</div>
+                      <div style={{ fontSize: 12, color: "#a08060", fontWeight: 600, marginBottom: 6 }}>{recipe.description}</div>
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 11, color: "#c09878", background: "#f5ede6", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>⏱ {recipe.prepTimeMin} min</span>
+                        <span style={{ fontSize: 11, color: "#c09878", background: "#f5ede6", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>🔥 {recipe.calories} kcal</span>
+                        <span style={{ fontSize: 11, color: "#e8470d", background: "#fff0ec", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
+                          🛒 {missing} {lang === "fr" ? `ingrédient${missing > 1 ? "s" : ""} manquant${missing > 1 ? "s" : ""}` : `ingredient${missing > 1 ? "s" : ""} missing`}
+                        </span>
+                      </div>
                     </div>
                   </div>
-
-                  <div onClick={() => recipe && (window.location.href = `/meal/${recipe.id}`)} style={{ fontSize: 16, fontWeight: 800, color: "#3a1f0d", marginBottom: 10, cursor: recipe ? "pointer" : "default" }}>
-                    {post.title}
-                  </div>
-
-                  {/* Actions */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <button onClick={() => toggleLike(post.id)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 700, color: liked.has(post.id) ? "#e8470d" : "#c09878", fontFamily: "'Nunito', sans-serif" }}>
-                      {liked.has(post.id) ? "❤️" : "🤍"} {post.likes + (liked.has(post.id) ? 1 : 0)}
-                    </button>
-                    <button onClick={() => togglePin(post.recipeId, post.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", borderRadius: 10, border: "none", background: pinned.has(post.id) ? "#3a1f0d" : "#e8470d", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                      {pinned.has(post.id) ? tx.pinned : tx.pin}
-                    </button>
-                  </div>
+                </div>
+                <div style={{ display: "flex", borderTop: "1px solid #f0e8de" }}>
+                  <button onClick={() => router.push(`/meal/${recipe.id}`)} style={{ flex: 1, padding: "10px", background: "none", border: "none", fontSize: 12, fontWeight: 800, color: "#e8470d", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                    {lang === "fr" ? "Voir la recette →" : "View recipe →"}
+                  </button>
+                  <button onClick={() => togglePin(recipe.id)} style={{ padding: "10px 16px", background: isPinned ? "#fff0ec" : "none", border: "none", borderLeft: "1px solid #f0e8de", fontSize: 12, fontWeight: 800, color: isPinned ? "#e8470d" : "#c09878", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                    {isPinned ? (lang === "fr" ? "📌 Épinglé" : "📌 Pinned") : (lang === "fr" ? "📌 Épingler" : "📌 Pin")}
+                  </button>
                 </div>
               </div>
             );

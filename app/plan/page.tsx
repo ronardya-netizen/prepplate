@@ -1,241 +1,178 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import recipesData from "@/data/recipes.json";
-import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
-import { getLang, t } from "@/lib/i18n";
 
-interface Recipe { id: string; title: string; emoji: string; calories: number; prepTimeMin: number; ingredients: { ingredientId: string; quantity: number; unit: string; isOptional?: boolean }[]; }
-interface IngredientData { id: string; name: string; category: string; unit: string; basePrice: number; }
-interface GroceryResult { title: string; price: string; store: string; link: string; thumbnail: string; }
-interface CachedResults { results: GroceryResult[]; timestamp: number; }
 
-const CACHE_TTL = 24 * 60 * 60 * 1000;
+interface Recipe { id: string; title: string; description: string; prepTimeMin: number; calories: number; cuisine: string; emoji: string; mealType: string; mode: string[]; dietTags: string[]; ingredients: { ingredientId: string }[]; }
 
-function StoreLogo({ store }: { store: string }) {
-  const [error, setError] = useState(false);
-  const domain = store.toLowerCase().replace(/\s/g, "").replace(".ca", "").replace(".com", "");
-  const logoUrl = `https://logo.clearbit.com/${domain}.ca`;
-  if (error) return <div style={{ width: 20, height: 20, borderRadius: 4, background: "#f0e8de", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 800, color: "#c09878" }}>{store[0]}</div>;
-  return <img src={logoUrl} alt={store} width={20} height={20} style={{ borderRadius: 4, objectFit: "contain" }} onError={() => setError(true)} />;
-}
 
-export default function PlanPage() {
-  const [pantryIds, setPantryIds] = useState<string[]>([]);
-  const [savedMealIds, setSavedMealIds] = useState<string[]>([]);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [postalCode, setPostalCode] = useState("");
-  const [editingPostal, setEditingPostal] = useState(false);
-  const [postalInput, setPostalInput] = useState("");
-  const [lang, setLang] = useState<"en" | "fr">("en");
-  const [groceryData, setGroceryData] = useState<Record<string, GroceryResult[]>>({});
-  const [loadingItems, setLoadingItems] = useState<Set<string>>(new Set());
+const RECIPES = recipesData as Recipe[];
 
-  const T = t[lang].plan;
+
+const CUISINE_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "italian", label: "🍕 Italian" },
+  { id: "haitian", label: "🇭🇹 Haitian" },
+  { id: "french", label: "🥐 French" },
+  { id: "asian", label: "🥢 Asian" },
+  { id: "mexican", label: "🌮 Mexican" },
+  { id: "indian", label: "🍛 Indian" },
+  { id: "middle-eastern", label: "🧆 Middle Eastern" },
+  { id: "american", label: "🍔 American" },
+];
+
+
+export default function DiscoverPage() {
+  const [pantryIds, setPantryIds] = useState<Set<string>>(new Set());
+  const [pinned, setPinned] = useState<Set<string>>(new Set());
+  const [cuisine, setCuisine] = useState("all");
+  const [lang, setLang] = useState("en");
+  const router = useRouter();
+
 
   useEffect(() => {
     const id = getUserId();
-    setLang(getLang());
-    fetch(`/api/pantry?userId=${id}`).then((r) => r.json()).then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
-    const savedPostal = localStorage.getItem("prepplate-postal");
-    if (savedPostal) setPostalCode(savedPostal);
-    const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
-    setSavedMealIds(planMeals);
+    setLang(localStorage.getItem("prepplate-lang") ?? "en");
+    const saved = localStorage.getItem("prepplate-pinned") ?? "[]";
+    setPinned(new Set(JSON.parse(saved)));
+
+
+    fetch(`/api/pantry?userId=${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const ids = new Set<string>((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId));
+        setPantryIds(ids);
+      });
   }, []);
 
-  async function fetchGroceryResults(ingredientName: string, ingredientId: string) {
-    const cacheKey = `grocery-${ingredientId}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      const parsed: CachedResults = JSON.parse(cached);
-      if (Date.now() - parsed.timestamp < CACHE_TTL) {
-        setGroceryData((prev) => ({ ...prev, [ingredientId]: parsed.results }));
-        return;
-      }
-    }
-    setLoadingItems((prev) => new Set(prev).add(ingredientId));
-    try {
-      const res = await fetch(`/api/grocery-search?ingredient=${encodeURIComponent(ingredientName)}&postal=${postalCode || "H3A1B1"}`);
-      const data = await res.json();
-      const results = data.results ?? [];
-      setGroceryData((prev) => ({ ...prev, [ingredientId]: results }));
-      localStorage.setItem(cacheKey, JSON.stringify({ results, timestamp: Date.now() }));
-    } catch (e) { console.error(e); }
-    finally {
-      setLoadingItems((prev) => { const next = new Set(prev); next.delete(ingredientId); return next; });
-    }
-  }
 
-  function savePostal() {
-    const cleaned = postalInput.toUpperCase().trim();
-    setPostalCode(cleaned);
-    localStorage.setItem("prepplate-postal", cleaned);
-    setEditingPostal(false);
-  }
-
-  function unsaveMeal(recipeId: string, e: React.MouseEvent) {
-    e.stopPropagation();
-    const updated = savedMealIds.filter((id) => id !== recipeId);
-    setSavedMealIds(updated);
-    localStorage.setItem("plan-meals", JSON.stringify(updated));
-  }
-
-  function toggleChecked(id: string) {
-    const next = new Set(checked);
+  function togglePin(id: string) {
+    const next = new Set(pinned);
     next.has(id) ? next.delete(id) : next.add(id);
-    setChecked(next);
+    setPinned(next);
+    localStorage.setItem("prepplate-pinned", JSON.stringify([...next]));
   }
 
-  const recipes = recipesData as Recipe[];
-  const pantrySet = new Set(pantryIds);
-  const savedMeals = recipes.filter((r) => savedMealIds.includes(r.id));
-  const plannedMeals = savedMeals.length > 0 ? savedMeals : recipes.filter((r) => {
-    const missing = r.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
-    return missing.length > 0 && missing.length <= 3;
-  }).slice(0, 4);
 
-  const allMissingIds = new Set<string>();
-  plannedMeals.forEach((m) => m.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId)).forEach((i) => allMissingIds.add(i.ingredientId)));
+  // Only show recipes where user is MISSING 1-3 ingredients
+  const discoverRecipes = RECIPES.filter((r) => {
+    const missing = (r.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
+    return missing >= 1 && missing <= 3;
+  }).filter((r) => cuisine === "all" || r.cuisine === cuisine);
 
-  const shoppingItems = Array.from(allMissingIds).map((id) => {
-    const ing = (ingredientsData as IngredientData[]).find((i) => i.id === id);
-    if (!ing) return null;
-    return { id, name: ing.name, category: ing.category };
-  }).filter(Boolean) as { id: string; name: string; category: string }[];
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+
+
+      {/* Header */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <Image src="/logo-icon.png" alt="PrepPlate" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
+            <Image src="/logo-icon.png" alt="PrepPlate" width={36} height={36} style={{ borderRadius: 10, objectFit: "cover" }} />
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</span>
           </div>
-          <a href="/profile" style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, textDecoration: "none", cursor: "pointer" }}>👤</a>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
         </div>
         <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px", textShadow: "0 1px 3px rgba(0,0,0,.3)" }}>{T.title}</h1>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>{T.subtitle}</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>
+            {lang === "fr" ? "Découvrir" : "Discover"}
+          </h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
+            {lang === "fr"
+              ? `${discoverRecipes.length} recettes à 1-3 ingrédients près • ${pinned.size} épinglée${pinned.size !== 1 ? "s" : ""}`
+              : `${discoverRecipes.length} recipes within 1-3 ingredients • ${pinned.size} pinned`}
+          </p>
         </div>
       </div>
 
-      <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
 
-        {/* Postal code */}
-        <div style={{ margin: "0 16px 16px", padding: "12px 14px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: editingPostal ? 10 : 0 }}>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? T.postalSet(postalCode) : T.postalEmpty}</div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>
-                {postalCode ? (lang === "fr" ? "Résultats adaptés à votre région" : "Results tailored to your area") : T.postalSub}
+      <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 14 }}>
+
+
+        {/* Cuisine filter */}
+        <div style={{ display: "flex", gap: 6, padding: "0 16px 14px", overflowX: "auto", scrollbarWidth: "none" }}>
+          {CUISINE_FILTERS.map((c) => (
+            <button key={c.id} onClick={() => setCuisine(c.id)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: cuisine === c.id ? "#e8470d" : "#e8d8c8", background: cuisine === c.id ? "#e8470d" : "#fff", color: cuisine === c.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+
+        {/* Pinned strip */}
+        {pinned.size > 0 && (
+          <div style={{ padding: "0 16px 12px" }}>
+            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
+              📌 {lang === "fr" ? "Épinglées" : "Pinned"}
+            </div>
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none" }}>
+              {RECIPES.filter((r) => pinned.has(r.id)).map((r) => (
+                <div key={r.id} onClick={() => router.push(`/meal/${r.id}`)} style={{ flexShrink: 0, width: 110, padding: "10px 12px", background: "#fff8f4", border: "1.5px solid #e8470d", borderRadius: 12, cursor: "pointer" }}>
+                  <div style={{ fontSize: 22, marginBottom: 4 }}>{r.emoji}</div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: "#3a1f0d", lineHeight: 1.2 }}>{r.title}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+
+        {/* Recipe cards */}
+        <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+          {discoverRecipes.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ fontSize: 40, marginBottom: 10 }}>🛒</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 4 }}>
+                {lang === "fr" ? "Votre garde-manger est bien rempli!" : "Your pantry is well stocked!"}
+              </div>
+              <div style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}>
+                {lang === "fr" ? "Allez sur Accueil pour voir vos recettes disponibles." : "Head to Home to see recipes you can cook now."}
               </div>
             </div>
-            <button onClick={() => { setEditingPostal(!editingPostal); setPostalInput(postalCode); }} style={{ padding: "6px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-              {editingPostal ? T.cancel : postalCode ? T.change : T.add}
-            </button>
-          </div>
-          {editingPostal && (
-            <div style={{ display: "flex", gap: 8 }}>
-              <input value={postalInput} onChange={(e) => setPostalInput(e.target.value)} placeholder="e.g. H3A 1B1" maxLength={7} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", fontSize: 13, fontFamily: "'Nunito', sans-serif", outline: "none", textTransform: "uppercase" }} />
-              <button onClick={savePostal} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#e8470d", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>{T.save}</button>
-            </div>
-          )}
-        </div>
+          ) : discoverRecipes.map((recipe) => {
+            const isPinned = pinned.has(recipe.id);
+            const missing = (recipe.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
 
-        {/* Meals */}
-        <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-          {savedMeals.length > 0 ? `${savedMeals.length} ${lang === "fr" ? "repas sauvegardé" : "saved meal"}${savedMeals.length > 1 ? "s" : ""}` : T.mealsNext}
-        </div>
-        <div style={{ padding: "0 16px 16px" }}>
-          {plannedMeals.map((meal) => {
-            const missing = meal.ingredients.filter((i) => !i.isOptional && !pantrySet.has(i.ingredientId));
-            const isSaved = savedMealIds.includes(meal.id);
+
             return (
-              <div key={meal.id} onClick={() => window.location.href = `/meal/${meal.id}`} style={{ padding: "10px 14px", background: "#fff", border: isSaved ? "1.5px solid #e8470d" : "1px solid #f0e8de", borderRadius: 12, marginBottom: 8, cursor: "pointer" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: "#fff8f4", border: "1px solid #fad8c8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{meal.emoji}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d" }}>{meal.title}</div>
-                    <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>{T.need(missing.length)}</div>
+              <div key={recipe.id} style={{ background: "#fff", border: `1.5px solid ${isPinned ? "#e8470d" : "#f0e8de"}`, borderRadius: 14, overflow: "hidden" }}>
+                <div onClick={() => router.push(`/meal/${recipe.id}`)} style={{ padding: "14px 14px 10px", cursor: "pointer" }}>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: "#fff8f4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>
+                      {recipe.emoji}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 2 }}>{recipe.title}</div>
+                      <div style={{ fontSize: 12, color: "#a08060", fontWeight: 600, marginBottom: 6 }}>{recipe.description}</div>
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 11, color: "#c09878", background: "#f5ede6", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>⏱ {recipe.prepTimeMin} min</span>
+                        <span style={{ fontSize: 11, color: "#c09878", background: "#f5ede6", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>🔥 {recipe.calories} kcal</span>
+                        <span style={{ fontSize: 11, color: "#e8470d", background: "#fff0ec", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
+                          🛒 {missing} {lang === "fr" ? `ingrédient${missing > 1 ? "s" : ""} manquant${missing > 1 ? "s" : ""}` : `ingredient${missing > 1 ? "s" : ""} missing`}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  {isSaved && (
-                    <button onClick={(e) => unsaveMeal(meal.id, e)} style={{ fontSize: 9, fontWeight: 800, background: "#fff0ec", color: "#e8470d", padding: "2px 7px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
-                      {lang === "fr" ? "Retirer" : "Remove"}
-                    </button>
-                  )}
+                </div>
+                <div style={{ display: "flex", borderTop: "1px solid #f0e8de" }}>
+                  <button onClick={() => router.push(`/meal/${recipe.id}`)} style={{ flex: 1, padding: "10px", background: "none", border: "none", fontSize: 12, fontWeight: 800, color: "#e8470d", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                    {lang === "fr" ? "Voir la recette →" : "View recipe →"}
+                  </button>
+                  <button onClick={() => togglePin(recipe.id)} style={{ padding: "10px 16px", background: isPinned ? "#fff0ec" : "none", border: "none", borderLeft: "1px solid #f0e8de", fontSize: 12, fontWeight: 800, color: isPinned ? "#e8470d" : "#c09878", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                    {isPinned ? (lang === "fr" ? "📌 Épinglé" : "📌 Pinned") : (lang === "fr" ? "📌 Épingler" : "📌 Pin")}
+                  </button>
                 </div>
               </div>
             );
           })}
         </div>
-
-        {/* Grocery list */}
-        {shoppingItems.length > 0 && (
-          <>
-            <div style={{ margin: "0 16px 12px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "12px 14px" }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{T.groceryList}</div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{T.itemsRemaining(shoppingItems.length - checked.size)}</div>
-            </div>
-
-            <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              {lang === "fr" ? "Appuyez sur un article pour trouver le meilleur prix à proximité" : "Tap an item to find the best price nearby"}
-            </div>
-
-            <div style={{ padding: "0 16px" }}>
-              {shoppingItems.map((item) => {
-                const results = groceryData[item.id];
-                const isLoading = loadingItems.has(item.id);
-                const cheapest = results?.[0];
-                return (
-                  <div key={item.id} style={{ marginBottom: 10 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: results ? "12px 12px 0 0" : 12, opacity: checked.has(item.id) ? 0.5 : 1 }}>
-                      <div onClick={() => toggleChecked(item.id)} style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, background: checked.has(item.id) ? "#e8470d" : "#fff", border: `2px solid ${checked.has(item.id) ? "#e8470d" : "#e8d8c8"}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
-                        {checked.has(item.id) ? "✓" : ""}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d", textDecoration: checked.has(item.id) ? "line-through" : "none" }}>{item.name}</div>
-                        {cheapest && <div style={{ fontSize: 11, color: "#2d6a3f", fontWeight: 700, marginTop: 1 }}>Best: {cheapest.price} @ {cheapest.store}</div>}
-                      </div>
-                      <button onClick={() => fetchGroceryResults(item.name, item.id)} disabled={isLoading} style={{ padding: "6px 10px", borderRadius: 8, background: results ? "#2d6a3f" : "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, cursor: "pointer", border: "none", fontFamily: "'Nunito', sans-serif", flexShrink: 0 }}>
-                        {isLoading ? "..." : results ? (lang === "fr" ? "Voir" : "View") : (lang === "fr" ? "Prix →" : "Prices →")}
-                      </button>
-                    </div>
-
-                    {results && results.length > 0 && (
-                      <div style={{ border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", overflow: "hidden" }}>
-                        {results.slice(0, 4).map((r, i) => (
-                          <a key={i} href={r.link} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px", background: i === 0 ? "#f0faf3" : "#fff", borderTop: "0.5px solid #f0e8de", textDecoration: "none" }}>
-                            {r.thumbnail && <img src={r.thumbnail} alt={r.title} width={36} height={36} style={{ borderRadius: 6, objectFit: "contain", flexShrink: 0 }} />}
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: 12, fontWeight: 700, color: "#3a1f0d", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</div>
-                              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
-                                <StoreLogo store={r.store} />
-                                <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{r.store}</span>
-                                {i === 0 && <span style={{ fontSize: 9, fontWeight: 800, background: "#e8f5ec", color: "#2d6a3f", padding: "1px 5px", borderRadius: 4 }}>BEST</span>}
-                              </div>
-                            </div>
-                            <div style={{ textAlign: "right", flexShrink: 0 }}>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: i === 0 ? "#2d6a3f" : "#3a1f0d" }}>{r.price}</div>
-                              <div style={{ fontSize: 10, color: "#e8470d", fontWeight: 700 }}>{lang === "fr" ? "Acheter →" : "Buy →"}</div>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                    )}
-
-                    {results && results.length === 0 && (
-                      <div style={{ padding: "8px 14px", background: "#fff8f4", border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", fontSize: 12, color: "#c09878", fontWeight: 600 }}>
-                        {lang === "fr" ? "Aucun résultat trouvé" : "No results found"}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        )}
       </div>
     </main>
   );
 }
+
+
