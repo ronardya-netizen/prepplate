@@ -26,7 +26,7 @@ const BG_COLORS = [
 
 const T = {
   en: {
-    title: "Discover", subtitle: "#letmecook — see what your community is making",
+    title: "Discover", subtitle: "See what your friends are making!",
     share: "+ Share", shareTitle: "Share to #letmecook", whatCook: "What did you cook?",
     selectRecipe: "Select a recipe...", hashtagNote: "will be added automatically",
     cancel: "Cancel", post: "Post", posted: "Posted to #letmecook!", postedSub: "Your meal is now on the feed",

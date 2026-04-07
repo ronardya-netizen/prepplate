@@ -179,7 +179,7 @@ export default function PlanPage() {
             </div>
 
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              {lang === "fr" ? "Appuyez pour voir les prix en temps réel" : "Tap an item to see real-time prices"}
+              {lang === "fr" ? "Appuyez sur un article pour trouver le meilleur prix à proximité" : "Tap an item to find the best price nearby"}
             </div>
 
             <div style={{ padding: "0 16px" }}>
