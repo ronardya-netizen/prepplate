@@ -1,22 +1,702 @@
 [
-  { "id": "ing-001", "name": "Pasta",         "category": "grain",   "unit": "g",     "basePrice": 0.004 },
-  { "id": "ing-002", "name": "Garlic",        "category": "produce", "unit": "piece", "basePrice": 0.30 },
-  { "id": "ing-003", "name": "Butter",        "category": "dairy",   "unit": "g",     "basePrice": 0.015 },
-  { "id": "ing-004", "name": "Olive oil",     "category": "pantry",  "unit": "tbsp",  "basePrice": 0.20 },
-  { "id": "ing-005", "name": "Parmesan",      "category": "dairy",   "unit": "g",     "basePrice": 0.05 },
-  { "id": "ing-006", "name": "Chickpeas",     "category": "protein", "unit": "g",     "basePrice": 0.003 },
-  { "id": "ing-007", "name": "Bell pepper",   "category": "produce", "unit": "piece", "basePrice": 1.20 },
-  { "id": "ing-008", "name": "Onion",         "category": "produce", "unit": "piece", "basePrice": 0.50 },
-  { "id": "ing-009", "name": "Cumin",         "category": "pantry",  "unit": "tbsp",  "basePrice": 0.10 },
-  { "id": "ing-010", "name": "Canned tomato", "category": "pantry",  "unit": "g",     "basePrice": 0.002 },
-  { "id": "ing-011", "name": "Rice",          "category": "grain",   "unit": "g",     "basePrice": 0.003 },
-  { "id": "ing-012", "name": "Vegetable stock","category": "pantry", "unit": "ml",    "basePrice": 0.002 },
-  { "id": "ing-013", "name": "Lemon",         "category": "produce", "unit": "piece", "basePrice": 0.60 },
-  { "id": "ing-014", "name": "Eggs",          "category": "protein", "unit": "piece", "basePrice": 0.40 },
-  { "id": "ing-015", "name": "Spinach",       "category": "produce", "unit": "g",     "basePrice": 0.012 },
-  { "id": "ing-016", "name": "Feta cheese",   "category": "dairy",   "unit": "g",     "basePrice": 0.04 },
-  { "id": "ing-017", "name": "Black beans",   "category": "protein", "unit": "g",     "basePrice": 0.003 },
-  { "id": "ing-018", "name": "Tortillas",     "category": "grain",   "unit": "piece", "basePrice": 0.35 },
-  { "id": "ing-019", "name": "Salsa",         "category": "pantry",  "unit": "tbsp",  "basePrice": 0.15 },
-  { "id": "ing-020", "name": "Avocado",       "category": "produce", "unit": "piece", "basePrice": 1.40 }
+  {
+    "id": "ing-001",
+    "name": "Pasta",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.003
+  },
+  {
+    "id": "ing-002",
+    "name": "Garlic",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.3
+  },
+  {
+    "id": "ing-003",
+    "name": "Butter",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.011
+  },
+  {
+    "id": "ing-004",
+    "name": "Olive oil",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.016
+  },
+  {
+    "id": "ing-005",
+    "name": "Parmesan",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.03
+  },
+  {
+    "id": "ing-006",
+    "name": "Chickpeas",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.002
+  },
+  {
+    "id": "ing-007",
+    "name": "Bell pepper",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.5
+  },
+  {
+    "id": "ing-008",
+    "name": "Onion",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.79
+  },
+  {
+    "id": "ing-009",
+    "name": "Cumin",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-010",
+    "name": "Canned tomato",
+    "category": "pantry",
+    "unit": "g",
+    "basePrice": 0.002
+  },
+  {
+    "id": "ing-011",
+    "name": "Rice",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.005
+  },
+  {
+    "id": "ing-012",
+    "name": "Vegetable stock",
+    "category": "pantry",
+    "unit": "ml",
+    "basePrice": 0.003
+  },
+  {
+    "id": "ing-013",
+    "name": "Lemon",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.6
+  },
+  {
+    "id": "ing-014",
+    "name": "Eggs",
+    "category": "protein",
+    "unit": "piece",
+    "basePrice": 0.33
+  },
+  {
+    "id": "ing-015",
+    "name": "Spinach",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.012
+  },
+  {
+    "id": "ing-016",
+    "name": "Feta cheese",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.04
+  },
+  {
+    "id": "ing-017",
+    "name": "Black beans",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.002
+  },
+  {
+    "id": "ing-018",
+    "name": "Tortillas",
+    "category": "grain",
+    "unit": "piece",
+    "basePrice": 0.35
+  },
+  {
+    "id": "ing-019",
+    "name": "Salsa",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.15
+  },
+  {
+    "id": "ing-020",
+    "name": "Avocado",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.4
+  },
+  {
+    "id": "ing-021",
+    "name": "Banana",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.25
+  },
+  {
+    "id": "ing-022",
+    "name": "Carrot",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.4
+  },
+  {
+    "id": "ing-023",
+    "name": "Potato",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.5
+  },
+  {
+    "id": "ing-024",
+    "name": "Sweet potato",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.8
+  },
+  {
+    "id": "ing-025",
+    "name": "Zucchini",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.9
+  },
+  {
+    "id": "ing-026",
+    "name": "Eggplant",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.2
+  },
+  {
+    "id": "ing-027",
+    "name": "Mushrooms",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.015
+  },
+  {
+    "id": "ing-028",
+    "name": "Tomato",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.7
+  },
+  {
+    "id": "ing-029",
+    "name": "Cucumber",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.8
+  },
+  {
+    "id": "ing-030",
+    "name": "Bread",
+    "category": "grain",
+    "unit": "slice",
+    "basePrice": 0.2
+  },
+  {
+    "id": "ing-031",
+    "name": "Milk",
+    "category": "dairy",
+    "unit": "ml",
+    "basePrice": 0.002
+  },
+  {
+    "id": "ing-032",
+    "name": "Yogurt",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.008
+  },
+  {
+    "id": "ing-033",
+    "name": "Cheddar cheese",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.03
+  },
+  {
+    "id": "ing-034",
+    "name": "Cream",
+    "category": "dairy",
+    "unit": "ml",
+    "basePrice": 0.006
+  },
+  {
+    "id": "ing-035",
+    "name": "Lentils",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.003
+  },
+  {
+    "id": "ing-036",
+    "name": "Tofu",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.008
+  },
+  {
+    "id": "ing-037",
+    "name": "Apple",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.6
+  },
+  {
+    "id": "ing-038",
+    "name": "Mango",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.2
+  },
+  {
+    "id": "ing-039",
+    "name": "Peanut butter",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.2
+  },
+  {
+    "id": "ing-040",
+    "name": "Coconut milk",
+    "category": "pantry",
+    "unit": "ml",
+    "basePrice": 0.004
+  },
+  {
+    "id": "ing-041",
+    "name": "Broccoli",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.5
+  },
+  {
+    "id": "ing-042",
+    "name": "Cauliflower",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.8
+  },
+  {
+    "id": "ing-043",
+    "name": "Leek",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.2
+  },
+  {
+    "id": "ing-044",
+    "name": "Celery",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.8
+  },
+  {
+    "id": "ing-045",
+    "name": "Green onion",
+    "category": "produce",
+    "unit": "bunch",
+    "basePrice": 0.99
+  },
+  {
+    "id": "ing-046",
+    "name": "Ginger",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.5
+  },
+  {
+    "id": "ing-047",
+    "name": "Lime",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.5
+  },
+  {
+    "id": "ing-048",
+    "name": "Orange",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.7
+  },
+  {
+    "id": "ing-049",
+    "name": "Strawberries",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.015
+  },
+  {
+    "id": "ing-050",
+    "name": "Blueberries",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.02
+  },
+  {
+    "id": "ing-051",
+    "name": "Corn",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.6
+  },
+  {
+    "id": "ing-052",
+    "name": "Peas",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.005
+  },
+  {
+    "id": "ing-053",
+    "name": "Kale",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.01
+  },
+  {
+    "id": "ing-054",
+    "name": "Lettuce",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.5
+  },
+  {
+    "id": "ing-055",
+    "name": "Arugula",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.02
+  },
+  {
+    "id": "ing-056",
+    "name": "Chicken breast",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.015
+  },
+  {
+    "id": "ing-057",
+    "name": "Ground beef",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.012
+  },
+  {
+    "id": "ing-058",
+    "name": "Salmon",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.03
+  },
+  {
+    "id": "ing-059",
+    "name": "Shrimp",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.025
+  },
+  {
+    "id": "ing-060",
+    "name": "Canned tuna",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.01
+  },
+  {
+    "id": "ing-061",
+    "name": "Pork chop",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.012
+  },
+  {
+    "id": "ing-062",
+    "name": "Lamb",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.025
+  },
+  {
+    "id": "ing-063",
+    "name": "Turkey",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.014
+  },
+  {
+    "id": "ing-064",
+    "name": "Kidney beans",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.003
+  },
+  {
+    "id": "ing-065",
+    "name": "White beans",
+    "category": "protein",
+    "unit": "g",
+    "basePrice": 0.003
+  },
+  {
+    "id": "ing-066",
+    "name": "Flour",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.002
+  },
+  {
+    "id": "ing-067",
+    "name": "Oats",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.003
+  },
+  {
+    "id": "ing-068",
+    "name": "Breadcrumbs",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.005
+  },
+  {
+    "id": "ing-069",
+    "name": "Couscous",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.004
+  },
+  {
+    "id": "ing-070",
+    "name": "Quinoa",
+    "category": "grain",
+    "unit": "g",
+    "basePrice": 0.01
+  },
+  {
+    "id": "ing-071",
+    "name": "Naan bread",
+    "category": "grain",
+    "unit": "piece",
+    "basePrice": 0.8
+  },
+  {
+    "id": "ing-072",
+    "name": "Pita bread",
+    "category": "grain",
+    "unit": "piece",
+    "basePrice": 0.4
+  },
+  {
+    "id": "ing-073",
+    "name": "Soy sauce",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-074",
+    "name": "Sesame oil",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.25
+  },
+  {
+    "id": "ing-075",
+    "name": "Honey",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.2
+  },
+  {
+    "id": "ing-076",
+    "name": "Vinegar",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.05
+  },
+  {
+    "id": "ing-077",
+    "name": "Dijon mustard",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.15
+  },
+  {
+    "id": "ing-078",
+    "name": "Tomato paste",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-079",
+    "name": "Paprika",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-080",
+    "name": "Turmeric",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-081",
+    "name": "Cinnamon",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-082",
+    "name": "Chili flakes",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-083",
+    "name": "Oregano",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-084",
+    "name": "Thyme",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-085",
+    "name": "Basil",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.1
+  },
+  {
+    "id": "ing-086",
+    "name": "Bay leaf",
+    "category": "pantry",
+    "unit": "piece",
+    "basePrice": 0.05
+  },
+  {
+    "id": "ing-087",
+    "name": "Tahini",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.25
+  },
+  {
+    "id": "ing-088",
+    "name": "Harissa",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.2
+  },
+  {
+    "id": "ing-089",
+    "name": "Curry powder",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.15
+  },
+  {
+    "id": "ing-090",
+    "name": "Garam masala",
+    "category": "pantry",
+    "unit": "tbsp",
+    "basePrice": 0.15
+  },
+  {
+    "id": "ing-091",
+    "name": "Mozzarella",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.04
+  },
+  {
+    "id": "ing-092",
+    "name": "Ricotta",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.03
+  },
+  {
+    "id": "ing-093",
+    "name": "Brie",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.06
+  },
+  {
+    "id": "ing-094",
+    "name": "Heavy cream",
+    "category": "dairy",
+    "unit": "ml",
+    "basePrice": 0.008
+  },
+  {
+    "id": "ing-095",
+    "name": "Sour cream",
+    "category": "dairy",
+    "unit": "g",
+    "basePrice": 0.008
+  },
+  {
+    "id": "ing-096",
+    "name": "Plantain",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.8
+  },
+  {
+    "id": "ing-097",
+    "name": "Scotch bonnet",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 0.3
+  },
+  {
+    "id": "ing-098",
+    "name": "Malanga",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 1.2
+  },
+  {
+    "id": "ing-099",
+    "name": "Pumpkin",
+    "category": "produce",
+    "unit": "piece",
+    "basePrice": 2.5
+  },
+  {
+    "id": "ing-100",
+    "name": "Watercress",
+    "category": "produce",
+    "unit": "g",
+    "basePrice": 0.015
+  }
 ]

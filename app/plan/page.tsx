@@ -10,31 +10,29 @@ interface Recipe { id: string; title: string; emoji: string; calories: number; p
 interface IngredientData { id: string; name: string; category: string; unit: string; basePrice: number; }
 
 const MONTREAL_STORES = [
-  { id: "maxi", name: "Maxi", searchUrl: "https://www.maxi.ca/en/search?q=", website: "https://www.maxi.ca", emoji: "🔴" },
-  { id: "iga", name: "IGA", searchUrl: "https://www.iga.net/en/search?term=", website: "https://www.iga.net", emoji: "🟢" },
-  { id: "metro", name: "Metro", searchUrl: "https://www.metro.ca/en/search?filter=", website: "https://www.metro.ca", emoji: "🔵" },
-  { id: "superc", name: "Super C", searchUrl: "https://www.superc.ca/en/search?q=", website: "https://www.superc.ca", emoji: "🟡" },
-  { id: "provigo", name: "Provigo", searchUrl: "https://www.provigo.ca/en/search?filter=", website: "https://www.provigo.ca", emoji: "🟠" },
-  { id: "walmart", name: "Walmart", searchUrl: "https://www.walmart.ca/search?q=", website: "https://www.walmart.ca", emoji: "🔵" },
-  { id: "costco", name: "Costco", searchUrl: "https://www.costco.ca/CatalogSearch?keyword=", website: "https://www.costco.ca", emoji: "⭕" },
-  { id: "pa", name: "PA Supermarché", searchUrl: "https://www.pasupermarche.com/search?q=", website: "https://www.pasupermarche.com", emoji: "🟣" },
-  { id: "adonis", name: "Marché Adonis", searchUrl: "https://www.marcheadonis.com/en/search?q=", website: "https://www.marcheadonis.com", emoji: "🟤" },
-  { id: "avril", name: "Avril", searchUrl: "https://www.avril.ca/en/search?q=", website: "https://www.avril.ca", emoji: "🌿" },
-  { id: "rachelle", name: "Rachelle-Béry", searchUrl: "https://www.rachelle-bery.com/recherche?q=", website: "https://www.rachelle-bery.com", emoji: "🌱" },
-  { id: "instacart", name: "Instacart", searchUrl: "https://www.instacart.ca/store/search_v3/term?term=", website: "https://www.instacart.ca", emoji: "🛒" },
+  { id: "maxi",     name: "Maxi",           searchUrl: "https://www.maxi.ca/en/search?q=",                    logo: "https://www.maxi.ca/favicon.ico",                          bestFor: ["grain", "pantry", "dairy"] },
+  { id: "iga",      name: "IGA",            searchUrl: "https://www.iga.net/en/search?term=",                  logo: "https://www.iga.net/favicon.ico",                          bestFor: ["produce", "dairy", "protein"] },
+  { id: "metro",    name: "Metro",          searchUrl: "https://www.metro.ca/en/search?filter=",               logo: "https://www.metro.ca/favicon.ico",                         bestFor: ["produce", "dairy"] },
+  { id: "superc",   name: "Super C",        searchUrl: "https://www.superc.ca/en/search?q=",                   logo: "https://www.superc.ca/favicon.ico",                        bestFor: ["grain", "pantry"] },
+  { id: "provigo",  name: "Provigo",        searchUrl: "https://www.provigo.ca/en/search?filter=",             logo: "https://www.provigo.ca/favicon.ico",                       bestFor: ["dairy", "grain"] },
+  { id: "walmart",  name: "Walmart",        searchUrl: "https://www.walmart.ca/search?q=",                     logo: "https://i5.walmartimages.ca/favicon.ico",                  bestFor: ["pantry", "grain"] },
+  { id: "costco",   name: "Costco",         searchUrl: "https://www.costco.ca/CatalogSearch?keyword=",         logo: "https://www.costco.ca/favicon.ico",                        bestFor: ["protein", "grain", "dairy"] },
+  { id: "pa",       name: "PA Supermarché", searchUrl: "https://www.pasupermarche.com/search?q=",              logo: "https://www.pasupermarche.com/favicon.ico",                bestFor: ["produce", "pantry"] },
+  { id: "adonis",   name: "Adonis",         searchUrl: "https://www.marcheadonis.com/en/search?q=",            logo: "https://www.marcheadonis.com/favicon.ico",                 bestFor: ["produce", "protein"] },
+  { id: "avril",    name: "Avril",          searchUrl: "https://www.avril.ca/en/search?q=",                    logo: "https://www.avril.ca/favicon.ico",                         bestFor: ["produce", "dairy"] },
+  { id: "rachelle", name: "Rachelle-Béry",  searchUrl: "https://www.rachelle-bery.com/recherche?q=",           logo: "https://www.rachelle-bery.com/favicon.ico",                bestFor: ["produce"] },
+  { id: "instacart","name": "Instacart",    searchUrl: "https://www.instacart.ca/store/search_v3/term?term=",  logo: "https://www.instacart.ca/favicon.ico",                     bestFor: ["grain", "pantry", "produce", "dairy", "protein"] },
 ];
 
-function getStoresForPostal(postalCode: string): typeof MONTREAL_STORES {
-  const prefix = postalCode.toUpperCase().replace(/\s/g, "").substring(0, 2);
-  const allMontreal = ["H1","H2","H3","H4","H5","H7","H8","H9","J4","J5","J6","J7","J8"];
-  const isMontreal = allMontreal.some((p) => prefix.startsWith(p));
-  if (isMontreal) return MONTREAL_STORES;
-  // Ontario
-  const onPrefixes = ["M1","M2","M3","M4","M5","M6","K1","K2","L1","L2","L3","L4"];
-  if (onPrefixes.some((p) => prefix.startsWith(p))) {
-    return MONTREAL_STORES.filter((s) => ["walmart", "costco", "instacart"].includes(s.id));
-  }
-  return MONTREAL_STORES.filter((s) => ["walmart", "instacart"].includes(s.id));
+function StoreLogo({ store }: { store: typeof MONTREAL_STORES[0] }) {
+  const [error, setError] = useState(false);
+  if (error) return <div style={{ width: 24, height: 24, borderRadius: 4, background: "#f0e8de", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#c09878" }}>{store.name[0]}</div>;
+  return <img src={store.logo} alt={store.name} width={24} height={24} style={{ borderRadius: 4, objectFit: "contain" }} onError={() => setError(true)} />;
+}
+
+function getSuggestedStore(category: string, preferredStoreId: string) {
+  if (preferredStoreId) return MONTREAL_STORES.find((s) => s.id === preferredStoreId) ?? MONTREAL_STORES[0];
+  return MONTREAL_STORES.find((s) => s.bestFor.includes(category)) ?? MONTREAL_STORES[0];
 }
 
 export default function PlanPage() {
@@ -44,7 +42,7 @@ export default function PlanPage() {
   const [postalCode, setPostalCode] = useState("");
   const [editingPostal, setEditingPostal] = useState(false);
   const [postalInput, setPostalInput] = useState("");
-  const [selectedStore, setSelectedStore] = useState<string>("");
+  const [preferredStoreId, setPreferredStoreId] = useState("");
   const [lang, setLang] = useState<"en" | "fr">("en");
 
   const T = t[lang].plan;
@@ -53,10 +51,10 @@ export default function PlanPage() {
     const id = getUserId();
     setLang(getLang());
     fetch(`/api/pantry?userId=${id}`).then((r) => r.json()).then((data) => setPantryIds((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
-    const saved = localStorage.getItem("prepplate-postal");
-    if (saved) setPostalCode(saved);
+    const savedPostal = localStorage.getItem("prepplate-postal");
+    if (savedPostal) setPostalCode(savedPostal);
     const savedStore = localStorage.getItem("prepplate-store");
-    if (savedStore) setSelectedStore(savedStore);
+    if (savedStore) setPreferredStoreId(savedStore);
     const planMeals = JSON.parse(localStorage.getItem("plan-meals") ?? "[]");
     setSavedMealIds(planMeals);
   }, []);
@@ -66,11 +64,6 @@ export default function PlanPage() {
     setPostalCode(cleaned);
     localStorage.setItem("prepplate-postal", cleaned);
     setEditingPostal(false);
-  }
-
-  function selectStore(storeId: string) {
-    setSelectedStore(storeId);
-    localStorage.setItem("prepplate-store", storeId);
   }
 
   function unsaveMeal(recipeId: string) {
@@ -84,9 +77,6 @@ export default function PlanPage() {
     next.has(id) ? next.delete(id) : next.add(id);
     setChecked(next);
   }
-
-  const nearbyStores = postalCode ? getStoresForPostal(postalCode) : MONTREAL_STORES;
-  const activeStore = nearbyStores.find((s) => s.id === selectedStore) ?? nearbyStores[0];
 
   const recipes = recipesData as Recipe[];
   const pantrySet = new Set(pantryIds);
@@ -102,8 +92,9 @@ export default function PlanPage() {
   const shoppingItems = Array.from(allMissingIds).map((id) => {
     const ing = (ingredientsData as IngredientData[]).find((i) => i.id === id);
     if (!ing) return null;
-    return { id, name: ing.name };
-  }).filter(Boolean) as { id: string; name: string }[];
+    const suggestedStore = getSuggestedStore(ing.category, preferredStoreId);
+    return { id, name: ing.name, category: ing.category, suggestedStore };
+  }).filter(Boolean) as { id: string; name: string; category: string; suggestedStore: typeof MONTREAL_STORES[0] }[];
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
@@ -128,7 +119,7 @@ export default function PlanPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: editingPostal ? 10 : 0 }}>
             <div>
               <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{postalCode ? T.postalSet(postalCode) : T.postalEmpty}</div>
-              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? `${nearbyStores.length} ${lang === "fr" ? "magasins près de vous" : "stores near you"}` : T.postalSub}</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{postalCode ? `${MONTREAL_STORES.length} ${lang === "fr" ? "magasins disponibles" : "stores available"}` : T.postalSub}</div>
             </div>
             <button onClick={() => { setEditingPostal(!editingPostal); setPostalInput(postalCode); }} style={{ padding: "6px 12px", borderRadius: 8, border: "1.5px solid #e8d8c8", background: "#fff", color: "#e8470d", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
               {editingPostal ? T.cancel : postalCode ? T.change : T.add}
@@ -142,27 +133,22 @@ export default function PlanPage() {
           )}
         </div>
 
-        {/* Store selector */}
+        {/* Preferred store */}
         <div style={{ padding: "0 16px 16px" }}>
           <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
-            {lang === "fr" ? "Choisir votre magasin" : "Choose your store"}
+            {lang === "fr" ? "Votre magasin préféré" : "Your preferred store"}
           </div>
-          <div style={{ display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
-            {nearbyStores.map((store) => (
-              <button key={store.id} onClick={() => selectStore(store.id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "8px 10px", borderRadius: 12, border: "1.5px solid", borderColor: activeStore.id === store.id ? "#e8470d" : "#e8d8c8", background: activeStore.id === store.id ? "#fff0ec" : "#fff", cursor: "pointer", fontFamily: "'Nunito', sans-serif", whiteSpace: "nowrap", flexShrink: 0 }}>
-                <span style={{ fontSize: 18 }}>{store.emoji}</span>
-                <span style={{ fontSize: 10, fontWeight: 800, color: activeStore.id === store.id ? "#e8470d" : "#a08060" }}>{store.name}</span>
+          <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+            {MONTREAL_STORES.map((store) => (
+              <button key={store.id} onClick={() => { const next = preferredStoreId === store.id ? "" : store.id; setPreferredStoreId(next); localStorage.setItem("prepplate-store", next); }} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "8px 10px", borderRadius: 12, border: "1.5px solid", borderColor: preferredStoreId === store.id ? "#e8470d" : "#e8d8c8", background: preferredStoreId === store.id ? "#fff0ec" : "#fff", cursor: "pointer", fontFamily: "'Nunito', sans-serif", whiteSpace: "nowrap", flexShrink: 0, minWidth: 60 }}>
+                <StoreLogo store={store} />
+                <span style={{ fontSize: 9, fontWeight: 800, color: preferredStoreId === store.id ? "#e8470d" : "#a08060" }}>{store.name}</span>
               </button>
             ))}
           </div>
-          {activeStore && (
-            <div style={{ marginTop: 8, padding: "8px 12px", background: "#fff8f4", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#3a1f0d" }}>
-                {lang === "fr" ? `Acheter chez ${activeStore.name}` : `Shopping at ${activeStore.name}`}
-              </span>
-              <a href={activeStore.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, fontWeight: 800, color: "#e8470d", textDecoration: "none" }}>
-                {lang === "fr" ? "Visiter →" : "Visit →"}
-              </a>
+          {!preferredStoreId && (
+            <div style={{ marginTop: 8, fontSize: 11, color: "#c09878", fontWeight: 600 }}>
+              {lang === "fr" ? "Sélectionnez un magasin ou nous suggérerons le meilleur par catégorie" : "Select a store or we'll suggest the best one per category"}
             </div>
           )}
         </div>
@@ -193,22 +179,17 @@ export default function PlanPage() {
         {/* Grocery list */}
         {shoppingItems.length > 0 && (
           <>
-            <div style={{ margin: "0 16px 12px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{T.groceryList}</div>
-                <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{T.itemsRemaining(shoppingItems.length - checked.size)}</div>
-              </div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#2d6a3f", background: "#f0faf3", padding: "4px 10px", borderRadius: 8 }}>
-                {activeStore.emoji} {activeStore.name}
-              </div>
+            <div style={{ margin: "0 16px 12px", background: "#fff8f4", border: "1px solid #fad8c8", borderRadius: 12, padding: "12px 14px" }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{T.groceryList}</div>
+              <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 2 }}>{T.itemsRemaining(shoppingItems.length - checked.size)}</div>
             </div>
 
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              {lang === "fr" ? `Acheter chez ${activeStore.name}` : `Buy at ${activeStore.name}`}
+              {lang === "fr" ? "Appuyez sur Acheter pour voir les prix en temps réel" : "Tap Buy to see real-time prices"}
             </div>
             <div style={{ padding: "0 16px" }}>
               {shoppingItems.map((item) => {
-                const buyUrl = `${activeStore.searchUrl}${encodeURIComponent(item.name)}`;
+                const buyUrl = `${item.suggestedStore.searchUrl}${encodeURIComponent(item.name)}`;
                 return (
                   <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: checked.has(item.id) ? "#f5f0e8" : "#fff", border: "1px solid #f0e8de", borderRadius: 12, marginBottom: 6, opacity: checked.has(item.id) ? 0.5 : 1 }}>
                     <div onClick={() => toggleChecked(item.id)} style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0, background: checked.has(item.id) ? "#e8470d" : "#fff", border: `2px solid ${checked.has(item.id) ? "#e8470d" : "#e8d8c8"}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
@@ -216,7 +197,11 @@ export default function PlanPage() {
                     </div>
                     <div onClick={() => toggleChecked(item.id)} style={{ flex: 1, cursor: "pointer" }}>
                       <div style={{ fontSize: 14, fontWeight: 800, color: "#3a1f0d", textDecoration: checked.has(item.id) ? "line-through" : "none" }}>{item.name}</div>
-                      <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600, marginTop: 1 }}>{activeStore.name}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 2 }}>
+                        <StoreLogo store={item.suggestedStore} />
+                        <span style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>{item.suggestedStore.name}</span>
+                        {!preferredStoreId && <span style={{ fontSize: 9, color: "#2d6a3f", fontWeight: 700, background: "#f0faf3", padding: "1px 5px", borderRadius: 4 }}>{lang === "fr" ? "suggéré" : "suggested"}</span>}
+                      </div>
                     </div>
                     <a href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ padding: "6px 10px", borderRadius: 8, background: "#e8470d", color: "#fff", fontSize: 11, fontWeight: 800, textDecoration: "none", flexShrink: 0 }}>
                       {T.buy} →
