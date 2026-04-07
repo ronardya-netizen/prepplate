@@ -8,44 +8,12 @@ import { getUserId } from "@/lib/user";
 
 interface Recipe { id: string; title: string; description: string; prepTimeMin: number; calories: number; cuisine: string; emoji: string; mealType: string; mode: string[]; dietTags: string[]; ingredients: { ingredientId: string; quantity: number; unit: string }[]; }
 interface IngredientData { id: string; name: string; nameFr?: string; emoji?: string; category: string; unit: string; basePrice: number; defaultShelfDays: number; }
+interface StoreResult { placeId: string; name: string; address: string; rating?: number; openNow?: boolean; distance: number; }
+interface PriceResult { store: string; price: number; priceDisplay: string; link?: string; }
 
 
 const RECIPES = recipesData as Recipe[];
 const INGREDIENTS = ingredientsData as IngredientData[];
-
-
-const STORES = [
-  { id: "best", name: "Best price", emoji: "💰", multiplier: 0 },
-  { id: "costco", name: "Costco", emoji: "🛒", multiplier: 0.82 },
-  { id: "maxi", name: "Maxi", emoji: "🛒", multiplier: 0.85 },
-  { id: "super_c", name: "Super C", emoji: "🛒", multiplier: 0.88 },
-  { id: "walmart", name: "Walmart", emoji: "🛒", multiplier: 0.90 },
-  { id: "marche_adonis", name: "Marché Adonis", emoji: "🛒", multiplier: 0.95 },
-  { id: "metro", name: "Metro", emoji: "🛒", multiplier: 1.05 },
-  { id: "iga", name: "IGA", emoji: "🛒", multiplier: 1.08 },
-  { id: "provigo", name: "Provigo", emoji: "🛒", multiplier: 1.10 },
-];
-
-
-const PAID_STORES = STORES.filter((s) => s.id !== "best");
-
-
-function getBestStore(ing: IngredientData) {
-  let best = PAID_STORES[0];
-  let bestPrice = Infinity;
-  for (const s of PAID_STORES) {
-    const p = ing.basePrice * s.multiplier * 100;
-    if (p < bestPrice) { bestPrice = p; best = s; }
-  }
-  return { store: best, price: bestPrice };
-}
-
-
-function getPrice(ing: IngredientData, storeId: string) {
-  if (storeId === "best") return getBestStore(ing).price;
-  const store = STORES.find((s) => s.id === storeId);
-  return ing.basePrice * (store?.multiplier ?? 1) * 100;
-}
 
 
 export default function PlanPage() {
@@ -56,12 +24,20 @@ export default function PlanPage() {
   const [removedMeals, setRemovedMeals] = useState<Set<string>>(new Set());
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [removedItems, setRemovedItems] = useState<Set<string>>(new Set());
-  const [selectedStore, setSelectedStore] = useState("best");
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [swipedMeal, setSwipedMeal] = useState<string | null>(null);
   const [swipedItem, setSwipedItem] = useState<string | null>(null);
   const [lang, setLang] = useState("en");
   const [loading, setLoading] = useState(true);
+
+
+  // Real data
+  const [nearbyStores, setNearbyStores] = useState<StoreResult[]>([]);
+  const [selectedStore, setSelectedStore] = useState<string | null>(null);
+  const [storesLoading, setStoresLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [prices, setPrices] = useState<Record<string, PriceResult[]>>({});
+  const [pricesLoading, setPricesLoading] = useState<Record<string, boolean>>({});
 
 
   useEffect(() => {
@@ -77,48 +53,60 @@ export default function PlanPage() {
         const items = data.items ?? [];
         const ids = new Set<string>(items.map((i: { ingredientId: string }) => i.ingredientId));
         setPantryIds(ids);
-
-
         const expiring = new Set<string>(
-          items
-            .filter((i: { quantityLevel?: string }) => {
-              const match = (i.quantityLevel ?? "").match(/expiry:(\d+)/);
-              return match && parseInt(match[1]) <= 2;
-            })
-            .map((i: { ingredientId: string }) => i.ingredientId)
+          items.filter((i: { quantityLevel?: string }) => {
+            const match = (i.quantityLevel ?? "").match(/expiry:(\d+)/);
+            return match && parseInt(match[1]) <= 2;
+          }).map((i: { ingredientId: string }) => i.ingredientId)
         );
         setExpiringIds(expiring);
-
-
         const pinnedRecipes = RECIPES.filter((r) => pinned.includes(r.id));
         const pinnedSet = new Set(pinnedRecipes.map((r) => r.id));
-
-
-        const expiryRecipes = RECIPES
-          .filter((r) => !pinnedSet.has(r.id))
-          .filter((r) => (r.ingredients ?? []).some((i) => expiring.has(i.ingredientId)))
-          .slice(0, 2);
-
-
+        const expiryRecipes = RECIPES.filter((r) => !pinnedSet.has(r.id) && (r.ingredients ?? []).some((i) => expiring.has(i.ingredientId))).slice(0, 2);
         const usedIds = new Set([...pinnedRecipes, ...expiryRecipes].map((r) => r.id));
-
-
-        const fillRecipes = RECIPES
-          .filter((r) => !usedIds.has(r.id))
-          .map((r) => ({
-            recipe: r,
-            missing: (r.ingredients ?? []).filter((i) => !ids.has(i.ingredientId)).length,
-          }))
-          .sort((a, b) => a.missing - b.missing)
-          .slice(0, Math.max(0, 5 - pinnedRecipes.length - expiryRecipes.length))
-          .map((x) => x.recipe);
-
-
+        const fillRecipes = RECIPES.filter((r) => !usedIds.has(r.id)).map((r) => ({ recipe: r, missing: (r.ingredients ?? []).filter((i) => !ids.has(i.ingredientId)).length })).sort((a, b) => a.missing - b.missing).slice(0, Math.max(0, 5 - pinnedRecipes.length - expiryRecipes.length)).map((x) => x.recipe);
         setWeekMeals([...pinnedRecipes, ...expiryRecipes, ...fillRecipes].slice(0, 5));
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+
+    // Get user location and fetch nearby stores
+    if (navigator.geolocation) {
+      setStoresLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setUserLocation(loc);
+          fetch(`/api/stores?lat=${loc.lat}&lng=${loc.lng}`)
+            .then((r) => r.json())
+            .then((data) => { setNearbyStores(data.stores ?? []); setStoresLoading(false); })
+            .catch(() => setStoresLoading(false));
+        },
+        () => setStoresLoading(false)
+      );
+    }
   }, []);
+
+
+  async function fetchPrices(ing: IngredientData) {
+    if (prices[ing.id] || pricesLoading[ing.id]) return;
+    setPricesLoading((prev) => ({ ...prev, [ing.id]: true }));
+    try {
+      const location = userLocation ? `${userLocation.lat},${userLocation.lng}` : "Montreal, QC";
+      const res = await fetch(`/api/prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}`);
+      const data = await res.json();
+      setPrices((prev) => ({ ...prev, [ing.id]: data.results ?? [] }));
+    } catch { setPrices((prev) => ({ ...prev, [ing.id]: [] })); }
+    finally { setPricesLoading((prev) => ({ ...prev, [ing.id]: false })); }
+  }
+
+
+  function toggleExpand(ing: IngredientData) {
+    if (expandedItem === ing.id) { setExpandedItem(null); return; }
+    setExpandedItem(ing.id);
+    fetchPrices(ing);
+  }
 
 
   function toggleCheck(id: string) {
@@ -128,38 +116,17 @@ export default function PlanPage() {
   }
 
 
-  function removeMeal(id: string) {
-    setRemovedMeals((prev) => new Set([...prev, id]));
-    setSwipedMeal(null);
-  }
-
-
-  function removeItem(id: string) {
-    setRemovedItems((prev) => new Set([...prev, id]));
-    setSwipedItem(null);
-  }
-
-
   const activeMeals = weekMeals.filter((m) => !removedMeals.has(m.id));
-
-
   const neededIds = new Set<string>();
   for (const meal of activeMeals) {
     for (const ing of meal.ingredients ?? []) {
       if (!pantryIds.has(ing.ingredientId)) neededIds.add(ing.ingredientId);
     }
   }
-
-
   const groceryList = INGREDIENTS.filter((i) => neededIds.has(i.id) && !removedItems.has(i.id));
   const unchecked = groceryList.filter((i) => !checkedItems.has(i.id));
   const checked = groceryList.filter((i) => checkedItems.has(i.id));
-  const total = unchecked.reduce((sum, ing) => sum + getPrice(ing, selectedStore), 0);
-
-
-  const addableMeals = RECIPES
-    .filter((r) => !weekMeals.find((m) => m.id === r.id) && !removedMeals.has(r.id))
-    .slice(0, 4);
+  const addableMeals = RECIPES.filter((r) => !weekMeals.find((m) => m.id === r.id) && !removedMeals.has(r.id)).slice(0, 4);
 
 
   return (
@@ -180,7 +147,7 @@ export default function PlanPage() {
             {lang === "fr" ? "Mon plan de la semaine" : "My Week"}
           </h1>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
-            {lang === "fr" ? "Glissez pour modifier • Liste optimisée" : "Swipe to edit • Optimized grocery list"}
+            {lang === "fr" ? "Glissez pour modifier • Prix en temps réel" : "Swipe to edit • Live prices"}
           </p>
         </div>
       </div>
@@ -194,12 +161,8 @@ export default function PlanPage() {
           <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 10 }}>
             🗓 {lang === "fr" ? "Vos repas cette semaine" : "Your meals this week"}
           </div>
-
-
           {loading ? (
-            <p style={{ color: "#c09878", fontSize: 13, fontWeight: 700 }}>
-              {lang === "fr" ? "Construction de votre plan…" : "Building your plan…"}
-            </p>
+            <p style={{ color: "#c09878", fontSize: 13, fontWeight: 700 }}>{lang === "fr" ? "Construction du plan…" : "Building your plan…"}</p>
           ) : (
             <>
               {activeMeals.map((meal) => {
@@ -207,22 +170,15 @@ export default function PlanPage() {
                 const isPinned = pinnedIds.has(meal.id);
                 const hasExpiring = (meal.ingredients ?? []).some((i) => expiringIds.has(i.ingredientId));
                 const isSwiped = swipedMeal === meal.id;
-
-
                 return (
                   <div key={meal.id} style={{ position: "relative", marginBottom: 8, borderRadius: 12, overflow: "hidden" }}>
-                    <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 80, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "0 12px 12px 0" }}>
-                      <button onClick={() => removeMeal(meal.id)} style={{ background: "none", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                    <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 80, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <button onClick={() => { setRemovedMeals((p) => new Set([...p, meal.id])); setSwipedMeal(null); }} style={{ background: "none", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
                         {lang === "fr" ? "Retirer" : "Remove"}
                       </button>
                     </div>
-                    <div
-                      onClick={() => setSwipedMeal(isSwiped ? null : meal.id)}
-                      style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#fff", border: "1.5px solid #f0e8de", borderRadius: 12, cursor: "pointer", transform: isSwiped ? "translateX(-76px)" : "translateX(0)", transition: "transform .25s ease", position: "relative", zIndex: 1 }}
-                    >
-                      <div style={{ width: 40, height: 40, borderRadius: 10, background: "#fff8f4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
-                        {meal.emoji}
-                      </div>
+                    <div onClick={() => setSwipedMeal(isSwiped ? null : meal.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#fff", border: "1.5px solid #f0e8de", borderRadius: 12, cursor: "pointer", transform: isSwiped ? "translateX(-76px)" : "translateX(0)", transition: "transform .25s ease", position: "relative", zIndex: 1 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 10, background: "#fff8f4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{meal.emoji}</div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 13, fontWeight: 800, color: "#3a1f0d" }}>{meal.title}</div>
                         <div style={{ display: "flex", gap: 4, marginTop: 3, flexWrap: "wrap" }}>
@@ -233,14 +189,11 @@ export default function PlanPage() {
                             : <span style={{ fontSize: 10, background: "#f0fdf4", color: "#22c55e", padding: "1px 6px", borderRadius: 20, fontWeight: 700 }}>✓ {lang === "fr" ? "Tout en stock" : "All in pantry"}</span>}
                         </div>
                       </div>
-                      <span style={{ fontSize: 16, color: "#e8d8c8", fontWeight: 300 }}>‹</span>
+                      <span style={{ fontSize: 16, color: "#e8d8c8" }}>‹</span>
                     </div>
                   </div>
                 );
               })}
-
-
-              {/* Add meal strip */}
               {activeMeals.length < 5 && addableMeals.length > 0 && (
                 <div style={{ marginBottom: 14 }}>
                   <div style={{ fontSize: 11, color: "#c09878", fontWeight: 700, marginBottom: 6 }}>
@@ -261,104 +214,117 @@ export default function PlanPage() {
         </div>
 
 
-        {/* Divider */}
         <div style={{ height: 8, background: "#f5f0eb", margin: "4px 0 0" }} />
 
 
-        {/* ── SECTION 2: Store selector ── */}
+        {/* ── SECTION 2: Nearby stores ── */}
         <div style={{ padding: "14px 16px 8px" }}>
           <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
-            🏪 {lang === "fr" ? "Choisir votre épicerie" : "Choose your store"}
+            🏪 {lang === "fr" ? "Épiceries à proximité" : "Nearby stores"}
           </div>
-          <div style={{ display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
-            {STORES.map((store) => (
-              <button key={store.id} onClick={() => setSelectedStore(store.id)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: selectedStore === store.id ? "#e8470d" : "#e8d8c8", background: selectedStore === store.id ? "#e8470d" : "#fff", color: selectedStore === store.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
-                {store.name}
-              </button>
-            ))}
-          </div>
+          {storesLoading ? (
+            <p style={{ fontSize: 12, color: "#c09878", fontWeight: 700 }}>{lang === "fr" ? "Recherche des épiceries…" : "Finding stores near you…"}</p>
+          ) : nearbyStores.length === 0 ? (
+            <p style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}>{lang === "fr" ? "Activez la localisation pour voir les épiceries proches." : "Enable location to see nearby stores."}</p>
+          ) : (
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+              {nearbyStores.map((store) => (
+                <div key={store.placeId} onClick={() => setSelectedStore(selectedStore === store.placeId ? null : store.placeId)} style={{ flexShrink: 0, padding: "8px 12px", borderRadius: 12, border: "1.5px solid", borderColor: selectedStore === store.placeId ? "#e8470d" : "#e8d8c8", background: selectedStore === store.placeId ? "#fff0ec" : "#fff", cursor: "pointer", minWidth: 120 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: selectedStore === store.placeId ? "#e8470d" : "#3a1f0d" }}>{store.name}</div>
+                  <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600, marginTop: 2 }}>
+                    {store.distance < 1000 ? `${store.distance}m` : `${(store.distance / 1000).toFixed(1)}km`}
+                    {store.openNow !== undefined && ` · ${store.openNow ? (lang === "fr" ? "Ouvert" : "Open") : (lang === "fr" ? "Fermé" : "Closed")}`}
+                  </div>
+                  {store.rating && <div style={{ fontSize: 10, color: "#f59e0b", fontWeight: 700 }}>★ {store.rating}</div>}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
 
+        <div style={{ height: 8, background: "#f5f0eb", margin: "4px 0 0" }} />
+
+
         {/* ── SECTION 3: Grocery list ── */}
-        <div style={{ padding: "0 16px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
-              🛒 {lang === "fr" ? "Liste d'épicerie" : "Grocery list"} ({unchecked.length})
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#e8470d" }}>~${total.toFixed(2)}</div>
+        <div style={{ padding: "14px 16px 0" }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 10 }}>
+            🛒 {lang === "fr" ? "Liste d'épicerie" : "Grocery list"} ({unchecked.length})
           </div>
 
 
           {groceryList.length === 0 ? (
             <div style={{ textAlign: "center", padding: "30px 0 20px" }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>🎉</div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d", marginBottom: 4 }}>
+              <div style={{ fontSize: 15, fontWeight: 800, color: "#3a1f0d" }}>
                 {lang === "fr" ? "Tout est dans votre garde-manger!" : "Everything is in your pantry!"}
-              </div>
-              <div style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}>
-                {lang === "fr" ? "Rien à acheter pour ces repas." : "Nothing to buy for these meals."}
               </div>
             </div>
           ) : (
             <>
               {unchecked.map((ing) => {
-                const best = getBestStore(ing);
-                const price = getPrice(ing, selectedStore);
-                const isBestMode = selectedStore === "best";
                 const isExpanded = expandedItem === ing.id;
                 const isSwiped = swipedItem === ing.id;
+                const ingPrices = prices[ing.id] ?? [];
+                const isLoadingPrices = pricesLoading[ing.id];
+                const cheapest = ingPrices[0];
 
 
                 return (
                   <div key={ing.id} style={{ position: "relative", marginBottom: 8, borderRadius: 12, overflow: "hidden" }}>
-                    {/* Swipe-to-remove background */}
                     <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 80, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <button onClick={() => removeItem(ing.id)} style={{ background: "none", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
+                      <button onClick={() => { setRemovedItems((p) => new Set([...p, ing.id])); setSwipedItem(null); }} style={{ background: "none", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
                         {lang === "fr" ? "Retirer" : "Remove"}
                       </button>
                     </div>
-
-
                     <div style={{ transform: isSwiped ? "translateX(-76px)" : "translateX(0)", transition: "transform .25s ease", position: "relative", zIndex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", padding: "10px 14px", background: "#fff", border: "1px solid #f0e8de", borderRadius: isExpanded ? "12px 12px 0 0" : 12, gap: 10 }}>
-                        {/* Checkbox */}
                         <div onClick={() => toggleCheck(ing.id)} style={{ width: 22, height: 22, borderRadius: 6, border: "2px solid #e8d8c8", background: "#fff", cursor: "pointer", flexShrink: 0 }} />
-                        {/* Swipe handle */}
                         <div onClick={() => setSwipedItem(isSwiped ? null : ing.id)} style={{ flex: 1, cursor: "pointer" }}>
                           <div style={{ fontSize: 14, fontWeight: 700, color: "#3a1f0d" }}>
                             {ing.emoji} {lang === "fr" && ing.nameFr ? ing.nameFr : ing.name}
                           </div>
                           <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>
-                            {isBestMode
-                              ? `${lang === "fr" ? "Moins cher chez" : "Cheapest at"} ${best.store.name} · $${best.price.toFixed(2)}`
-                              : `${STORES.find((s) => s.id === selectedStore)?.name} · $${price.toFixed(2)}`}
+                            {cheapest
+                              ? `${lang === "fr" ? "Moins cher chez" : "Cheapest at"} ${cheapest.store} · ${cheapest.priceDisplay}`
+                              : (lang === "fr" ? "Appuyez ▼ pour voir les prix" : "Tap ▼ for live prices")}
                           </div>
                         </div>
-                        {/* Expand prices */}
-                        <button onClick={() => setExpandedItem(isExpanded ? null : ing.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#c09878", fontWeight: 700, padding: "0 4px", fontFamily: "'Nunito', sans-serif" }}>
+                        <button onClick={() => toggleExpand(ing)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#e8470d", fontWeight: 700, padding: "0 4px", fontFamily: "'Nunito', sans-serif" }}>
                           {isExpanded ? "▲" : "▼"}
                         </button>
                       </div>
 
 
-                      {/* Price comparison across all stores */}
                       {isExpanded && (
                         <div style={{ border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", background: "#fafaf8", overflow: "hidden" }}>
-                          {PAID_STORES.map((store) => {
-                            const p = ing.basePrice * store.multiplier * 100;
-                            const isLowest = store.id === best.store.id;
-                            return (
-                              <div key={store.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "0.5px solid #f0e8de", background: isLowest ? "#f0fdf4" : "transparent" }}>
-                                <span style={{ fontSize: 13, fontWeight: isLowest ? 800 : 600, color: isLowest ? "#16a34a" : "#3a1f0d" }}>
-                                  {store.name} {isLowest && "✓"}
-                                </span>
-                                <span style={{ fontSize: 13, fontWeight: isLowest ? 800 : 600, color: isLowest ? "#16a34a" : "#c09878" }}>
-                                  ${p.toFixed(2)}
+                          {isLoadingPrices ? (
+                            <div style={{ padding: "12px 14px", fontSize: 12, color: "#c09878", fontWeight: 700 }}>
+                              {lang === "fr" ? "Recherche des prix en temps réel…" : "Fetching live prices…"}
+                            </div>
+                          ) : ingPrices.length === 0 ? (
+                            <div style={{ padding: "12px 14px", fontSize: 12, color: "#c09878", fontWeight: 600 }}>
+                              {lang === "fr" ? "Aucun prix trouvé." : "No prices found."}
+                            </div>
+                          ) : ingPrices.map((p, i) => (
+                            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "0.5px solid #f0e8de", background: i === 0 ? "#f0fdf4" : "transparent" }}>
+                              <div>
+                                <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#3a1f0d" }}>
+                                  {p.store} {i === 0 && "✓"}
                                 </span>
                               </div>
-                            );
-                          })}
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#c09878" }}>
+                                  {p.priceDisplay}
+                                </span>
+                                {p.link && (
+                                  <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: "#e8470d", fontWeight: 700, textDecoration: "none", background: "#fff0ec", padding: "2px 6px", borderRadius: 10 }}>
+                                    {lang === "fr" ? "Voir" : "View"}
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -367,7 +333,6 @@ export default function PlanPage() {
               })}
 
 
-              {/* Checked / in cart */}
               {checked.length > 0 && (
                 <>
                   <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", margin: "14px 0 8px" }}>
