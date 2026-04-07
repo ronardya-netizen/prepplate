@@ -1,77 +1,63 @@
 import { NextRequest, NextResponse } from "next/server";
-import storePricesData from "@/data/store-prices.json";
 
-interface StorePrice {
-  storeId: string;
-  storeName: string;
-  price: number;
-  unit: string;
-  inStock: boolean;
-  salePrice: number | null;
-}
 
-interface IngredientStorePrices {
-  ingredientId: string;
-  name: string;
-  stores: StorePrice[];
-}
-
-const STORE_URLS: Record<string, string> = {
-  maxi:      "https://www.maxi.ca/en/search?q=",
-  iga:       "https://www.iga.net/en/search?term=",
-  metro:     "https://www.metro.ca/en/search?filter=",
-  walmart:   "https://www.walmart.ca/search?q=",
-  instacart: "https://www.instacart.ca/store/search_v3/term?term=",
-  amazon:    "https://www.amazon.ca/s?k=",
-};
-
-const STORE_COLORS: Record<string, string> = {
-  maxi:      "#e8470d",
-  iga:       "#e8470d",
-  metro:     "#e8470d",
-  walmart:   "#0071ce",
-  instacart: "#2d6a3f",
-  amazon:    "#ff9900",
-};
-
-/**
- * GET /api/prices?ingredients=ing-001,ing-002,...
- * Returns per-ingredient price comparison across all stores,
- * with cheapest store highlighted.
- */
 export async function GET(req: NextRequest) {
-  const ids = new URL(req.url).searchParams.get("ingredients");
-  const ingredientIds = ids ? ids.split(",") : [];
+  const { searchParams } = new URL(req.url);
+  const ingredient = searchParams.get("ingredient");
+  const location = searchParams.get("location") ?? "Montreal, QC";
 
-  const data = storePricesData as IngredientStorePrices[];
 
-  const results = ingredientIds.map((id) => {
-    const item = data.find((d) => d.ingredientId === id);
-    if (!item) return null;
+  if (!ingredient) return NextResponse.json({ error: "ingredient required" }, { status: 400 });
 
-    // Find cheapest in-stock store
-    const availableStores = item.stores.filter((s) => s.inStock);
-    const withEffectivePrice = availableStores.map((s) => ({
-      ...s,
-      effectivePrice: s.salePrice ?? s.price,
-      buyUrl: `${STORE_URLS[s.storeId] ?? "#"}${encodeURIComponent(item.name)}`,
-      color: STORE_COLORS[s.storeId] ?? "#888",
+
+  try {
+    const params = new URLSearchParams({
+      engine: "google_shopping",
+      q: `${ingredient} grocery`,
+      location,
+      hl: "en",
+      gl: "ca",
+      api_key: process.env.SERP_API_KEY ?? "",
+    });
+
+
+    const res = await fetch(`https://serpapi.com/search?${params}`);
+    const data = await res.json();
+
+
+    const results = (data.shopping_results ?? []).slice(0, 8).map((item: {
+      title: string;
+      source: string;
+      price: string;
+      extracted_price?: number;
+      thumbnail?: string;
+      link?: string;
+    }) => ({
+      title: item.title,
+      store: item.source,
+      price: item.extracted_price ?? parseFloat(item.price?.replace(/[^0-9.]/g, "") ?? "0"),
+      priceDisplay: item.price,
+      thumbnail: item.thumbnail,
+      link: item.link,
     }));
 
-    withEffectivePrice.sort((a, b) => a.effectivePrice - b.effectivePrice);
-    const cheapest = withEffectivePrice[0];
-    const savings = withEffectivePrice.length > 1
-      ? withEffectivePrice[withEffectivePrice.length - 1].effectivePrice - cheapest.effectivePrice
-      : 0;
 
-    return {
-      ingredientId: id,
-      name: item.name,
-      cheapestStore: cheapest,
-      allStores: withEffectivePrice,
-      maxSavings: Math.round(savings * 100) / 100,
-    };
-  }).filter(Boolean);
+    // Group by store and keep cheapest per store
+    const byStore: Record<string, typeof results[0]> = {};
+    for (const r of results) {
+      const key = r.store?.toLowerCase() ?? "other";
+      if (!byStore[key] || r.price < byStore[key].price) {
+        byStore[key] = r;
+      }
+    }
 
-  return NextResponse.json({ results });
+
+    const sorted = Object.values(byStore).sort((a, b) => a.price - b.price);
+
+
+    return NextResponse.json({ ingredient, location, results: sorted });
+  } catch (err) {
+    console.error("SerpAPI error:", err);
+    return NextResponse.json({ error: "Failed to fetch prices" }, { status: 500 });
+  }
 }
