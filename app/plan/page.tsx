@@ -4,7 +4,6 @@ import recipesData from "@/data/recipes.json";
 import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
 
-
 interface Recipe {
   id: string;
   title: string;
@@ -19,7 +18,6 @@ interface Recipe {
   }[];
 }
 
-
 interface IngredientData {
   id: string;
   name: string;
@@ -28,22 +26,18 @@ interface IngredientData {
   basePrice: number;
 }
 
-
 interface StorePrice {
   storeName: string;
   price: number;
   link: string;
 }
 
-
 interface LivePriceResult {
   name: string;
   stores: StorePrice[];
 }
 
-
 const PRICE_CACHE_TTL_MS = 60 * 60 * 1000;
-
 
 function loadCachedPrices(key: string): LivePriceResult[] | null {
   try {
@@ -57,13 +51,11 @@ function loadCachedPrices(key: string): LivePriceResult[] | null {
   }
 }
 
-
 function saveCachedPrices(key: string, data: LivePriceResult[]) {
   try {
     localStorage.setItem(`prices-cache-${key}`, JSON.stringify({ ts: Date.now(), data }));
   } catch {}
 }
-
 
 export default function PlanPage() {
   const [pantryIds, setPantryIds] = useState<string[]>([]);
@@ -77,9 +69,7 @@ export default function PlanPage() {
   const [pricesLoading, setPricesLoading] = useState(false);
   const [pricesError, setPricesError] = useState("");
 
-
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
 
   useEffect(() => {
     const id = getUserId();
@@ -99,7 +89,6 @@ export default function PlanPage() {
       setLocationLabel(savedLabel);
     }
   }, []);
-
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -133,10 +122,8 @@ export default function PlanPage() {
     }, 700);
   }, [postalInput]);
 
-
   const recipes = recipesData as Recipe[];
   const pantrySet = new Set(pantryIds);
-
 
   const plannedMeals = recipes
     .filter((r) => {
@@ -147,7 +134,6 @@ export default function PlanPage() {
     })
     .slice(0, 4);
 
-
   const allMissingIds = new Set<string>();
   plannedMeals.forEach((m) =>
     m.ingredients
@@ -155,14 +141,12 @@ export default function PlanPage() {
       .forEach((i) => allMissingIds.add(i.ingredientId))
   );
 
-
   const groceryItems = Array.from(allMissingIds)
     .map((id) => {
       const ing = (ingredientsData as IngredientData[]).find((i) => i.id === id);
       return ing ? { id, name: ing.name } : null;
     })
     .filter(Boolean) as { id: string; name: string }[];
-
 
   useEffect(() => {
     if (!locationString || groceryItems.length === 0) return;
@@ -188,7 +172,6 @@ export default function PlanPage() {
       .finally(() => setPricesLoading(false));
   }, [locationString, groceryItems.length]);
 
-
   function toggleChecked(id: string) {
     setChecked((prev) => {
       const next = new Set(prev);
@@ -197,22 +180,18 @@ export default function PlanPage() {
     });
   }
 
-
   const shoppingItems = groceryItems.map((item) => {
     const live = livePrices.find((p) => p.name.toLowerCase() === item.name.toLowerCase());
     return { ...item, stores: live?.stores ?? [] };
   });
-
 
   const cheapestTotal = shoppingItems.reduce(
     (sum, item) => sum + (item.stores[0]?.price ?? 0),
     0
   );
 
-
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
-
 
       {/* Header */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
@@ -246,9 +225,7 @@ export default function PlanPage() {
         </div>
       </div>
 
-
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 16 }}>
-
 
         {/* Planned meals */}
         <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
@@ -283,7 +260,6 @@ export default function PlanPage() {
           )}
         </div>
 
-
         {/* Grocery list */}
         {shoppingItems.length > 0 && (
           <>
@@ -302,11 +278,9 @@ export default function PlanPage() {
               )}
             </div>
 
-
             <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
               {locationString ? "Live prices · cheapest first" : "Add postal code to see live prices"}
             </div>
-
 
             {pricesLoading && (
               <div style={{ padding: "20px", textAlign: "center", color: "#c09878", fontSize: 13, fontWeight: 600 }}>
@@ -314,13 +288,11 @@ export default function PlanPage() {
               </div>
             )}
 
-
             {pricesError && (
               <div style={{ margin: "0 16px 12px", padding: "10px 14px", background: "#fff0ec", borderRadius: 10, fontSize: 13, color: "#e8470d", fontWeight: 700 }}>
                 ⚠ {pricesError}
               </div>
             )}
-
 
             <div style={{ padding: "0 16px" }}>
               {shoppingItems.map((item) => {
@@ -363,7 +335,6 @@ export default function PlanPage() {
                       )}
                     </div>
 
-
                     {cheapest && !checked.has(item.id) && (
                       <div style={{ border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", marginBottom: 6, overflow: "hidden" }}>
                         {item.stores.slice(0, 5).map((store, idx) => (
@@ -397,7 +368,6 @@ export default function PlanPage() {
             </div>
           </>
         )}
-
 
         {shoppingItems.length === 0 && (
           <div style={{ padding: "40px 20px", textAlign: "center", color: "#c09878", fontSize: 14, fontWeight: 600 }}>
