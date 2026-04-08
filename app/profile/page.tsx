@@ -18,8 +18,10 @@ export default function ProfilePage() {
   const [shareActivity, setShareActivity] = useState(true);
   const [lang, setLang] = useState("en");
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
+  const [postalCode, setPostalCode] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number; label: string } | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const [saved, setSaved] = useState(false);
 
 
@@ -34,6 +36,7 @@ export default function ProfilePage() {
     if (settings.shareActivity !== undefined) setShareActivity(settings.shareActivity);
     if (settings.lang) setLang(settings.lang);
     if (settings.dietaryRestrictions) setDietaryRestrictions(settings.dietaryRestrictions);
+    if (settings.postalCode) setPostalCode(settings.postalCode);
     if (settings.location) setLocation(settings.location);
   }, []);
 
@@ -48,29 +51,31 @@ export default function ProfilePage() {
   }
 
 
-  async function detectLocation() {
-    if (!navigator.geolocation) return alert("Geolocation not supported");
+  async function geocodePostalCode() {
+    if (!postalCode.trim()) return;
     setLocationLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude: lat, longitude: lng } = pos.coords;
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
-          const data = await res.json();
-          const label = data.address?.city ?? data.address?.town ?? data.address?.village ?? `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
-          setLocation({ lat, lng, label });
-        } catch {
-          setLocation({ lat, lng, label: `${lat.toFixed(2)}, ${lng.toFixed(2)}` });
-        }
+    setLocationError("");
+    try {
+      const query = encodeURIComponent(`${postalCode.trim()}, Canada`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`);
+      const data = await res.json();
+      if (!data || data.length === 0) {
+        setLocationError(lang === "fr" ? "Code postal introuvable." : "Postal code not found.");
         setLocationLoading(false);
-      },
-      () => { alert("Could not get location. Please allow location access."); setLocationLoading(false); }
-    );
+        return;
+      }
+      const { lat, lon, display_name } = data[0];
+      const city = display_name.split(",")[2]?.trim() ?? postalCode;
+      setLocation({ lat: parseFloat(lat), lng: parseFloat(lon), label: `${postalCode.toUpperCase()} · ${city}` });
+    } catch {
+      setLocationError(lang === "fr" ? "Erreur de géocodage." : "Could not geocode postal code.");
+    }
+    setLocationLoading(false);
   }
 
 
   function saveSettings() {
-    const settings = { nutritionGoal, cuisines, budget, groceryFreq, shareActivity, lang, dietaryRestrictions, location };
+    const settings = { nutritionGoal, cuisines, budget, groceryFreq, shareActivity, lang, dietaryRestrictions, postalCode, location };
     localStorage.setItem("prepplate-settings", JSON.stringify(settings));
     localStorage.setItem("prepplate-lang", lang);
     setSaved(true);
@@ -83,6 +88,8 @@ export default function ProfilePage() {
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
+
+
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -99,6 +106,8 @@ export default function ProfilePage() {
 
 
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, padding: "20px 16px 80px" }}>
+
+
         <Section label={L ? "Langue" : "Language"}>
           <div style={{ display: "flex", gap: 8 }}>
             {["en", "fr"].map((l) => (
@@ -110,15 +119,26 @@ export default function ProfilePage() {
         </Section>
 
 
-        <Section label={L ? "Ma localisation" : "My location"}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ flex: 1, padding: "10px 14px", background: "#f5f0eb", borderRadius: 10, fontSize: 13, fontWeight: 600, color: location ? "#3a1f0d" : "#c09878" }}>
-              {location ? `📍 ${location.label}` : (L ? "Localisation non définie" : "Location not set")}
-            </div>
-            <button onClick={detectLocation} disabled={locationLoading} style={{ padding: "10px 16px", borderRadius: 10, background: "#e8470d", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif", whiteSpace: "nowrap" }}>
-              {locationLoading ? "..." : (L ? "Détecter" : "Detect")}
+        <Section label={L ? "Code postal" : "Postal code"}>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && geocodePostalCode()}
+              placeholder={L ? "Ex: H3A 1B1" : "e.g. H3A 1B1"}
+              maxLength={7}
+              style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 14, fontFamily: "'Nunito', sans-serif", outline: "none", letterSpacing: "0.1em", fontWeight: 700 }}
+            />
+            <button onClick={geocodePostalCode} disabled={locationLoading || !postalCode.trim()} style={{ padding: "10px 16px", borderRadius: 10, background: "#e8470d", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: locationLoading || !postalCode.trim() ? "not-allowed" : "pointer", fontFamily: "'Nunito', sans-serif", opacity: !postalCode.trim() ? 0.5 : 1 }}>
+              {locationLoading ? "…" : (L ? "Valider" : "Confirm")}
             </button>
           </div>
+          {locationError && <p style={{ fontSize: 11, color: "#ef4444", fontWeight: 600, margin: "6px 0 0" }}>{locationError}</p>}
+          {location && !locationError && (
+            <div style={{ marginTop: 8, padding: "8px 12px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, fontSize: 12, color: "#16a34a", fontWeight: 700 }}>
+              📍 {location.label}
+            </div>
+          )}
           <p style={{ fontSize: 11, color: "#c09878", fontWeight: 600, margin: "6px 0 0" }}>
             {L ? "Utilisé pour trouver les épiceries proches dans Plan" : "Used to find nearby stores in the Plan page"}
           </p>
@@ -214,5 +234,3 @@ function Section({ label, children }: { label: string; children: React.ReactNode
     </div>
   );
 }
-
-
