@@ -2578,8 +2578,7 @@
     "description": "Trendy breakfast ready in 5 minutes",
     "prepTimeMin": 5,
     "dietTags": [
-      "vegetarian",
-      "vegan"
+      "vegetarian"
     ],
     "cuisine": "american",
     "emoji": "\ud83e\udd51",
@@ -3136,2786 +3135,277 @@
   },
   {
     "id": "rec-051",
-    "title": "Banana bread",
-    "description": "Use up overripe bananas in this classic loaf",
-    "prepTimeMin": 60,
+    "title": "Jollof rice",
+    "description": "West African one-pot classic",
+    "prepTimeMin": 40,
     "dietTags": [
-      "vegetarian"
+      "vegetarian",
+      "vegan",
+      "gluten-free"
     ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf4c",
-    "calories": 280,
-    "mealType": "snack",
+    "cuisine": "african",
+    "emoji": "\ud83c\udf72",
+    "calories": 480,
+    "mealType": "dinner",
     "mode": [
-      "comfort"
+      "comfort",
+      "healthy"
     ],
     "ingredients": [
       {
-        "ingredientId": "ing-021",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-014",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 60,
+        "ingredientId": "ing-011",
+        "quantity": 200,
         "unit": "g"
+      },
+      {
+        "ingredientId": "ing-010",
+        "quantity": 300,
+        "unit": "g"
+      },
+      {
+        "ingredientId": "ing-008",
+        "quantity": 1,
+        "unit": "piece"
+      },
+      {
+        "ingredientId": "ing-054",
+        "quantity": 1,
+        "unit": "piece"
+      },
+      {
+        "ingredientId": "ing-004",
+        "quantity": 2,
+        "unit": "tbsp"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 175\u00b0C. Grease a loaf pan."
+        "step": 1,
+        "instruction": "Blend tomatoes, onion and chili into a smooth paste."
       },
       {
-        "id": 2,
-        "title": "Mash bananas",
-        "instruction": "Mash 3 overripe bananas until smooth."
+        "step": 2,
+        "instruction": "Fry the paste in olive oil for 10 minutes until it darkens."
       },
       {
-        "id": 3,
-        "title": "Mix batter",
-        "instruction": "Beat in eggs, melted butter, sugar, flour, and baking soda until just combined."
-      },
-      {
-        "id": 4,
-        "title": "Bake",
-        "instruction": "Pour into pan and bake for 55 minutes until a toothpick comes out clean.",
-        "timerSeconds": 3300
-      },
-      {
-        "id": 5,
-        "title": "Cool and serve",
-        "instruction": "Cool for 10 minutes before slicing."
+        "step": 3,
+        "instruction": "Add rice and chicken broth, season well, cover and cook 25 minutes."
       }
     ]
   },
   {
     "id": "rec-052",
-    "title": "Carrot and ginger soup",
-    "description": "Use up carrots before they soften",
-    "prepTimeMin": 30,
+    "title": "Egusi soup",
+    "description": "Nigerian melon seed soup with leafy greens",
+    "prepTimeMin": 45,
     "dietTags": [
-      "vegetarian",
-      "vegan",
       "gluten-free"
     ],
-    "cuisine": "french",
-    "emoji": "\ud83e\udd55",
-    "calories": 180,
-    "mealType": "lunch",
+    "cuisine": "african",
+    "emoji": "\ud83e\udd63",
+    "calories": 520,
+    "mealType": "dinner",
     "mode": [
-      "healthy",
-      "low-cal",
-      "comfort"
+      "comfort",
+      "high-protein"
     ],
     "ingredients": [
+      {
+        "ingredientId": "ing-013",
+        "quantity": 100,
+        "unit": "g"
+      },
       {
         "ingredientId": "ing-008",
         "quantity": 1,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
+        "ingredientId": "ing-010",
+        "quantity": 200,
+        "unit": "g"
       },
       {
-        "ingredientId": "ing-012",
-        "quantity": 700,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
+        "ingredientId": "ing-070",
+        "quantity": 3,
         "unit": "tbsp"
+      },
+      {
+        "ingredientId": "ing-065",
+        "quantity": 1,
+        "unit": "tsp"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Saut\u00e9 aromatics",
-        "instruction": "Cook onion and garlic in olive oil for 4 minutes.",
-        "timerSeconds": 240
+        "step": 1,
+        "instruction": "Heat oil and fry onions until soft."
       },
       {
-        "id": 2,
-        "title": "Add carrots",
-        "instruction": "Add sliced carrots and ginger. Cook 3 minutes.",
-        "timerSeconds": 180
+        "step": 2,
+        "instruction": "Add blended tomatoes and cook for 10 minutes."
       },
       {
-        "id": 3,
-        "title": "Add stock",
-        "instruction": "Pour in stock and bring to boil. Simmer 20 minutes.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 4,
-        "title": "Blend",
-        "instruction": "Blend until smooth. Season with salt and pepper."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve with a swirl of cream and crusty bread."
+        "step": 3,
+        "instruction": "Add spinach and season, simmer 15 minutes."
       }
     ]
   },
   {
     "id": "rec-053",
-    "title": "Spinach and egg frittata",
-    "description": "Rescue wilting spinach in this Italian baked omelette",
-    "prepTimeMin": 25,
+    "title": "Fufu with vegetable soup",
+    "description": "Ghanaian staple with rich vegetable broth",
+    "prepTimeMin": 35,
     "dietTags": [
       "vegetarian",
+      "vegan",
       "gluten-free"
     ],
-    "cuisine": "italian",
-    "emoji": "\ud83e\udd6c",
-    "calories": 290,
-    "mealType": "breakfast",
+    "cuisine": "african",
+    "emoji": "\ud83e\uded5",
+    "calories": 440,
+    "mealType": "dinner",
     "mode": [
-      "quick",
-      "high-protein",
-      "healthy"
+      "comfort"
     ],
     "ingredients": [
       {
-        "ingredientId": "ing-014",
-        "quantity": 5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 30,
+        "ingredientId": "ing-108",
+        "quantity": 200,
         "unit": "g"
       },
       {
-        "ingredientId": "ing-004",
+        "ingredientId": "ing-013",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredientId": "ing-010",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "ingredientId": "ing-008",
         "quantity": 1,
-        "unit": "tbsp"
+        "unit": "piece"
+      },
+      {
+        "ingredientId": "ing-076",
+        "quantity": 400,
+        "unit": "ml"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 190\u00b0C."
+        "step": 1,
+        "instruction": "Prepare gari dough by mixing with hot water until smooth."
       },
       {
-        "id": 2,
-        "title": "Saut\u00e9 spinach",
-        "instruction": "Wilt spinach and onion in olive oil in an oven-safe pan for 3 minutes.",
-        "timerSeconds": 180
+        "step": 2,
+        "instruction": "Simmer vegetables in broth with onion for 20 minutes."
       },
       {
-        "id": 3,
-        "title": "Add eggs",
-        "instruction": "Beat eggs with parmesan, salt and pepper. Pour over spinach."
-      },
-      {
-        "id": 4,
-        "title": "Bake",
-        "instruction": "Bake for 12 minutes until set and golden.",
-        "timerSeconds": 720
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Slice into wedges and serve warm or at room temperature."
+        "step": 3,
+        "instruction": "Serve fufu balls alongside the vegetable soup."
       }
     ]
   },
   {
     "id": "rec-054",
-    "title": "Stale bread panzanella",
-    "description": "Tuscan bread salad \u2014 the best use for stale bread",
-    "prepTimeMin": 15,
+    "title": "Mafe (peanut stew)",
+    "description": "Senegalese groundnut stew",
+    "prepTimeMin": 50,
     "dietTags": [
-      "vegetarian",
-      "vegan"
+      "gluten-free"
     ],
-    "cuisine": "italian",
-    "emoji": "\ud83c\udf5e",
-    "calories": 310,
-    "mealType": "lunch",
+    "cuisine": "african",
+    "emoji": "\ud83e\udd5c",
+    "calories": 560,
+    "mealType": "dinner",
     "mode": [
-      "quick",
-      "healthy"
+      "comfort",
+      "high-protein"
     ],
     "ingredients": [
       {
+        "ingredientId": "ing-091",
+        "quantity": 4,
+        "unit": "tbsp"
+      },
+      {
         "ingredientId": "ing-010",
-        "quantity": 300,
+        "quantity": 200,
         "unit": "g"
       },
       {
         "ingredientId": "ing-008",
-        "quantity": 0.5,
+        "quantity": 1,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-004",
-        "quantity": 3,
-        "unit": "tbsp"
+        "ingredientId": "ing-007",
+        "quantity": 2,
+        "unit": "piece"
+      },
+      {
+        "ingredientId": "ing-045",
+        "quantity": 1,
+        "unit": "piece"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Toast bread",
-        "instruction": "Cube stale bread and toast in olive oil until golden.",
-        "timerSeconds": 300
+        "step": 1,
+        "instruction": "Saut\u00e9 onion and carrots until soft."
       },
       {
-        "id": 2,
-        "title": "Chop vegetables",
-        "instruction": "Dice tomatoes, cucumber, and red onion."
+        "step": 2,
+        "instruction": "Add tomatoes and peanut butter, stir well."
       },
       {
-        "id": 3,
-        "title": "Dress",
-        "instruction": "Toss bread and vegetables with olive oil, red wine vinegar, and basil."
-      },
-      {
-        "id": 4,
-        "title": "Rest and serve",
-        "instruction": "Let sit 10 minutes so bread absorbs dressing. Serve at room temperature.",
-        "timerSeconds": 600
+        "step": 3,
+        "instruction": "Add sweet potato and simmer 30 minutes until thick."
       }
     ]
   },
   {
     "id": "rec-055",
-    "title": "Zucchini fritters",
-    "description": "Crispy fritters for zucchini past its prime",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "middle-eastern",
-    "emoji": "\ud83e\udd52",
-    "calories": 240,
-    "mealType": "snack",
-    "mode": [
-      "quick",
-      "healthy"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-014",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 30,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Grate and drain zucchini",
-        "instruction": "Grate zucchini, salt generously and squeeze out all moisture."
-      },
-      {
-        "id": 2,
-        "title": "Mix batter",
-        "instruction": "Combine zucchini with beaten eggs, flour, parmesan, and garlic."
-      },
-      {
-        "id": 3,
-        "title": "Fry",
-        "instruction": "Fry spoonfuls in oil for 3 minutes per side until golden.",
-        "timerSeconds": 360
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Serve hot with yogurt dipping sauce."
-      }
-    ]
-  },
-  {
-    "id": "rec-056",
-    "title": "Sweet potato soup",
-    "description": "Velvety soup for sweet potatoes about to turn",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf60",
-    "calories": 220,
-    "mealType": "lunch",
-    "mode": [
-      "comfort",
-      "healthy",
-      "low-cal"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-012",
-        "quantity": 700,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Roast sweet potato",
-        "instruction": "Dice sweet potato and roast at 200\u00b0C for 20 minutes.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 2,
-        "title": "Saut\u00e9 aromatics",
-        "instruction": "Cook onion and garlic in oil for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 3,
-        "title": "Blend",
-        "instruction": "Combine roasted sweet potato with aromatics and stock. Blend until smooth."
-      },
-      {
-        "id": 4,
-        "title": "Season and serve",
-        "instruction": "Season with salt, cumin, and chili. Serve hot."
-      }
-    ]
-  },
-  {
-    "id": "rec-057",
-    "title": "Bread pudding",
-    "description": "Classic comfort dessert from leftover bread",
-    "prepTimeMin": 50,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf6e",
-    "calories": 380,
-    "mealType": "snack",
-    "mode": [
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-014",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 30,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep bread",
-        "instruction": "Cube stale bread and place in a greased baking dish."
-      },
-      {
-        "id": 2,
-        "title": "Make custard",
-        "instruction": "Whisk eggs, milk, sugar, vanilla, and cinnamon. Pour over bread."
-      },
-      {
-        "id": 3,
-        "title": "Soak",
-        "instruction": "Let bread soak for 15 minutes.",
-        "timerSeconds": 900
-      },
-      {
-        "id": 4,
-        "title": "Bake",
-        "instruction": "Bake at 175\u00b0C for 35 minutes until golden.",
-        "timerSeconds": 2100
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve warm with whipped cream or ice cream."
-      }
-    ]
-  },
-  {
-    "id": "rec-058",
-    "title": "Potato leek soup",
-    "description": "French classic for aging potatoes and leeks",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83e\udd54",
-    "calories": 260,
-    "mealType": "dinner",
-    "mode": [
-      "comfort",
-      "healthy"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-012",
-        "quantity": 800,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Saut\u00e9 leeks",
-        "instruction": "Slice leeks and soften in butter for 5 minutes.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 2,
-        "title": "Add potatoes",
-        "instruction": "Add diced potatoes and garlic. Cook 2 minutes."
-      },
-      {
-        "id": 3,
-        "title": "Add stock",
-        "instruction": "Pour in stock and simmer for 20 minutes until potatoes are tender.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 4,
-        "title": "Blend and serve",
-        "instruction": "Blend partially for a creamy texture. Season and serve."
-      }
-    ]
-  },
-  {
-    "id": "rec-059",
-    "title": "Tomato bruschetta",
-    "description": "Italian appetizer for overripe tomatoes",
-    "prepTimeMin": 10,
-    "dietTags": [
-      "vegetarian",
-      "vegan"
-    ],
-    "cuisine": "italian",
-    "emoji": "\ud83c\udf45",
-    "calories": 200,
-    "mealType": "snack",
-    "mode": [
-      "quick",
-      "healthy"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-010",
-        "quantity": 300,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Toast bread",
-        "instruction": "Grill or toast thick bread slices until golden."
-      },
-      {
-        "id": 2,
-        "title": "Prep topping",
-        "instruction": "Dice tomatoes, mix with garlic, olive oil, basil, salt and pepper."
-      },
-      {
-        "id": 3,
-        "title": "Assemble",
-        "instruction": "Rub toast with garlic clove. Spoon tomato mixture on top."
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Drizzle with extra olive oil and serve immediately."
-      }
-    ]
-  },
-  {
-    "id": "rec-060",
-    "title": "Mushroom risotto",
-    "description": "Creamy Italian rice for aging mushrooms",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "italian",
-    "emoji": "\ud83c\udf44",
-    "calories": 460,
-    "mealType": "dinner",
-    "mode": [
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-011",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-012",
-        "quantity": 700,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 30,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Saut\u00e9 mushrooms",
-        "instruction": "Cook sliced mushrooms in butter until golden. Set aside.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 2,
-        "title": "Toast rice",
-        "instruction": "Cook onion and garlic in butter. Add arborio rice and toast 2 minutes.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 3,
-        "title": "Add stock gradually",
-        "instruction": "Add warm stock one ladle at a time, stirring constantly for 20 minutes.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 4,
-        "title": "Finish",
-        "instruction": "Stir in mushrooms, parmesan, and butter. Season well."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve immediately in warm bowls."
-      }
-    ]
-  },
-  {
-    "id": "rec-061",
-    "title": "Yogurt flatbread",
-    "description": "2-ingredient flatbread using yogurt about to expire",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "indian",
-    "emoji": "\ud83e\uded3",
-    "calories": 220,
-    "mealType": "snack",
-    "mode": [
-      "quick",
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Make dough",
-        "instruction": "Mix 200g plain yogurt with 200g self-raising flour until a soft dough forms."
-      },
-      {
-        "id": 2,
-        "title": "Divide",
-        "instruction": "Divide into 4 balls and roll out thin."
-      },
-      {
-        "id": 3,
-        "title": "Cook",
-        "instruction": "Cook in a dry pan over high heat for 2 minutes per side until charred.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Brush with butter and serve with hummus or soup."
-      }
-    ]
-  },
-  {
-    "id": "rec-062",
-    "title": "Roasted vegetable medley",
-    "description": "Use up any vegetables before they go bad",
-    "prepTimeMin": 40,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83e\udd66",
-    "calories": 180,
-    "mealType": "lunch",
-    "mode": [
-      "healthy",
-      "low-cal"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-007",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 3,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 220\u00b0C."
-      },
-      {
-        "id": 2,
-        "title": "Prep vegetables",
-        "instruction": "Cut all vegetables into similar-sized chunks."
-      },
-      {
-        "id": 3,
-        "title": "Season",
-        "instruction": "Toss with olive oil, salt, pepper, and herbs."
-      },
-      {
-        "id": 4,
-        "title": "Roast",
-        "instruction": "Spread on a baking tray and roast for 25-30 minutes until caramelized.",
-        "timerSeconds": 1800
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve as a side or over rice or pasta."
-      }
-    ]
-  },
-  {
-    "id": "rec-063",
-    "title": "Milk rice pudding",
-    "description": "Use up milk before it turns",
+    "title": "Roasted vegetable bowl",
+    "description": "Colorful roasted veggies over rice",
     "prepTimeMin": 30,
     "dietTags": [
       "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83c\udf5a",
-    "calories": 290,
-    "mealType": "snack",
-    "mode": [
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-011",
-        "quantity": 100,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Heat milk",
-        "instruction": "Heat 600ml milk in a saucepan until just simmering."
-      },
-      {
-        "id": 2,
-        "title": "Add rice",
-        "instruction": "Add arborio or short-grain rice and sugar. Stir well."
-      },
-      {
-        "id": 3,
-        "title": "Cook slowly",
-        "instruction": "Cook on low heat for 25 minutes, stirring frequently.",
-        "timerSeconds": 1500
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Serve warm with cinnamon and jam."
-      }
-    ]
-  },
-  {
-    "id": "rec-064",
-    "title": "French toast",
-    "description": "The best use for day-old bread",
-    "prepTimeMin": 15,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83c\udf5e",
-    "calories": 340,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-014",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Make custard",
-        "instruction": "Beat eggs with milk, sugar, vanilla, and cinnamon."
-      },
-      {
-        "id": 2,
-        "title": "Soak bread",
-        "instruction": "Dip thick bread slices in custard for 30 seconds each side.",
-        "timerSeconds": 60
-      },
-      {
-        "id": 3,
-        "title": "Cook",
-        "instruction": "Fry in butter over medium heat for 3 minutes per side until golden.",
-        "timerSeconds": 360
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Serve with maple syrup, powdered sugar, or fresh fruit."
-      }
-    ]
-  },
-  {
-    "id": "rec-065",
-    "title": "Cauliflower fried rice",
-    "description": "Low-carb way to use up aging cauliflower",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "asian",
-    "emoji": "\ud83e\udd66",
-    "calories": 190,
-    "mealType": "lunch",
-    "mode": [
-      "quick",
-      "healthy",
-      "low-cal"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-014",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Rice cauliflower",
-        "instruction": "Pulse cauliflower in a food processor until rice-sized pieces."
-      },
-      {
-        "id": 2,
-        "title": "Stir-fry",
-        "instruction": "Fry garlic and onion in oil for 2 minutes.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 3,
-        "title": "Add cauliflower",
-        "instruction": "Add cauliflower rice and cook for 5 minutes.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 4,
-        "title": "Add eggs",
-        "instruction": "Push to sides, scramble eggs in center, then mix."
-      },
-      {
-        "id": 5,
-        "title": "Season and serve",
-        "instruction": "Season with soy sauce and serve hot."
-      }
-    ]
-  },
-  {
-    "id": "rec-066",
-    "title": "Overripe mango smoothie",
-    "description": "Rescue soft mangoes in a tropical drink",
-    "prepTimeMin": 5,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "haitian",
-    "emoji": "\ud83e\udd6d",
-    "calories": 180,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "healthy",
-      "low-cal"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-021",
-        "quantity": 1,
-        "unit": "piece"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep fruit",
-        "instruction": "Peel and cube overripe mango. Freeze for 1 hour for thicker smoothie."
-      },
-      {
-        "id": 2,
-        "title": "Blend",
-        "instruction": "Blend mango with coconut milk, lime juice, and ice until smooth."
-      },
-      {
-        "id": 3,
-        "title": "Serve",
-        "instruction": "Pour into glasses and serve immediately."
-      }
-    ]
-  },
-  {
-    "id": "rec-067",
-    "title": "Potato hash",
-    "description": "Crispy breakfast hash for aging potatoes",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "vegetarian",
       "vegan",
       "gluten-free"
     ],
     "cuisine": "american",
-    "emoji": "\ud83e\udd54",
-    "calories": 310,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-007",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Dice and boil",
-        "instruction": "Dice potatoes and parboil for 5 minutes. Drain.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 2,
-        "title": "Fry",
-        "instruction": "Fry potatoes in oil on high heat for 8 minutes until crispy.",
-        "timerSeconds": 480
-      },
-      {
-        "id": 3,
-        "title": "Add vegetables",
-        "instruction": "Add diced onion, pepper, and garlic. Cook 3 more minutes.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Season well and serve topped with fried eggs if desired."
-      }
-    ]
-  },
-  {
-    "id": "rec-068",
-    "title": "Cheese and onion tart",
-    "description": "French-style tart for aging cheese and onions",
-    "prepTimeMin": 45,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83e\uddc5",
-    "calories": 420,
-    "mealType": "dinner",
-    "mode": [
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-008",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 80,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-014",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Caramelize onions",
-        "instruction": "Cook sliced onions in butter for 20 minutes until golden.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 2,
-        "title": "Make custard",
-        "instruction": "Beat eggs with cream, cheese, salt and pepper."
-      },
-      {
-        "id": 3,
-        "title": "Assemble",
-        "instruction": "Line a tart pan with pastry, add onions, pour custard over."
-      },
-      {
-        "id": 4,
-        "title": "Bake",
-        "instruction": "Bake at 190\u00b0C for 25 minutes until set and golden.",
-        "timerSeconds": 1500
-      }
-    ]
-  },
-  {
-    "id": "rec-069",
-    "title": "Apple cinnamon porridge",
-    "description": "Warm breakfast for bruised apples",
-    "prepTimeMin": 10,
-    "dietTags": [
-      "vegetarian",
-      "vegan"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf4e",
-    "calories": 290,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "healthy",
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-003",
-        "quantity": 10,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook oats",
-        "instruction": "Simmer oats in milk or water for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 2,
-        "title": "Cook apples",
-        "instruction": "In a separate pan, cook diced apple with butter, cinnamon and brown sugar for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 3,
-        "title": "Combine and serve",
-        "instruction": "Top oats with spiced apples and a drizzle of honey."
-      }
-    ]
-  },
-  {
-    "id": "rec-070",
-    "title": "Wilted greens pasta",
-    "description": "Revive aging leafy greens in this simple pasta",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "vegetarian",
-      "vegan"
-    ],
-    "cuisine": "italian",
-    "emoji": "\ud83e\udd6c",
-    "calories": 430,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "healthy"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-001",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 3,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook pasta",
-        "instruction": "Cook pasta until al dente. Reserve pasta water.",
-        "timerSeconds": 540
-      },
-      {
-        "id": 2,
-        "title": "Wilt greens",
-        "instruction": "Saut\u00e9 garlic in olive oil. Add any wilting greens and cook until just soft.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 3,
-        "title": "Combine",
-        "instruction": "Toss pasta with greens, adding pasta water to loosen."
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Finish with chili flakes, lemon zest, and parmesan."
-      }
-    ]
-  },
-  {
-    "id": "rec-071",
-    "title": "Pumpkin soup",
-    "description": "Silky soup for pumpkin or squash past its best",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83c\udf83",
-    "calories": 190,
-    "mealType": "lunch",
-    "mode": [
-      "comfort",
-      "healthy",
-      "low-cal"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-012",
-        "quantity": 600,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Roast pumpkin",
-        "instruction": "Roast diced pumpkin with olive oil at 200\u00b0C for 25 minutes.",
-        "timerSeconds": 1500
-      },
-      {
-        "id": 2,
-        "title": "Saut\u00e9 aromatics",
-        "instruction": "Cook onion and garlic in oil for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 3,
-        "title": "Blend",
-        "instruction": "Blend roasted pumpkin with aromatics, stock, and coconut milk until smooth."
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Season and serve with toasted seeds and bread."
-      }
-    ]
-  },
-  {
-    "id": "rec-072",
-    "title": "Greek yogurt parfait",
-    "description": "Use up yogurt and fruit in this layered dessert",
-    "prepTimeMin": 5,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "middle-eastern",
-    "emoji": "\ud83c\udf53",
-    "calories": 240,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "healthy",
-      "low-cal"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-021",
-        "quantity": 1,
-        "unit": "piece"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep fruit",
-        "instruction": "Slice any ripe or overripe fruit."
-      },
-      {
-        "id": 2,
-        "title": "Layer",
-        "instruction": "Layer yogurt, granola, and fruit in a glass or bowl."
-      },
-      {
-        "id": 3,
-        "title": "Serve",
-        "instruction": "Drizzle with honey and serve immediately."
-      }
-    ]
-  },
-  {
-    "id": "rec-073",
-    "title": "Cornbread with old corn",
-    "description": "Use up canned or frozen corn in fluffy cornbread",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf3d",
-    "calories": 290,
-    "mealType": "snack",
-    "mode": [
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-014",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 60,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Preheat",
-        "instruction": "Preheat oven to 200\u00b0C. Grease a baking pan."
-      },
-      {
-        "id": 2,
-        "title": "Mix dry ingredients",
-        "instruction": "Combine cornmeal, flour, sugar, baking powder, and salt."
-      },
-      {
-        "id": 3,
-        "title": "Mix wet ingredients",
-        "instruction": "Whisk eggs, milk, melted butter, and corn kernels."
-      },
-      {
-        "id": 4,
-        "title": "Combine and bake",
-        "instruction": "Mix wet into dry. Pour into pan and bake 20-25 minutes.",
-        "timerSeconds": 1500
-      }
-    ]
-  },
-  {
-    "id": "rec-074",
-    "title": "Pepper and egg sandwich",
-    "description": "Italian-American breakfast for aging peppers",
-    "prepTimeMin": 15,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83e\udd6a",
-    "calories": 350,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-007",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-014",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Saut\u00e9 peppers",
-        "instruction": "Slice peppers and onion. Cook in olive oil for 8 minutes until soft.",
-        "timerSeconds": 480
-      },
-      {
-        "id": 2,
-        "title": "Add eggs",
-        "instruction": "Beat eggs and pour over peppers. Scramble gently.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 3,
-        "title": "Serve",
-        "instruction": "Stuff into a crusty roll and serve immediately."
-      }
-    ]
-  },
-  {
-    "id": "rec-075",
-    "title": "Creamy potato gratin",
-    "description": "French gratin dauphinois for potatoes that need using",
-    "prepTimeMin": 60,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83e\udd54",
-    "calories": 480,
-    "mealType": "dinner",
-    "mode": [
-      "comfort"
-    ],
-    "ingredients": [
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 60,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep potatoes",
-        "instruction": "Thinly slice potatoes and pat dry."
-      },
-      {
-        "id": 2,
-        "title": "Layer",
-        "instruction": "Layer potatoes in a buttered dish with garlic, cream, salt, pepper, and nutmeg."
-      },
-      {
-        "id": 3,
-        "title": "Top with cheese",
-        "instruction": "Sprinkle parmesan on top."
-      },
-      {
-        "id": 4,
-        "title": "Bake",
-        "instruction": "Cover and bake at 180\u00b0C for 45 minutes. Uncover for last 15 minutes.",
-        "timerSeconds": 3600
-      }
-    ]
-  },
-  {
-    "id": "rec-076",
-    "title": "Pan-seared chicken breast",
-    "description": "Juicy golden chicken with butter sauce \u2014 12 minutes",
-    "prepTimeMin": 12,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf57",
+    "emoji": "\ud83e\udd57",
     "calories": 320,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "high-protein"
-    ],
-    "source": "RecipeTin Eats",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 500,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 30,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-079",
-        "quantity": 0.5,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Flatten chicken",
-        "instruction": "Slice each chicken breast in half horizontally to form thin steaks. Pat dry with paper towels."
-      },
-      {
-        "id": 2,
-        "title": "Season",
-        "instruction": "Mix paprika, salt, and pepper. Coat chicken evenly on both sides."
-      },
-      {
-        "id": 3,
-        "title": "Sear",
-        "instruction": "Melt half the butter with olive oil in a pan over high heat. Cook chicken 2.5 minutes per side until golden.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 4,
-        "title": "Rest chicken",
-        "instruction": "Transfer chicken to a plate. Rest 3 minutes.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 5,
-        "title": "Make sauce",
-        "instruction": "Lower heat. Add remaining butter to pan and simmer 1 minute, scraping up the golden bits. Pour over chicken and serve."
-      }
-    ]
-  },
-  {
-    "id": "rec-077",
-    "title": "Tuscan chicken with spinach",
-    "description": "Creamy one-pan chicken with spinach and parmesan",
-    "prepTimeMin": 30,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "italian",
-    "emoji": "\ud83c\udf57",
-    "calories": 480,
-    "mealType": "dinner",
-    "mode": [
-      "comfort",
-      "high-protein"
-    ],
-    "source": "The Recipe Rebel / The Kitchn",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 500,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-015",
-        "quantity": 100,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-094",
-        "quantity": 150,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 40,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Sear chicken",
-        "instruction": "Season chicken with salt, pepper, and paprika. Sear in olive oil over medium-high heat for 3-5 minutes per side until golden. Set aside.",
-        "timerSeconds": 480
-      },
-      {
-        "id": 2,
-        "title": "Cook garlic",
-        "instruction": "In the same pan, saut\u00e9 minced garlic for 30 seconds.",
-        "timerSeconds": 30
-      },
-      {
-        "id": 3,
-        "title": "Make sauce",
-        "instruction": "Add cream and parmesan. Stir until combined and slightly thickened, about 3 minutes.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 4,
-        "title": "Add spinach",
-        "instruction": "Add spinach and stir until wilted."
-      },
-      {
-        "id": 5,
-        "title": "Finish",
-        "instruction": "Return chicken to pan. Cover and cook 5 minutes until chicken is cooked through. Serve immediately.",
-        "timerSeconds": 300
-      }
-    ]
-  },
-  {
-    "id": "rec-078",
-    "title": "Sheet pan salmon with broccoli and carrots",
-    "description": "Asian-inspired one-pan dinner ready in 20 minutes",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "asian",
-    "emoji": "\ud83c\udf63",
-    "calories": 390,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "healthy",
-      "high-protein"
-    ],
-    "source": "The Modern Proper",
-    "ingredients": [
-      {
-        "ingredientId": "ing-058",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-041",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-022",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-073",
-        "quantity": 2,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-074",
-        "quantity": 1,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-046",
-        "quantity": 1,
-        "unit": "piece"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 200\u00b0C. Line a baking sheet with parchment paper."
-      },
-      {
-        "id": 2,
-        "title": "Make sauce",
-        "instruction": "Whisk together soy sauce, sesame oil, minced garlic, and grated ginger."
-      },
-      {
-        "id": 3,
-        "title": "Arrange pan",
-        "instruction": "Cut broccoli into florets and slice carrots. Place salmon and vegetables on the baking sheet. Drizzle half the sauce over everything."
-      },
-      {
-        "id": 4,
-        "title": "Roast",
-        "instruction": "Bake for 12 minutes until salmon flakes easily. If vegetables need more time, remove salmon and roast 3 more minutes.",
-        "timerSeconds": 720
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Drizzle remaining sauce over everything. Serve with rice."
-      }
-    ]
-  },
-  {
-    "id": "rec-079",
-    "title": "Salmon and broccoli stir-fry",
-    "description": "5-ingredient weeknight stir-fry from Food Network",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "asian",
-    "emoji": "\ud83c\udf63",
-    "calories": 350,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "healthy",
-      "high-protein"
-    ],
-    "source": "Food Network",
-    "ingredients": [
-      {
-        "ingredientId": "ing-058",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-041",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-073",
-        "quantity": 2,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook broccoli",
-        "instruction": "Add 1cm water to a wok. Bring to boil. Add broccoli florets, cover loosely and cook 4 minutes until bright green. Drain.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 2,
-        "title": "Sear salmon",
-        "instruction": "Heat oil in the same pan over medium-high. Season salmon with salt and pepper. Cook 3 minutes undisturbed until browned.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 3,
-        "title": "Add garlic",
-        "instruction": "Sprinkle minced garlic over salmon. Flip salmon carefully."
-      },
-      {
-        "id": 4,
-        "title": "Finish",
-        "instruction": "Pour soy sauce over salmon. Add broccoli back. Cook 3 more minutes until salmon is cooked through.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve immediately over rice or noodles."
-      }
-    ]
-  },
-  {
-    "id": "rec-080",
-    "title": "Garlic butter salmon with mushrooms",
-    "description": "Rich and easy 15-minute salmon dinner",
-    "prepTimeMin": 15,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf63",
-    "calories": 420,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "comfort",
-      "high-protein"
-    ],
-    "source": "TheFitFork",
-    "ingredients": [
-      {
-        "ingredientId": "ing-058",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-027",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 30,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook mushrooms",
-        "instruction": "Slice mushrooms and cook in butter over medium-high heat for 5 minutes until golden. Add minced garlic and cook 1 more minute. Set aside.",
-        "timerSeconds": 360
-      },
-      {
-        "id": 2,
-        "title": "Sear salmon",
-        "instruction": "Add olive oil to same pan. Season salmon with salt and pepper. Cook skin-side down 4 minutes, then flip and cook 2 more minutes.",
-        "timerSeconds": 360
-      },
-      {
-        "id": 3,
-        "title": "Combine",
-        "instruction": "Return mushrooms to pan. Spoon garlic butter over salmon."
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Serve immediately with vegetables or rice."
-      }
-    ]
-  },
-  {
-    "id": "rec-081",
-    "title": "Broccoli and mushroom stir-fry",
-    "description": "Vegan 15-minute stir-fry with soy and ginger",
-    "prepTimeMin": 15,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "asian",
-    "emoji": "\ud83e\udd66",
-    "calories": 180,
     "mealType": "lunch",
     "mode": [
-      "quick",
-      "healthy",
-      "low-cal"
-    ],
-    "source": "Cooktoria",
-    "ingredients": [
-      {
-        "ingredientId": "ing-041",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-027",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-046",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-073",
-        "quantity": 2,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-074",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Make sauce",
-        "instruction": "Mix soy sauce, sesame oil, and a pinch of sugar in a small bowl."
-      },
-      {
-        "id": 2,
-        "title": "Stir-fry aromatics",
-        "instruction": "Heat oil in a large pan over medium-high heat. Add minced garlic and grated ginger. Cook 30 seconds.",
-        "timerSeconds": 30
-      },
-      {
-        "id": 3,
-        "title": "Add vegetables",
-        "instruction": "Add broccoli florets, sliced mushrooms, and a splash of water. Stir-fry 5-7 minutes until browned and tender.",
-        "timerSeconds": 420
-      },
-      {
-        "id": 4,
-        "title": "Add sauce",
-        "instruction": "Pour sauce over vegetables. Cook 1 more minute."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve immediately over rice."
-      }
-    ]
-  },
-  {
-    "id": "rec-082",
-    "title": "Baked chicken with tomatoes and cheese",
-    "description": "Ricardo-inspired braised chicken with rich tomato sauce",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "italian",
-    "emoji": "\ud83c\udf57",
-    "calories": 440,
-    "mealType": "dinner",
-    "mode": [
-      "comfort",
-      "high-protein"
-    ],
-    "source": "Ricardo Cuisine",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 500,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-028",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-033",
-        "quantity": 60,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Brown chicken",
-        "instruction": "Season chicken with salt and pepper. Brown in olive oil over medium-high heat, 3 minutes per side. Set aside.",
-        "timerSeconds": 360
-      },
-      {
-        "id": 2,
-        "title": "Cook aromatics",
-        "instruction": "In the same pan, cook diced onion and minced garlic for 3 minutes.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 3,
-        "title": "Add tomatoes",
-        "instruction": "Add diced tomatoes and thyme. Simmer 5 minutes.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 4,
-        "title": "Add chicken",
-        "instruction": "Return chicken to pan. Spoon tomato mixture over it. Sprinkle with cheese."
-      },
-      {
-        "id": 5,
-        "title": "Broil",
-        "instruction": "Transfer to oven and broil 5 minutes until cheese is golden and chicken is cooked through.",
-        "timerSeconds": 300
-      }
-    ]
-  },
-  {
-    "id": "rec-083",
-    "title": "Ground beef and zucchini skillet",
-    "description": "Easy one-pan weeknight dinner",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83e\udd69",
-    "calories": 430,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "comfort",
-      "high-protein"
-    ],
-    "source": "Budget Bytes",
-    "ingredients": [
-      {
-        "ingredientId": "ing-057",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-025",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-010",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Brown beef",
-        "instruction": "Cook ground beef in a large pan over medium-high heat until browned. Drain excess fat.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 2,
-        "title": "Add vegetables",
-        "instruction": "Add diced onion, minced garlic, and sliced zucchini. Cook 5 minutes.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 3,
-        "title": "Add tomatoes",
-        "instruction": "Add crushed tomatoes, Italian seasoning, salt and pepper. Stir well."
-      },
-      {
-        "id": 4,
-        "title": "Simmer",
-        "instruction": "Simmer 5 minutes until sauce thickens slightly.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve over rice or pasta, or on its own."
-      }
-    ]
-  },
-  {
-    "id": "rec-084",
-    "title": "Mushroom and spinach frittata",
-    "description": "Ricardo-inspired baked egg dish \u2014 perfect for brunch",
-    "prepTimeMin": 25,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83c\udf73",
-    "calories": 280,
-    "mealType": "breakfast",
-    "mode": [
-      "healthy",
-      "high-protein"
-    ],
-    "source": "Ricardo Cuisine",
-    "ingredients": [
-      {
-        "ingredientId": "ing-014",
-        "quantity": 6,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-027",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-015",
-        "quantity": 80,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 30,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 190\u00b0C."
-      },
-      {
-        "id": 2,
-        "title": "Cook vegetables",
-        "instruction": "Saut\u00e9 sliced mushrooms and diced onion in olive oil for 5 minutes. Add spinach and wilt. Season with salt and pepper.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 3,
-        "title": "Add eggs",
-        "instruction": "Beat eggs with parmesan, salt and pepper. Pour over vegetables in an oven-safe pan."
-      },
-      {
-        "id": 4,
-        "title": "Bake",
-        "instruction": "Bake 12-15 minutes until set and golden on top.",
-        "timerSeconds": 780
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Slice into wedges and serve warm or at room temperature."
-      }
-    ]
-  },
-  {
-    "id": "rec-085",
-    "title": "Carrot ginger soup",
-    "description": "Silky blended soup for carrots past their prime",
-    "prepTimeMin": 30,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83e\udd55",
-    "calories": 180,
-    "mealType": "lunch",
-    "mode": [
-      "healthy",
       "low-cal",
-      "comfort"
+      "healthy"
     ],
-    "source": "BBC Good Food",
     "ingredients": [
-      {
-        "ingredientId": "ing-022",
-        "quantity": 5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-046",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-012",
-        "quantity": 700,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Saut\u00e9 aromatics",
-        "instruction": "Cook diced onion, minced garlic and grated ginger in olive oil for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 2,
-        "title": "Add carrots",
-        "instruction": "Add sliced carrots. Cook 3 minutes.",
-        "timerSeconds": 180
-      },
-      {
-        "id": 3,
-        "title": "Add stock",
-        "instruction": "Pour in vegetable stock. Bring to boil then simmer 20 minutes until carrots are tender.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 4,
-        "title": "Blend",
-        "instruction": "Blend until smooth with a stick blender or in batches. Season with salt and pepper."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve with a swirl of cream and crusty bread."
-      }
-    ]
-  },
-  {
-    "id": "rec-086",
-    "title": "Chicken and broccoli stir-fry",
-    "description": "Classic takeout-style stir-fry at home",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "asian",
-    "emoji": "\ud83c\udf57",
-    "calories": 360,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "healthy",
-      "high-protein"
-    ],
-    "source": "Budget Bytes",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-041",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-046",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-073",
-        "quantity": 3,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-074",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep",
-        "instruction": "Slice chicken into thin strips. Cut broccoli into small florets. Mix soy sauce, sesame oil and a splash of water for the sauce."
-      },
-      {
-        "id": 2,
-        "title": "Cook chicken",
-        "instruction": "Cook chicken strips in a hot pan with oil for 4-5 minutes until golden. Set aside.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 3,
-        "title": "Cook broccoli",
-        "instruction": "In the same pan, stir-fry broccoli, garlic and ginger for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 4,
-        "title": "Combine",
-        "instruction": "Return chicken to pan. Pour sauce over everything and toss for 1 minute.",
-        "timerSeconds": 60
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve immediately over steamed rice."
-      }
-    ]
-  },
-  {
-    "id": "rec-087",
-    "title": "Creamy mushroom pasta",
-    "description": "Rich weeknight pasta with garlic mushroom sauce",
-    "prepTimeMin": 20,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "italian",
-    "emoji": "\ud83c\udf5d",
-    "calories": 520,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "comfort"
-    ],
-    "source": "Ricardo Cuisine",
-    "ingredients": [
-      {
-        "ingredientId": "ing-001",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-027",
-        "quantity": 250,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-094",
-        "quantity": 100,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-005",
-        "quantity": 30,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook pasta",
-        "instruction": "Cook pasta in salted water until al dente. Reserve 1 cup pasta water.",
-        "timerSeconds": 540
-      },
-      {
-        "id": 2,
-        "title": "Cook mushrooms",
-        "instruction": "Saut\u00e9 sliced mushrooms in butter over high heat for 5 minutes until golden. Add garlic, cook 1 minute.",
-        "timerSeconds": 360
-      },
-      {
-        "id": 3,
-        "title": "Add cream",
-        "instruction": "Pour in cream. Simmer 2 minutes until slightly thickened.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 4,
-        "title": "Combine",
-        "instruction": "Add drained pasta to mushroom sauce. Toss with parmesan, adding pasta water to loosen."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve immediately with extra parmesan."
-      }
-    ]
-  },
-  {
-    "id": "rec-088",
-    "title": "Ground beef tacos with avocado",
-    "description": "Classic beef tacos ready in 20 minutes",
-    "prepTimeMin": 20,
-    "dietTags": [],
-    "cuisine": "mexican",
-    "emoji": "\ud83c\udf2e",
-    "calories": 510,
-    "mealType": "dinner",
-    "mode": [
-      "quick",
-      "comfort",
-      "high-protein"
-    ],
-    "source": "Budget Bytes",
-    "ingredients": [
-      {
-        "ingredientId": "ing-057",
-        "quantity": 400,
-        "unit": "g"
-      },
       {
         "ingredientId": "ing-020",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-018",
-        "quantity": 4,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-009",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook beef",
-        "instruction": "Brown ground beef in a pan over medium-high heat. Drain fat.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 2,
-        "title": "Season",
-        "instruction": "Add cumin, garlic powder, salt and pepper. Cook 2 minutes.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 3,
-        "title": "Prep avocado",
-        "instruction": "Mash avocado with lime juice, diced onion, and salt."
-      },
-      {
-        "id": 4,
-        "title": "Warm tortillas",
-        "instruction": "Heat tortillas in a dry pan 30 seconds each side.",
-        "timerSeconds": 60
-      },
-      {
-        "id": 5,
-        "title": "Assemble",
-        "instruction": "Fill tortillas with beef and top with avocado. Serve immediately."
-      }
-    ]
-  },
-  {
-    "id": "rec-089",
-    "title": "Yogurt marinated chicken",
-    "description": "Tender oven-baked chicken with yogurt marinade",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "indian",
-    "emoji": "\ud83c\udf57",
-    "calories": 340,
-    "mealType": "dinner",
-    "mode": [
-      "healthy",
-      "high-protein"
-    ],
-    "source": "Skinnytaste",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 500,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-032",
-        "quantity": 150,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-046",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-089",
-        "quantity": 1,
-        "unit": "tbsp"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Marinate",
-        "instruction": "Mix yogurt, minced garlic, grated ginger, curry powder, olive oil, salt and pepper. Coat chicken and marinate 30 minutes minimum.",
-        "timerSeconds": 1800
-      },
-      {
-        "id": 2,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 220\u00b0C."
-      },
-      {
-        "id": 3,
-        "title": "Bake",
-        "instruction": "Place chicken on a baking sheet. Bake 20-25 minutes until cooked through and slightly charred.",
-        "timerSeconds": 1320
-      },
-      {
-        "id": 4,
-        "title": "Rest",
-        "instruction": "Rest 5 minutes before serving.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve with rice, flatbread and extra yogurt sauce."
-      }
-    ]
-  },
-  {
-    "id": "rec-090",
-    "title": "Spinach and lentil soup",
-    "description": "Hearty high-protein soup using wilting spinach",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "vegetarian",
-      "vegan",
-      "gluten-free"
-    ],
-    "cuisine": "middle-eastern",
-    "emoji": "\ud83e\udd6c",
-    "calories": 280,
-    "mealType": "lunch",
-    "mode": [
-      "healthy",
-      "comfort",
-      "high-protein"
-    ],
-    "source": "BBC Good Food",
-    "ingredients": [
-      {
-        "ingredientId": "ing-015",
-        "quantity": 150,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-035",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-010",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-012",
-        "quantity": 800,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 2,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Saut\u00e9 aromatics",
-        "instruction": "Cook diced onion and garlic in olive oil for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 2,
-        "title": "Add spices",
-        "instruction": "Add cumin, turmeric and chili flakes. Cook 1 minute.",
-        "timerSeconds": 60
-      },
-      {
-        "id": 3,
-        "title": "Add lentils and tomatoes",
-        "instruction": "Add lentils, crushed tomatoes and stock. Bring to boil.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 4,
-        "title": "Simmer",
-        "instruction": "Simmer 20 minutes until lentils are tender.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 5,
-        "title": "Add spinach",
-        "instruction": "Stir in spinach and cook 2 minutes until wilted. Season and serve.",
-        "timerSeconds": 120
-      }
-    ]
-  },
-  {
-    "id": "rec-091",
-    "title": "Apple and cheddar quesadillas",
-    "description": "Sweet and savory quesadilla for aging apples",
-    "prepTimeMin": 10,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83c\udf4e",
-    "calories": 380,
-    "mealType": "lunch",
-    "mode": [
-      "quick",
-      "comfort"
-    ],
-    "source": "Budget Bytes",
-    "ingredients": [
-      {
-        "ingredientId": "ing-037",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-033",
-        "quantity": 60,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-018",
-        "quantity": 2,
-        "unit": "piece"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep filling",
-        "instruction": "Thinly slice apple. Grate cheddar cheese."
-      },
-      {
-        "id": 2,
-        "title": "Assemble",
-        "instruction": "Spread cheese and apple slices on half a tortilla. Fold over."
-      },
-      {
-        "id": 3,
-        "title": "Cook",
-        "instruction": "Cook in a dry pan over medium heat, 2-3 minutes per side until golden and cheese is melted.",
-        "timerSeconds": 300
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Slice and serve with a drizzle of honey or side salad."
-      }
-    ]
-  },
-  {
-    "id": "rec-092",
-    "title": "Mango chicken curry",
-    "description": "Tropical curry using overripe mango",
-    "prepTimeMin": 30,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "indian",
-    "emoji": "\ud83e\udd6d",
-    "calories": 420,
-    "mealType": "dinner",
-    "mode": [
-      "comfort",
-      "high-protein"
-    ],
-    "source": "BBC Good Food",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-038",
         "quantity": 1,
         "unit": "piece"
       },
       {
         "ingredientId": "ing-040",
-        "quantity": 200,
-        "unit": "ml"
+        "quantity": 150,
+        "unit": "g"
       },
       {
-        "ingredientId": "ing-008",
+        "ingredientId": "ing-042",
         "quantity": 1,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-002",
-        "quantity": 3,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-089",
-        "quantity": 2,
-        "unit": "tbsp"
+        "ingredientId": "ing-011",
+        "quantity": 150,
+        "unit": "g"
       },
       {
         "ingredientId": "ing-004",
@@ -5925,73 +3415,58 @@
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Cook aromatics",
-        "instruction": "Fry diced onion and garlic in oil for 4 minutes. Add curry powder and cook 1 minute.",
-        "timerSeconds": 300
+        "step": 1,
+        "instruction": "Chop all vegetables and toss with olive oil and seasoning."
       },
       {
-        "id": 2,
-        "title": "Add chicken",
-        "instruction": "Add diced chicken. Brown on all sides, about 5 minutes.",
-        "timerSeconds": 300
+        "step": 2,
+        "instruction": "Roast at 200\u00b0C for 20 minutes until golden."
       },
       {
-        "id": 3,
-        "title": "Add mango",
-        "instruction": "Add diced mango and coconut milk. Stir well."
-      },
-      {
-        "id": 4,
-        "title": "Simmer",
-        "instruction": "Simmer 15 minutes until chicken is cooked and sauce thickens.",
-        "timerSeconds": 900
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Season with salt and serve over rice."
+        "step": 3,
+        "instruction": "Serve over cooked rice."
       }
     ]
   },
   {
-    "id": "rec-093",
-    "title": "Baked salmon with lemon and garlic",
-    "description": "Simple 15-minute oven-baked salmon",
-    "prepTimeMin": 15,
+    "id": "rec-056",
+    "title": "Mango avocado salad",
+    "description": "Fresh tropical fruit and veggie salad",
+    "prepTimeMin": 10,
     "dietTags": [
+      "vegetarian",
+      "vegan",
       "gluten-free"
     ],
     "cuisine": "american",
-    "emoji": "\ud83c\udf4b",
-    "calories": 340,
-    "mealType": "dinner",
+    "emoji": "\ud83e\udd6d",
+    "calories": 220,
+    "mealType": "lunch",
     "mode": [
       "quick",
-      "healthy",
-      "high-protein"
+      "low-cal",
+      "healthy"
     ],
-    "source": "RecipeTin Eats",
     "ingredients": [
       {
-        "ingredientId": "ing-058",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-013",
+        "ingredientId": "ing-085",
         "quantity": 1,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-002",
-        "quantity": 3,
+        "ingredientId": "ing-086",
+        "quantity": 1,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-003",
-        "quantity": 20,
+        "ingredientId": "ing-048",
+        "quantity": 80,
         "unit": "g"
+      },
+      {
+        "ingredientId": "ing-084",
+        "quantity": 1,
+        "unit": "piece"
       },
       {
         "ingredientId": "ing-004",
@@ -6001,493 +3476,209 @@
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Preheat oven",
-        "instruction": "Preheat oven to 200\u00b0C. Line a baking dish with parchment."
+        "step": 1,
+        "instruction": "Dice mango and avocado into cubes."
       },
       {
-        "id": 2,
-        "title": "Season salmon",
-        "instruction": "Place salmon in dish. Drizzle with olive oil, lemon juice, and top with garlic slices and butter."
+        "step": 2,
+        "instruction": "Toss with lettuce, lime juice and olive oil."
       },
       {
-        "id": 3,
-        "title": "Bake",
-        "instruction": "Bake 12-15 minutes until salmon flakes easily with a fork.",
-        "timerSeconds": 780
-      },
-      {
-        "id": 4,
-        "title": "Serve",
-        "instruction": "Serve immediately with roasted vegetables or salad."
+        "step": 3,
+        "instruction": "Season with salt and serve immediately."
       }
     ]
   },
   {
-    "id": "rec-094",
-    "title": "Potato and leek soup",
-    "description": "Classic French vichyssoise-style soup",
+    "id": "rec-057",
+    "title": "Stuffed bell peppers",
+    "description": "Peppers filled with rice and vegetables",
     "prepTimeMin": 35,
+    "dietTags": [
+      "vegetarian",
+      "vegan",
+      "gluten-free"
+    ],
+    "cuisine": "american",
+    "emoji": "\ud83e\uded1",
+    "calories": 380,
+    "mealType": "dinner",
+    "mode": [
+      "healthy",
+      "comfort"
+    ],
+    "ingredients": [
+      {
+        "ingredientId": "ing-020",
+        "quantity": 3,
+        "unit": "piece"
+      },
+      {
+        "ingredientId": "ing-011",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredientId": "ing-006",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredientId": "ing-010",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredientId": "ing-002",
+        "quantity": 2,
+        "unit": "piece"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "Halve and deseed bell peppers, place in baking dish."
+      },
+      {
+        "step": 2,
+        "instruction": "Mix cooked rice, chickpeas, tomatoes and garlic."
+      },
+      {
+        "step": 3,
+        "instruction": "Fill peppers with mixture and bake 20 minutes at 180\u00b0C."
+      }
+    ]
+  },
+  {
+    "id": "rec-058",
+    "title": "Banana oat pancakes",
+    "description": "2-ingredient healthy breakfast pancakes",
+    "prepTimeMin": 15,
     "dietTags": [
       "vegetarian",
       "gluten-free"
     ],
-    "cuisine": "french",
-    "emoji": "\ud83e\udd54",
-    "calories": 250,
-    "mealType": "lunch",
+    "cuisine": "american",
+    "emoji": "\ud83e\udd5e",
+    "calories": 260,
+    "mealType": "breakfast",
     "mode": [
-      "comfort",
+      "quick",
+      "low-cal",
       "healthy"
     ],
-    "source": "BBC Good Food",
     "ingredients": [
       {
-        "ingredientId": "ing-023",
-        "quantity": 4,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-043",
+        "ingredientId": "ing-019",
         "quantity": 2,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-012",
-        "quantity": 800,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
+        "ingredientId": "ing-087",
+        "quantity": 80,
         "unit": "g"
       },
       {
-        "ingredientId": "ing-002",
+        "ingredientId": "ing-014",
         "quantity": 2,
         "unit": "piece"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Soften leeks",
-        "instruction": "Slice leeks and cook gently in butter for 5 minutes until soft.",
-        "timerSeconds": 300
+        "step": 1,
+        "instruction": "Mash bananas and mix with oats and eggs into a batter."
       },
       {
-        "id": 2,
-        "title": "Add potatoes",
-        "instruction": "Add diced potatoes and garlic. Cook 2 minutes."
+        "step": 2,
+        "instruction": "Cook small pancakes in a non-stick pan 2 min per side."
       },
       {
-        "id": 3,
-        "title": "Add stock",
-        "instruction": "Pour in stock. Bring to boil then simmer 20 minutes until potatoes are tender.",
-        "timerSeconds": 1200
-      },
-      {
-        "id": 4,
-        "title": "Blend",
-        "instruction": "Blend partially or fully to your preferred texture. Season with salt and pepper."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve hot with crusty bread."
+        "step": 3,
+        "instruction": "Serve with honey or fresh fruit."
       }
     ]
   },
   {
-    "id": "rec-095",
-    "title": "Tofu and vegetable stir-fry",
-    "description": "Crispy tofu with seasonal vegetables",
-    "prepTimeMin": 20,
+    "id": "rec-059",
+    "title": "Broccoli stir-fry",
+    "description": "Quick Asian-style broccoli with garlic",
+    "prepTimeMin": 15,
     "dietTags": [
       "vegetarian",
       "vegan",
       "gluten-free"
     ],
     "cuisine": "asian",
-    "emoji": "\ud83e\udd61",
-    "calories": 260,
-    "mealType": "dinner",
+    "emoji": "\ud83e\udd66",
+    "calories": 180,
+    "mealType": "lunch",
     "mode": [
       "quick",
-      "healthy",
-      "high-protein"
+      "low-cal",
+      "healthy"
     ],
-    "source": "Budget Bytes",
     "ingredients": [
       {
-        "ingredientId": "ing-036",
+        "ingredientId": "ing-040",
         "quantity": 300,
         "unit": "g"
       },
       {
-        "ingredientId": "ing-007",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-041",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
         "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-073",
         "quantity": 3,
+        "unit": "piece"
+      },
+      {
+        "ingredientId": "ing-009",
+        "quantity": 2,
         "unit": "tbsp"
       },
       {
-        "ingredientId": "ing-074",
+        "ingredientId": "ing-072",
         "quantity": 1,
         "unit": "tbsp"
+      },
+      {
+        "ingredientId": "ing-053",
+        "quantity": 5,
+        "unit": "g"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Press tofu",
-        "instruction": "Press tofu between towels for 10 minutes. Cut into cubes."
+        "step": 1,
+        "instruction": "Heat sesame oil in a wok over high heat."
       },
       {
-        "id": 2,
-        "title": "Fry tofu",
-        "instruction": "Fry tofu in oil over high heat until golden and crispy on all sides, about 8 minutes. Set aside.",
-        "timerSeconds": 480
+        "step": 2,
+        "instruction": "Add garlic and ginger, fry 30 seconds."
       },
       {
-        "id": 3,
-        "title": "Stir-fry vegetables",
-        "instruction": "In the same pan, stir-fry sliced bell pepper, broccoli and garlic for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 4,
-        "title": "Add sauce",
-        "instruction": "Return tofu. Add soy sauce and sesame oil. Toss for 1 minute."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Serve over steamed rice."
+        "step": 3,
+        "instruction": "Add broccoli and soy sauce, stir-fry 5 minutes until tender-crisp."
       }
     ]
   },
   {
-    "id": "rec-096",
-    "title": "Avocado and egg toast",
-    "description": "Trendy protein-packed breakfast",
-    "prepTimeMin": 10,
+    "id": "rec-060",
+    "title": "Thieboudienne",
+    "description": "Senegalese rice and fish \u2014 national dish",
+    "prepTimeMin": 60,
     "dietTags": [
-      "vegetarian"
+      "gluten-free"
     ],
-    "cuisine": "american",
-    "emoji": "\ud83e\udd51",
-    "calories": 380,
-    "mealType": "breakfast",
-    "mode": [
-      "quick",
-      "healthy",
-      "high-protein"
-    ],
-    "source": "Skinnytaste",
-    "ingredients": [
-      {
-        "ingredientId": "ing-020",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-014",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-013",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-030",
-        "quantity": 2,
-        "unit": "slice"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Toast bread",
-        "instruction": "Toast bread to your liking."
-      },
-      {
-        "id": 2,
-        "title": "Mash avocado",
-        "instruction": "Mash avocado with lemon juice, salt, and pepper."
-      },
-      {
-        "id": 3,
-        "title": "Cook eggs",
-        "instruction": "Fry or poach eggs to your liking.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 4,
-        "title": "Assemble",
-        "instruction": "Spread avocado on toast. Top with egg. Season with chili flakes and salt."
-      }
-    ]
-  },
-  {
-    "id": "rec-097",
-    "title": "Milk-based b\u00e9chamel pasta bake",
-    "description": "Use up milk in this comforting baked pasta",
-    "prepTimeMin": 40,
-    "dietTags": [
-      "vegetarian"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83c\udf5d",
-    "calories": 560,
+    "cuisine": "african",
+    "emoji": "\ud83d\udc1f",
+    "calories": 580,
     "mealType": "dinner",
     "mode": [
       "comfort"
     ],
-    "source": "BBC Good Food",
     "ingredients": [
       {
-        "ingredientId": "ing-001",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-031",
-        "quantity": 500,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 40,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-066",
-        "quantity": 40,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-033",
-        "quantity": 60,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Cook pasta",
-        "instruction": "Cook pasta until al dente. Drain and set aside.",
-        "timerSeconds": 540
-      },
-      {
-        "id": 2,
-        "title": "Make b\u00e9chamel",
-        "instruction": "Melt butter in a saucepan. Whisk in flour. Gradually add milk, whisking continuously until thick and smooth.",
-        "timerSeconds": 480
-      },
-      {
-        "id": 3,
-        "title": "Add cheese",
-        "instruction": "Stir in half the cheese. Season with salt, pepper and nutmeg."
-      },
-      {
-        "id": 4,
-        "title": "Assemble",
-        "instruction": "Mix pasta with b\u00e9chamel. Pour into a baking dish. Top with remaining cheese."
-      },
-      {
-        "id": 5,
-        "title": "Bake",
-        "instruction": "Bake at 190\u00b0C for 20 minutes until golden and bubbling.",
-        "timerSeconds": 1200
-      }
-    ]
-  },
-  {
-    "id": "rec-098",
-    "title": "Yogurt cucumber sauce bowl",
-    "description": "Light tzatziki-style bowl for aging yogurt and cucumber",
-    "prepTimeMin": 10,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "middle-eastern",
-    "emoji": "\ud83e\udd52",
-    "calories": 220,
-    "mealType": "lunch",
-    "mode": [
-      "quick",
-      "healthy",
-      "low-cal"
-    ],
-    "source": "BBC Good Food",
-    "ingredients": [
-      {
-        "ingredientId": "ing-032",
-        "quantity": 200,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-029",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-013",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-004",
-        "quantity": 1,
-        "unit": "tbsp"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Prep cucumber",
-        "instruction": "Grate cucumber. Squeeze out all excess water using a clean cloth or paper towels."
-      },
-      {
-        "id": 2,
-        "title": "Mix",
-        "instruction": "Combine yogurt, cucumber, minced garlic, lemon juice, olive oil, salt and fresh herbs."
-      },
-      {
-        "id": 3,
-        "title": "Serve",
-        "instruction": "Serve as a dip with pita, or as a sauce over grilled meat or falafel."
-      }
-    ]
-  },
-  {
-    "id": "rec-099",
-    "title": "Cheddar broccoli soup",
-    "description": "Creamy comfort soup using broccoli and cheddar",
-    "prepTimeMin": 30,
-    "dietTags": [
-      "vegetarian",
-      "gluten-free"
-    ],
-    "cuisine": "american",
-    "emoji": "\ud83e\uddc0",
-    "calories": 380,
-    "mealType": "lunch",
-    "mode": [
-      "comfort",
-      "healthy"
-    ],
-    "source": "Budget Bytes",
-    "ingredients": [
-      {
-        "ingredientId": "ing-041",
-        "quantity": 1,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-033",
-        "quantity": 100,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-031",
-        "quantity": 400,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-008",
-        "quantity": 0.5,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-002",
-        "quantity": 2,
-        "unit": "piece"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
-      }
-    ],
-    "steps": [
-      {
-        "id": 1,
-        "title": "Saut\u00e9 base",
-        "instruction": "Cook diced onion and garlic in butter for 4 minutes.",
-        "timerSeconds": 240
-      },
-      {
-        "id": 2,
-        "title": "Add broccoli",
-        "instruction": "Add broccoli florets. Cook 3 minutes."
-      },
-      {
-        "id": 3,
-        "title": "Add milk",
-        "instruction": "Pour in milk. Simmer 10 minutes until broccoli is tender.",
-        "timerSeconds": 600
-      },
-      {
-        "id": 4,
-        "title": "Add cheese",
-        "instruction": "Blend partially. Return to heat and stir in grated cheddar until melted."
-      },
-      {
-        "id": 5,
-        "title": "Serve",
-        "instruction": "Season well. Serve with bread."
-      }
-    ]
-  },
-  {
-    "id": "rec-100",
-    "title": "Chicken and mushroom rice",
-    "description": "One-pot comfort dinner \u2014 flavourful and filling",
-    "prepTimeMin": 35,
-    "dietTags": [
-      "gluten-free"
-    ],
-    "cuisine": "french",
-    "emoji": "\ud83c\udf57",
-    "calories": 490,
-    "mealType": "dinner",
-    "mode": [
-      "comfort",
-      "high-protein"
-    ],
-    "source": "Ricardo Cuisine",
-    "ingredients": [
-      {
-        "ingredientId": "ing-056",
-        "quantity": 400,
-        "unit": "g"
-      },
-      {
-        "ingredientId": "ing-027",
-        "quantity": 200,
+        "ingredientId": "ing-028",
+        "quantity": 300,
         "unit": "g"
       },
       {
@@ -6496,56 +3687,36 @@
         "unit": "g"
       },
       {
-        "ingredientId": "ing-008",
-        "quantity": 1,
-        "unit": "piece"
+        "ingredientId": "ing-010",
+        "quantity": 200,
+        "unit": "g"
       },
       {
-        "ingredientId": "ing-002",
+        "ingredientId": "ing-007",
         "quantity": 2,
         "unit": "piece"
       },
       {
-        "ingredientId": "ing-012",
-        "quantity": 500,
-        "unit": "ml"
-      },
-      {
-        "ingredientId": "ing-003",
-        "quantity": 20,
-        "unit": "g"
+        "ingredientId": "ing-039",
+        "quantity": 1,
+        "unit": "piece"
       }
     ],
     "steps": [
       {
-        "id": 1,
-        "title": "Brown chicken",
-        "instruction": "Season and brown chicken pieces in butter over medium-high heat. Set aside.",
-        "timerSeconds": 480
+        "step": 1,
+        "instruction": "Season fish and pan-fry until golden, set aside."
       },
       {
-        "id": 2,
-        "title": "Cook mushrooms",
-        "instruction": "In same pan, cook sliced mushrooms and onion for 5 minutes.",
-        "timerSeconds": 300
+        "step": 2,
+        "instruction": "Cook tomato-based sauce with vegetables for 20 minutes."
       },
       {
-        "id": 3,
-        "title": "Add rice",
-        "instruction": "Add rice and stir to coat. Add garlic."
-      },
-      {
-        "id": 4,
-        "title": "Add stock",
-        "instruction": "Pour in stock. Bring to boil. Add chicken back on top.",
-        "timerSeconds": 120
-      },
-      {
-        "id": 5,
-        "title": "Simmer covered",
-        "instruction": "Cover and cook on low heat for 18 minutes until rice is cooked and chicken done.",
-        "timerSeconds": 1080
+        "step": 3,
+        "instruction": "Add rice to the sauce, cook covered 25 minutes, top with fish."
       }
     ]
   }
 ]
+
+

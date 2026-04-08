@@ -18,6 +18,7 @@ const CUISINE_FILTERS = [
   { id: "haitian", label: "🇭🇹 Haitian" },
   { id: "french", label: "🥐 French" },
   { id: "asian", label: "🥢 Asian" },
+  { id: "african", label: "🌍 African" },
   { id: "mexican", label: "🌮 Mexican" },
   { id: "indian", label: "🍛 Indian" },
   { id: "middle-eastern", label: "🧆 Middle Eastern" },
@@ -25,10 +26,21 @@ const CUISINE_FILTERS = [
 ];
 
 
+const MODE_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "quick", label: "⚡ Quick" },
+  { id: "low-cal", label: "🥗 Low cal" },
+  { id: "high-protein", label: "💪 Protein" },
+  { id: "healthy", label: "🌿 Healthy" },
+  { id: "comfort", label: "🍝 Comfort" },
+];
+
+
 export default function DiscoverPage() {
   const [pantryIds, setPantryIds] = useState<Set<string>>(new Set());
   const [pinned, setPinned] = useState<Set<string>>(new Set());
   const [cuisine, setCuisine] = useState("all");
+  const [mode, setMode] = useState("all");
   const [lang, setLang] = useState("en");
   const router = useRouter();
 
@@ -36,15 +48,11 @@ export default function DiscoverPage() {
   useEffect(() => {
     const id = getUserId();
     setLang(localStorage.getItem("prepplate-lang") ?? "en");
-    const saved = localStorage.getItem("prepplate-pinned") ?? "[]";
-    setPinned(new Set(JSON.parse(saved)));
-
-
+    setPinned(new Set(JSON.parse(localStorage.getItem("prepplate-pinned") ?? "[]")));
     fetch(`/api/pantry?userId=${id}`)
       .then((r) => r.json())
       .then((data) => {
-        const ids = new Set<string>((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId));
-        setPantryIds(ids);
+        setPantryIds(new Set((data.items ?? []).map((i: { ingredientId: string }) => i.ingredientId)));
       });
   }, []);
 
@@ -57,18 +65,19 @@ export default function DiscoverPage() {
   }
 
 
-  // Only show recipes where user is MISSING 1-3 ingredients
   const discoverRecipes = RECIPES.filter((r) => {
     const missing = (r.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
-    return missing >= 1 && missing <= 3;
-  }).filter((r) => cuisine === "all" || r.cuisine === cuisine);
+    if (missing < 1 || missing > 3) return false;
+    if (cuisine !== "all" && r.cuisine !== cuisine) return false;
+    if (mode !== "all" && !r.mode.includes(mode)) return false;
+    return true;
+  });
 
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
 
 
-      {/* Header */}
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -83,8 +92,8 @@ export default function DiscoverPage() {
           </h1>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", fontWeight: 600, margin: 0 }}>
             {lang === "fr"
-              ? `${discoverRecipes.length} recettes à 1-3 ingrédients près • ${pinned.size} épinglée${pinned.size !== 1 ? "s" : ""}`
-              : `${discoverRecipes.length} recipes within 1-3 ingredients • ${pinned.size} pinned`}
+              ? `${discoverRecipes.length} recettes à 1–3 ingrédients près • ${pinned.size} épinglée${pinned.size !== 1 ? "s" : ""}`
+              : `${discoverRecipes.length} recipes within 1–3 ingredients • ${pinned.size} pinned`}
           </p>
         </div>
       </div>
@@ -93,8 +102,10 @@ export default function DiscoverPage() {
       <div style={{ background: "#fff", borderRadius: "20px 20px 0 0", marginTop: -8, paddingTop: 14 }}>
 
 
-        {/* Cuisine filter */}
-        <div style={{ display: "flex", gap: 6, padding: "0 16px 14px", overflowX: "auto", scrollbarWidth: "none" }}>
+        <div style={{ padding: "0 16px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
+          {lang === "fr" ? "Cuisine" : "Cuisine"}
+        </div>
+        <div style={{ display: "flex", gap: 6, padding: "0 16px 10px", overflowX: "auto", scrollbarWidth: "none" }}>
           {CUISINE_FILTERS.map((c) => (
             <button key={c.id} onClick={() => setCuisine(c.id)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: cuisine === c.id ? "#e8470d" : "#e8d8c8", background: cuisine === c.id ? "#e8470d" : "#fff", color: cuisine === c.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
               {c.label}
@@ -103,9 +114,20 @@ export default function DiscoverPage() {
         </div>
 
 
-        {/* Pinned strip */}
+        <div style={{ padding: "0 16px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
+          {lang === "fr" ? "Mode" : "Mode"}
+        </div>
+        <div style={{ display: "flex", gap: 6, padding: "0 16px 14px", overflowX: "auto", scrollbarWidth: "none" }}>
+          {MODE_FILTERS.map((m) => (
+            <button key={m.id} onClick={() => setMode(m.id)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: mode === m.id ? "#e8470d" : "#e8d8c8", background: mode === m.id ? "#e8470d" : "#fff", color: mode === m.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+
+
         {pinned.size > 0 && (
-          <div style={{ padding: "0 16px 12px" }}>
+          <div style={{ padding: "0 16px 14px" }}>
             <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
               📌 {lang === "fr" ? "Épinglées" : "Pinned"}
             </div>
@@ -121,7 +143,6 @@ export default function DiscoverPage() {
         )}
 
 
-        {/* Recipe cards */}
         <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 10 }}>
           {discoverRecipes.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 0" }}>
@@ -130,14 +151,12 @@ export default function DiscoverPage() {
                 {lang === "fr" ? "Votre garde-manger est bien rempli!" : "Your pantry is well stocked!"}
               </div>
               <div style={{ fontSize: 12, color: "#c09878", fontWeight: 600 }}>
-                {lang === "fr" ? "Allez sur Accueil pour voir vos recettes disponibles." : "Head to Home to see recipes you can cook now."}
+                {lang === "fr" ? "Allez sur Accueil pour vos recettes disponibles." : "Head to Home to see what you can cook now."}
               </div>
             </div>
           ) : discoverRecipes.map((recipe) => {
             const isPinned = pinned.has(recipe.id);
             const missing = (recipe.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
-
-
             return (
               <div key={recipe.id} style={{ background: "#fff", border: `1.5px solid ${isPinned ? "#e8470d" : "#f0e8de"}`, borderRadius: 14, overflow: "hidden" }}>
                 <div onClick={() => router.push(`/meal/${recipe.id}`)} style={{ padding: "14px 14px 10px", cursor: "pointer" }}>
@@ -152,8 +171,11 @@ export default function DiscoverPage() {
                         <span style={{ fontSize: 11, color: "#c09878", background: "#f5ede6", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>⏱ {recipe.prepTimeMin} min</span>
                         <span style={{ fontSize: 11, color: "#c09878", background: "#f5ede6", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>🔥 {recipe.calories} kcal</span>
                         <span style={{ fontSize: 11, color: "#e8470d", background: "#fff0ec", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>
-                          🛒 {missing} {lang === "fr" ? `ingrédient${missing > 1 ? "s" : ""} manquant${missing > 1 ? "s" : ""}` : `ingredient${missing > 1 ? "s" : ""} missing`}
+                          🛒 {missing} {lang === "fr" ? `manquant${missing > 1 ? "s" : ""}` : `missing`}
                         </span>
+                        {recipe.dietTags.includes("vegan") && (
+                          <span style={{ fontSize: 11, color: "#16a34a", background: "#f0fdf4", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>🌱 Vegan</span>
+                        )}
                       </div>
                     </div>
                   </div>
