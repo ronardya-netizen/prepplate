@@ -11,9 +11,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "postalCode is required" }, { status: 400 });
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_Google_Places_API_Key;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "NEXT_PUBLIC_Google_Places_API_Key not configured" }, { status: 500 });
+    return NextResponse.json({ error: "NEXT_PUBLIC_GOOGLE_PLACES_API_KEY not configured" }, { status: 500 });
   }
 
   const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(postalCode)}&components=country:CA&key=${apiKey}`;
