@@ -16,6 +16,15 @@ const RECIPES = recipesData as Recipe[];
 const INGREDIENTS = ingredientsData as IngredientData[];
 
 
+function getLocationFromStorage(): { lat: number; lng: number } | null {
+  try {
+    const settings = JSON.parse(localStorage.getItem("prepplate-settings") ?? "{}");
+    if (settings.location?.lat && settings.location?.lng) return settings.location;
+  } catch {}
+  return null;
+}
+
+
 export default function PlanPage() {
   const [pantryIds, setPantryIds] = useState<Set<string>>(new Set());
   const [expiringIds, setExpiringIds] = useState<Set<string>>(new Set());
@@ -32,7 +41,6 @@ export default function PlanPage() {
   const [nearbyStores, setNearbyStores] = useState<StoreResult[]>([]);
   const [selectedStore, setSelectedStore] = useState<string | null>(null);
   const [storesLoading, setStoresLoading] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [prices, setPrices] = useState<Record<string, PriceResult[]>>({});
   const [pricesLoading, setPricesLoading] = useState<Record<string, boolean>>({});
 
@@ -41,16 +49,22 @@ export default function PlanPage() {
     const id = getUserId();
     const savedLang = localStorage.getItem("prepplate-lang") ?? "en";
     setLang(savedLang);
+
+
+    // Load pinned meals from localStorage
     const pinned: string[] = JSON.parse(localStorage.getItem("prepplate-pinned") ?? "[]");
     setPinnedIds(new Set(pinned));
 
 
+    // Load pantry from DB
     fetch(`/api/pantry?userId=${id}`)
       .then((r) => r.json())
       .then((data) => {
         const items = data.items ?? [];
         const ids = new Set<string>(items.map((i: { ingredientId: string }) => i.ingredientId));
         setPantryIds(ids);
+
+
         const expiring = new Set<string>(
           items.filter((i: { quantityLevel?: string }) => {
             const match = (i.quantityLevel ?? "").match(/expiry:(\d+)/);
@@ -58,38 +72,37 @@ export default function PlanPage() {
           }).map((i: { ingredientId: string }) => i.ingredientId)
         );
         setExpiringIds(expiring);
+
+
+        // Build week meals — pinned first, then expiry, then fill
         const pinnedRecipes = RECIPES.filter((r) => pinned.includes(r.id));
         const pinnedSet = new Set(pinnedRecipes.map((r) => r.id));
-        const expiryRecipes = RECIPES.filter((r) => !pinnedSet.has(r.id) && (r.ingredients ?? []).some((i) => expiring.has(i.ingredientId))).slice(0, 2);
+        const expiryRecipes = RECIPES
+          .filter((r) => !pinnedSet.has(r.id) && (r.ingredients ?? []).some((i) => expiring.has(i.ingredientId)))
+          .slice(0, 2);
         const usedIds = new Set([...pinnedRecipes, ...expiryRecipes].map((r) => r.id));
-        const fillRecipes = RECIPES.filter((r) => !usedIds.has(r.id)).map((r) => ({ recipe: r, missing: (r.ingredients ?? []).filter((i) => !ids.has(i.ingredientId)).length })).sort((a, b) => a.missing - b.missing).slice(0, Math.max(0, 5 - pinnedRecipes.length - expiryRecipes.length)).map((x) => x.recipe);
+        const fillRecipes = RECIPES
+          .filter((r) => !usedIds.has(r.id))
+          .map((r) => ({ recipe: r, missing: (r.ingredients ?? []).filter((i) => !ids.has(i.ingredientId)).length }))
+          .sort((a, b) => a.missing - b.missing)
+          .slice(0, Math.max(0, 5 - pinnedRecipes.length - expiryRecipes.length))
+          .map((x) => x.recipe);
+
+
         setWeekMeals([...pinnedRecipes, ...expiryRecipes, ...fillRecipes].slice(0, 5));
         setLoading(false);
       })
       .catch(() => setLoading(false));
 
 
-    // Read saved location from profile first, fall back to browser geolocation
-    function fetchStores(loc: { lat: number; lng: number }) {
-      setUserLocation(loc);
+    // Load nearby stores from saved location
+    const loc = getLocationFromStorage();
+    if (loc) {
       setStoresLoading(true);
       fetch(`/api/stores?lat=${loc.lat}&lng=${loc.lng}`)
         .then((r) => r.json())
         .then((data) => { setNearbyStores(data.stores ?? []); setStoresLoading(false); })
         .catch(() => setStoresLoading(false));
-    }
-
-
-    const settings = JSON.parse(localStorage.getItem("prepplate-settings") ?? "{}");
-    const savedLocation = settings.location;
-    if (savedLocation?.lat && savedLocation?.lng) {
-      fetchStores(savedLocation);
-    } else if (navigator.geolocation) {
-      setStoresLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => fetchStores({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => setStoresLoading(false)
-      );
     }
   }, []);
 
@@ -98,12 +111,17 @@ export default function PlanPage() {
     if (prices[ing.id] || pricesLoading[ing.id]) return;
     setPricesLoading((prev) => ({ ...prev, [ing.id]: true }));
     try {
-      const loc = userLocation ? `${userLocation.lat},${userLocation.lng}` : "Montreal, QC";
-      const res = await fetch(`/api/prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(loc)}`);
+      // Always read location fresh from localStorage
+      const loc = getLocationFromStorage();
+      const location = loc ? `${loc.lat},${loc.lng}` : "Montreal, QC";
+      const res = await fetch(`/api/prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}`);
       const data = await res.json();
       setPrices((prev) => ({ ...prev, [ing.id]: data.results ?? [] }));
-    } catch { setPrices((prev) => ({ ...prev, [ing.id]: [] })); }
-    finally { setPricesLoading((prev) => ({ ...prev, [ing.id]: false })); }
+    } catch {
+      setPrices((prev) => ({ ...prev, [ing.id]: [] }));
+    } finally {
+      setPricesLoading((prev) => ({ ...prev, [ing.id]: false }));
+    }
   }
 
 
@@ -168,6 +186,10 @@ export default function PlanPage() {
           </div>
           {loading ? (
             <p style={{ color: "#c09878", fontSize: 13, fontWeight: 700 }}>{L ? "Construction du plan…" : "Building your plan…"}</p>
+          ) : activeMeals.length === 0 ? (
+            <div style={{ padding: "16px", background: "#fff8f4", borderRadius: 12, fontSize: 13, color: "#c09878", fontWeight: 600 }}>
+              {L ? "📌 Épinglez des recettes dans Découvrir pour les voir ici." : "📌 Pin recipes in Discover to see them here."}
+            </div>
           ) : (
             <>
               {activeMeals.map((meal) => {
@@ -229,7 +251,9 @@ export default function PlanPage() {
             <p style={{ fontSize: 12, color: "#c09878", fontWeight: 700 }}>{L ? "Recherche des épiceries…" : "Finding stores near you…"}</p>
           ) : nearbyStores.length === 0 ? (
             <div style={{ padding: "10px 14px", background: "#fff8f4", borderRadius: 10, fontSize: 12, color: "#c09878", fontWeight: 600 }}>
-              {L ? "📍 Ajoutez votre localisation dans Profil pour voir les épiceries proches." : "📍 Add your location in Profile to see nearby stores."}
+              {L
+                ? "📍 Ajoutez votre code postal dans Profil → Sauvegarder."
+                : "📍 Add your postal code in Profile → Save settings."}
             </div>
           ) : (
             <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
@@ -291,7 +315,7 @@ export default function PlanPage() {
                               : (L ? "Appuyez ▼ pour les prix en direct" : "Tap ▼ for live prices")}
                           </div>
                         </div>
-                        <button onClick={() => toggleExpand(ing)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#e8470d", fontWeight: 700, padding: "0 4px", fontFamily: "'Nunito', sans-serif" }}>
+                        <button onClick={() => toggleExpand(ing)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#e8470d", fontWeight: 700, padding: "0 4px", fontFamily: "'Nunito', sans-serif" }}>
                           {isExpanded ? "▲" : "▼"}
                         </button>
                       </div>
@@ -346,3 +370,5 @@ export default function PlanPage() {
     </main>
   );
 }
+
+
