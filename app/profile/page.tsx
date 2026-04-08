@@ -56,17 +56,14 @@ export default function ProfilePage() {
     setLocationLoading(true);
     setLocationError("");
     try {
-      const query = encodeURIComponent(`${postalCode.trim()}, Canada`);
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`);
+      const res = await fetch(`/api/geocode?postalCode=${encodeURIComponent(postalCode.trim())}`);
       const data = await res.json();
-      if (!data || data.length === 0) {
-        setLocationError(lang === "fr" ? "Code postal introuvable." : "Postal code not found.");
+      if (!res.ok || data.error) {
+        setLocationError(lang === "fr" ? "Code postal canadien introuvable." : "Canadian postal code not found.");
         setLocationLoading(false);
         return;
       }
-      const { lat, lon, display_name } = data[0];
-      const city = display_name.split(",")[2]?.trim() ?? postalCode;
-      setLocation({ lat: parseFloat(lat), lng: parseFloat(lon), label: `${postalCode.toUpperCase()} · ${city}` });
+      setLocation({ lat: data.lat, lng: data.lng, label: data.label });
     } catch {
       setLocationError(lang === "fr" ? "Erreur de géocodage." : "Could not geocode postal code.");
     }
@@ -88,8 +85,6 @@ export default function ProfilePage() {
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
-
-
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -125,7 +120,7 @@ export default function ProfilePage() {
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === "Enter" && geocodePostalCode()}
-              placeholder={L ? "Ex: H3A 1B1" : "e.g. H3A 1B1"}
+              placeholder={L ? "Ex: H1G 4G9" : "e.g. H1G 4G9"}
               maxLength={7}
               style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 14, fontFamily: "'Nunito', sans-serif", outline: "none", letterSpacing: "0.1em", fontWeight: 700 }}
             />
@@ -140,7 +135,7 @@ export default function ProfilePage() {
             </div>
           )}
           <p style={{ fontSize: 11, color: "#c09878", fontWeight: 600, margin: "6px 0 0" }}>
-            {L ? "Utilisé pour trouver les épiceries proches dans Plan" : "Used to find nearby stores in the Plan page"}
+            {L ? "Code postal canadien · utilisé pour trouver les épiceries" : "Canadian postal code · used to find nearby stores"}
           </p>
         </Section>
 
