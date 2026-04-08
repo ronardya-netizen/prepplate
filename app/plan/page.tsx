@@ -39,7 +39,6 @@ export default function PlanPage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   // Location
-  const [postalCode, setPostalCode] = useState("");
   const [postalInput, setPostalInput] = useState("");
   const [locationString, setLocationString] = useState("");
   const [locationLabel, setLocationLabel] = useState("");
@@ -86,7 +85,6 @@ export default function PlanPage() {
         if (!res.ok) throw new Error(data.error ?? "Unknown error");
         setLocationString(data.locationString);
         setLocationLabel(`${data.city}, ${data.province}`);
-        setPostalCode(cleaned);
         localStorage.setItem("prepplate-postal", cleaned);
         localStorage.setItem("prepplate-location", data.locationString);
         localStorage.setItem("prepplate-location-label", `${data.city}, ${data.province}`);
@@ -155,8 +153,6 @@ export default function PlanPage() {
   });
 
   const cheapestTotal = shoppingItems.reduce((sum, item) => sum + (item.stores[0]?.price ?? 0), 0);
-
-  const btnStyle: React.CSSProperties = { width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "#e8470d", color: "#fff", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" };
 
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
