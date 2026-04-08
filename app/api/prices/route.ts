@@ -1,77 +1,84 @@
 import { NextRequest, NextResponse } from "next/server";
-import storePricesData from "@/data/store-prices.json";
+
+interface SerpShoppingResult {
+  title: string;
+  extracted_price?: number;
+  price?: string;
+  source?: string;
+  link?: string;
+}
 
 interface StorePrice {
-  storeId: string;
   storeName: string;
   price: number;
-  unit: string;
-  inStock: boolean;
-  salePrice: number | null;
+  link: string;
 }
 
-interface IngredientStorePrices {
-  ingredientId: string;
+interface IngredientPrices {
   name: string;
-  stores: StorePrice[];
+  stores: StorePrice[]; // sorted cheapest first
 }
-
-const STORE_URLS: Record<string, string> = {
-  maxi:      "https://www.maxi.ca/en/search?q=",
-  iga:       "https://www.iga.net/en/search?term=",
-  metro:     "https://www.metro.ca/en/search?filter=",
-  walmart:   "https://www.walmart.ca/search?q=",
-  instacart: "https://www.instacart.ca/store/search_v3/term?term=",
-  amazon:    "https://www.amazon.ca/s?k=",
-};
-
-const STORE_COLORS: Record<string, string> = {
-  maxi:      "#e8470d",
-  iga:       "#e8470d",
-  metro:     "#e8470d",
-  walmart:   "#0071ce",
-  instacart: "#2d6a3f",
-  amazon:    "#ff9900",
-};
 
 /**
- * GET /api/prices?ingredients=ing-001,ing-002,...
- * Returns per-ingredient price comparison across all stores,
- * with cheapest store highlighted.
+ * GET /api/prices?ingredients=Pasta,Garlic,Butter&location=Montreal,+Quebec,+Canada
+ * Fetches live grocery prices from SERP API (Google Shopping),
+ * grouped by store and sorted cheapest to most expensive.
  */
 export async function GET(req: NextRequest) {
-  const ids = new URL(req.url).searchParams.get("ingredients");
-  const ingredientIds = ids ? ids.split(",") : [];
+  const { searchParams } = new URL(req.url);
+  const ingredientsParam = searchParams.get("ingredients");
+  const location = searchParams.get("location");
 
-  const data = storePricesData as IngredientStorePrices[];
+  if (!ingredientsParam || !location) {
+    return NextResponse.json({ error: "ingredients and location are required" }, { status: 400 });
+  }
 
-  const results = ingredientIds.map((id) => {
-    const item = data.find((d) => d.ingredientId === id);
-    if (!item) return null;
+  const apiKey = process.env.SERP_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ error: "SERP_API_KEY not configured" }, { status: 500 });
+  }
 
-    // Find cheapest in-stock store
-    const availableStores = item.stores.filter((s) => s.inStock);
-    const withEffectivePrice = availableStores.map((s) => ({
-      ...s,
-      effectivePrice: s.salePrice ?? s.price,
-      buyUrl: `${STORE_URLS[s.storeId] ?? "#"}${encodeURIComponent(item.name)}`,
-      color: STORE_COLORS[s.storeId] ?? "#888",
-    }));
+  const ingredientNames = ingredientsParam.split(",").map((s) => s.trim()).filter(Boolean);
 
-    withEffectivePrice.sort((a, b) => a.effectivePrice - b.effectivePrice);
-    const cheapest = withEffectivePrice[0];
-    const savings = withEffectivePrice.length > 1
-      ? withEffectivePrice[withEffectivePrice.length - 1].effectivePrice - cheapest.effectivePrice
-      : 0;
+  const results: IngredientPrices[] = await Promise.all(
+    ingredientNames.map(async (name): Promise<IngredientPrices> => {
+      try {
+        const serpUrl = new URL("https://serpapi.com/search.json");
+        serpUrl.searchParams.set("engine", "google_shopping");
+        serpUrl.searchParams.set("q", name);
+        serpUrl.searchParams.set("location", location);
+        serpUrl.searchParams.set("gl", "ca");
+        serpUrl.searchParams.set("hl", "en");
+        serpUrl.searchParams.set("api_key", apiKey);
 
-    return {
-      ingredientId: id,
-      name: item.name,
-      cheapestStore: cheapest,
-      allStores: withEffectivePrice,
-      maxSavings: Math.round(savings * 100) / 100,
-    };
-  }).filter(Boolean);
+        const res = await fetch(serpUrl.toString());
+        const data = await res.json();
+
+        const shoppingResults: SerpShoppingResult[] = data.shopping_results ?? [];
+
+        // Deduplicate by store — keep cheapest listing per store
+        const storeMap = new Map<string, StorePrice>();
+        for (const item of shoppingResults) {
+          const price = item.extracted_price;
+          const storeName = item.source;
+          const link = item.link ?? "#";
+          if (!price || !storeName) continue;
+
+          const existing = storeMap.get(storeName);
+          if (!existing || price < existing.price) {
+            storeMap.set(storeName, { storeName, price, link });
+          }
+        }
+
+        // Sort cheapest first
+        const stores = Array.from(storeMap.values()).sort((a, b) => a.price - b.price);
+
+        return { name, stores };
+      } catch {
+        return { name, stores: [] };
+      }
+    })
+  );
 
   return NextResponse.json({ results });
 }
