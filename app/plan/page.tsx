@@ -6,23 +6,21 @@ import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
 
 
+
+
 interface Recipe { id: string; title: string; description: string; prepTimeMin: number; calories: number; cuisine: string; emoji: string; mealType: string; mode: string[]; dietTags: string[]; ingredients: { ingredientId: string; quantity: number; unit: string }[]; }
 interface IngredientData { id: string; name: string; nameFr?: string; emoji?: string; category: string; unit: string; basePrice: number; defaultShelfDays: number; }
-interface StoreResult { placeId: string; name: string; address: string; rating?: number; openNow?: boolean; distance: number; }
-interface PriceResult { store: string; price: number; priceDisplay: string; link?: string; }
+interface NearbyStore { name: string; address: string; placeId: string; }
+interface StorePrice { storeName: string; address: string; price: number; }
+interface IngredientPriceResult { ingredient: string; stores: StorePrice[]; cheapest: StorePrice | null; }
+
+
 
 
 const RECIPES = recipesData as Recipe[];
 const INGREDIENTS = ingredientsData as IngredientData[];
 
 
-function getLocationFromStorage(): { lat: number; lng: number } | null {
-  try {
-    const settings = JSON.parse(localStorage.getItem("prepplate-settings") ?? "{}");
-    if (settings.location?.lat && settings.location?.lng) return settings.location;
-  } catch {}
-  return null;
-}
 
 
 export default function PlanPage() {
@@ -38,17 +36,37 @@ export default function PlanPage() {
   const [swipedItem, setSwipedItem] = useState<string | null>(null);
   const [lang, setLang] = useState("en");
   const [loading, setLoading] = useState(true);
-  const [nearbyStores, setNearbyStores] = useState<StoreResult[]>([]);
-  const [selectedStore, setSelectedStore] = useState<string | null>(null);
-  const [storesLoading, setStoresLoading] = useState(false);
-  const [prices, setPrices] = useState<Record<string, PriceResult[]>>({});
-  const [pricesLoading, setPricesLoading] = useState<Record<string, boolean>>({});
+
+
+  // Postal code & store state
+  const [postalCode, setPostalCode] = useState("");
+  const [radius, setRadius] = useState(5);
+  const [locationLabel, setLocationLabel] = useState("");
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
+  const [nearbyStores, setNearbyStores] = useState<NearbyStore[]>([]);
+  const [ingredientPrices, setIngredientPrices] = useState<Record<string, IngredientPriceResult>>({});
+  const [pricesLoading, setPricesLoading] = useState(false);
+  const [pricesError, setPricesError] = useState("");
+
+
 
 
   useEffect(() => {
     const id = getUserId();
     const savedLang = localStorage.getItem("prepplate-lang") ?? "en";
     setLang(savedLang);
+
+
+    // Restore saved postal code & radius
+    const savedPostal = localStorage.getItem("prepplate-postal") ?? "";
+    const savedRadius = localStorage.getItem("prepplate-radius") ?? "5";
+    const savedLabel = localStorage.getItem("prepplate-location-label") ?? "";
+    if (savedPostal) {
+      setPostalCode(savedPostal);
+      setRadius(parseInt(savedRadius));
+      setLocationLabel(savedLabel);
+    }
 
 
     // Load pinned meals from localStorage
@@ -93,43 +111,76 @@ export default function PlanPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-
-
-    // Load nearby stores from saved location
-    const loc = getLocationFromStorage();
-    if (loc) {
-      setStoresLoading(true);
-      fetch(`/api/stores?lat=${loc.lat}&lng=${loc.lng}`)
-        .then((r) => r.json())
-        .then((data) => { setNearbyStores(data.stores ?? []); setStoresLoading(false); })
-        .catch(() => setStoresLoading(false));
-    }
   }, []);
 
 
-  async function fetchPrices(ing: IngredientData) {
-    if (prices[ing.id] || pricesLoading[ing.id]) return;
-    setPricesLoading((prev) => ({ ...prev, [ing.id]: true }));
+
+
+  async function searchStoresAndPrices() {
+    const cleaned = postalCode.trim().toUpperCase().replace(/\s/g, "");
+    if (cleaned.length < 3) return;
+
+
+    setLocationLoading(true);
+    setLocationError("");
+    setPricesError("");
+
+
     try {
-      // Always read location fresh from localStorage
-      const loc = getLocationFromStorage();
-      const location = loc ? `${loc.lat},${loc.lng}` : "Montreal, QC";
-      const res = await fetch(`/api/prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}`);
+      // Step 1: Geocode postal code for display label
+      const locRes = await fetch(`/api/location?postalCode=${encodeURIComponent(cleaned)}`);
+      const locData = await locRes.json();
+      if (!locRes.ok) throw new Error(locData.error ?? "Could not find postal code");
+      const label = `${locData.city}, ${locData.province}`;
+      setLocationLabel(label);
+
+
+      // Save to localStorage
+      localStorage.setItem("prepplate-postal", cleaned);
+      localStorage.setItem("prepplate-radius", String(radius));
+      localStorage.setItem("prepplate-location-label", label);
+    } catch (e: unknown) {
+      setLocationError(e instanceof Error ? e.message : "Could not find location");
+      setLocationLoading(false);
+      return;
+    }
+    setLocationLoading(false);
+
+
+    // Step 2: Fetch nearby store prices for all grocery items
+    if (groceryList.length === 0) return;
+
+
+    setPricesLoading(true);
+    try {
+      const ingredientNames = groceryList.map((i) => i.name).join(",");
+      const res = await fetch(
+        `/api/nearby-prices?postalCode=${encodeURIComponent(postalCode.trim())}&radius=${radius}&ingredients=${encodeURIComponent(ingredientNames)}`
+      );
       const data = await res.json();
-      setPrices((prev) => ({ ...prev, [ing.id]: data.results ?? [] }));
+
+
+      // Map results back to ingredient IDs
+      const stores: NearbyStore[] = data.stores ?? [];
+      setNearbyStores(stores);
+
+
+      const priceMap: Record<string, IngredientPriceResult> = {};
+      for (const result of (data.results ?? [])) {
+        const ing = groceryList.find((i) => i.name.toLowerCase() === result.ingredient?.toLowerCase());
+        if (ing) {
+          priceMap[ing.id] = result;
+        }
+      }
+      setIngredientPrices(priceMap);
     } catch {
-      setPrices((prev) => ({ ...prev, [ing.id]: [] }));
+      setPricesError(L ? "Impossible de charger les prix." : "Could not load prices.");
     } finally {
-      setPricesLoading((prev) => ({ ...prev, [ing.id]: false }));
+      setPricesLoading(false);
     }
   }
 
 
-  function toggleExpand(ing: IngredientData) {
-    if (expandedItem === ing.id) { setExpandedItem(null); return; }
-    setExpandedItem(ing.id);
-    fetchPrices(ing);
-  }
 
 
   function toggleCheck(id: string) {
@@ -137,6 +188,8 @@ export default function PlanPage() {
     next.has(id) ? next.delete(id) : next.add(id);
     setCheckedItems(next);
   }
+
+
 
 
   const activeMeals = weekMeals.filter((m) => !removedMeals.has(m.id));
@@ -153,6 +206,8 @@ export default function PlanPage() {
   const L = lang === "fr";
 
 
+
+
   return (
     <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 80px", background: "#fff", minHeight: "100vh", fontFamily: "'Nunito', sans-serif" }}>
 
@@ -162,7 +217,7 @@ export default function PlanPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <Image src="/logo-icon.png" alt="PrepPlate" width={36} height={36} style={{ borderRadius: 10, objectFit: "cover" }} />
             <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</span>
-            </div>
+          </div>
           <a href="/profile" style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, textDecoration: "none", cursor: "pointer" }}>👤</a>
         </div>
         <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
@@ -224,7 +279,7 @@ export default function PlanPage() {
               {activeMeals.length < 5 && addableMeals.length > 0 && (
                 <div style={{ marginBottom: 14 }}>
                   <div style={{ fontSize: 11, color: "#c09878", fontWeight: 700, marginBottom: 6 }}>{L ? "+ Ajouter un repas" : "+ Add a meal"}</div>
-                  <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none" }}>
+                  <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none" as const }}>
                     {addableMeals.map((r) => (
                       <div key={r.id} onClick={() => setWeekMeals((prev) => [...prev, r])} style={{ flexShrink: 0, padding: "8px 12px", background: "#fff8f4", border: "1.5px dashed #fad8c8", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
                         <span style={{ fontSize: 18 }}>{r.emoji}</span>
@@ -242,31 +297,78 @@ export default function PlanPage() {
         <div style={{ height: 8, background: "#f5f0eb", margin: "4px 0 0" }} />
 
 
-        {/* Nearby stores */}
+        {/* Nearby stores — postal code input */}
         <div style={{ padding: "14px 16px 8px" }}>
-          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878", marginBottom: 10 }}>
             🏪 {L ? "Épiceries à proximité" : "Nearby stores"}
           </div>
-          {storesLoading ? (
-            <p style={{ fontSize: 12, color: "#c09878", fontWeight: 700 }}>{L ? "Recherche des épiceries…" : "Finding stores near you…"}</p>
-          ) : nearbyStores.length === 0 ? (
-            <div style={{ padding: "10px 14px", background: "#fff8f4", borderRadius: 10, fontSize: 12, color: "#c09878", fontWeight: 600 }}>
-              {L
-                ? "📍 Ajoutez votre code postal dans Profil → Sauvegarder."
-                : "📍 Add your postal code in Profile → Save settings."}
+
+
+          {/* Postal code input */}
+          <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+            <input
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && searchStoresAndPrices()}
+              placeholder={L ? "Code postal (ex: H2X 1Y4)" : "Postal code (e.g. H2X 1Y4)"}
+              maxLength={7}
+              style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 14, fontFamily: "'Nunito', sans-serif", outline: "none", letterSpacing: "0.08em", fontWeight: 700 }}
+            />
+            <button
+              onClick={searchStoresAndPrices}
+              disabled={locationLoading || pricesLoading || postalCode.trim().length < 3}
+              style={{ padding: "10px 16px", borderRadius: 10, background: "#e8470d", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: postalCode.trim().length < 3 ? "not-allowed" : "pointer", fontFamily: "'Nunito', sans-serif", opacity: postalCode.trim().length < 3 ? 0.5 : 1, whiteSpace: "nowrap" }}
+            >
+              {locationLoading || pricesLoading ? "…" : (L ? "Chercher" : "Search")}
+            </button>
+          </div>
+
+
+          {/* Radius selector */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            {[3, 5, 10, 15].map((r) => (
+              <button
+                key={r}
+                onClick={() => setRadius(r)}
+                style={{ padding: "4px 10px", borderRadius: 14, fontSize: 11, fontWeight: 700, border: "1.5px solid", borderColor: radius === r ? "#e8470d" : "#e8d8c8", background: radius === r ? "#e8470d" : "#fff", color: radius === r ? "#fff" : "#a08060", cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}
+              >
+                {r} km
+              </button>
+            ))}
+          </div>
+
+
+          {locationError && (
+            <p style={{ fontSize: 11, color: "#ef4444", fontWeight: 600, margin: "0 0 8px" }}>{locationError}</p>
+          )}
+          {locationLabel && !locationError && (
+            <div style={{ fontSize: 12, color: "#16a34a", fontWeight: 700, marginBottom: 8 }}>
+              📍 {L ? "Résultats près de" : "Results near"} {locationLabel}
             </div>
-          ) : (
-            <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+          )}
+          {pricesError && (
+            <p style={{ fontSize: 11, color: "#ef4444", fontWeight: 600, margin: "0 0 8px" }}>{pricesError}</p>
+          )}
+
+
+          {/* Store chips */}
+          {nearbyStores.length > 0 && (
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", scrollbarWidth: "none" as const, paddingBottom: 4 }}>
               {nearbyStores.map((store) => (
-                <div key={store.placeId} onClick={() => setSelectedStore(selectedStore === store.placeId ? null : store.placeId)} style={{ flexShrink: 0, padding: "8px 12px", borderRadius: 12, border: "1.5px solid", borderColor: selectedStore === store.placeId ? "#e8470d" : "#e8d8c8", background: selectedStore === store.placeId ? "#fff0ec" : "#fff", cursor: "pointer", minWidth: 120 }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: selectedStore === store.placeId ? "#e8470d" : "#3a1f0d" }}>{store.name}</div>
-                  <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600, marginTop: 2 }}>
-                    {store.distance < 1000 ? `${store.distance}m` : `${(store.distance / 1000).toFixed(1)}km`}
-                    {store.openNow !== undefined && ` · ${store.openNow ? (L ? "Ouvert" : "Open") : (L ? "Fermé" : "Closed")}`}
-                  </div>
-                  {store.rating && <div style={{ fontSize: 10, color: "#f59e0b", fontWeight: 700 }}>★ {store.rating}</div>}
+                <div key={store.placeId} style={{ flexShrink: 0, padding: "8px 12px", borderRadius: 12, border: "1.5px solid #e8d8c8", background: "#fff", minWidth: 100 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: "#3a1f0d" }}>{store.name}</div>
+                  <div style={{ fontSize: 10, color: "#c09878", fontWeight: 600, marginTop: 2, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{store.address}</div>
                 </div>
               ))}
+            </div>
+          )}
+
+
+          {nearbyStores.length === 0 && !locationLabel && !locationLoading && (
+            <div style={{ padding: "10px 14px", background: "#fff8f4", borderRadius: 10, fontSize: 12, color: "#c09878", fontWeight: 600 }}>
+              {L
+                ? "📍 Entrez votre code postal pour voir les épiceries et prix."
+                : "📍 Enter your postal code to see nearby stores and prices."}
             </div>
           )}
         </div>
@@ -292,9 +394,9 @@ export default function PlanPage() {
               {unchecked.map((ing) => {
                 const isExpanded = expandedItem === ing.id;
                 const isSwiped = swipedItem === ing.id;
-                const ingPrices = prices[ing.id] ?? [];
-                const isLoadingPrices = pricesLoading[ing.id];
-                const cheapest = ingPrices[0];
+                const priceData = ingredientPrices[ing.id];
+                const storeList = priceData?.stores ?? [];
+                const cheapest = priceData?.cheapest;
                 return (
                   <div key={ing.id} style={{ position: "relative", marginBottom: 8, borderRadius: 12, overflow: "hidden" }}>
                     <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 80, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -311,33 +413,30 @@ export default function PlanPage() {
                           </div>
                           <div style={{ fontSize: 11, color: "#c09878", fontWeight: 600 }}>
                             {cheapest
-                              ? `${L ? "Moins cher chez" : "Cheapest at"} ${cheapest.store} · ${cheapest.priceDisplay}`
-                              : (L ? "Appuyez ▼ pour les prix en direct" : "Tap ▼ for live prices")}
+                              ? `${L ? "Moins cher chez" : "Cheapest at"} ${cheapest.storeName} · $${cheapest.price.toFixed(2)}`
+                              : (L ? "Appuyez ▼ pour les prix" : "Tap ▼ for prices")}
                           </div>
                         </div>
-                        <button onClick={() => toggleExpand(ing)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#e8470d", fontWeight: 700, padding: "0 4px", fontFamily: "'Nunito', sans-serif" }}>
+                        <button onClick={() => setExpandedItem(isExpanded ? null : ing.id)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#e8470d", fontWeight: 700, padding: "0 4px", fontFamily: "'Nunito', sans-serif" }}>
                           {isExpanded ? "▲" : "▼"}
                         </button>
                       </div>
                       {isExpanded && (
                         <div style={{ border: "1px solid #f0e8de", borderTop: "none", borderRadius: "0 0 12px 12px", background: "#fafaf8", overflow: "hidden" }}>
-                          {isLoadingPrices ? (
-                            <div style={{ padding: "12px 14px", fontSize: 12, color: "#c09878", fontWeight: 700 }}>
-                              {L ? "Recherche des prix…" : "Fetching live prices…"}
-                            </div>
-                          ) : ingPrices.length === 0 ? (
+                          {storeList.length === 0 ? (
                             <div style={{ padding: "12px 14px", fontSize: 12, color: "#c09878", fontWeight: 600 }}>
-                              {L ? "Aucun prix trouvé." : "No prices found."}
+                              {locationLabel
+                                ? (L ? "Aucun prix trouvé." : "No prices found. Try searching above.")
+                                : (L ? "Entrez un code postal pour voir les prix." : "Enter a postal code above to see prices.")}
                             </div>
-                          ) : ingPrices.map((p, i) => (
+                          ) : storeList.map((p, i) => (
                             <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "0.5px solid #f0e8de", background: i === 0 ? "#f0fdf4" : "transparent" }}>
                               <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#3a1f0d" }}>
-                                {p.store} {i === 0 && "✓"}
+                                {i === 0 ? "🏆 " : ""}{p.storeName}
                               </span>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#c09878" }}>{p.priceDisplay}</span>
-                                {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: "#e8470d", fontWeight: 700, textDecoration: "none", background: "#fff0ec", padding: "2px 6px", borderRadius: 10 }}>{L ? "Voir" : "View"}</a>}
-                              </div>
+                              <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#c09878" }}>
+                                ${p.price.toFixed(2)}
+                              </span>
                             </div>
                           ))}
                         </div>
@@ -370,5 +469,3 @@ export default function PlanPage() {
     </main>
   );
 }
-
-
