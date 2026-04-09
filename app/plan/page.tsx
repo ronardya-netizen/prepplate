@@ -201,6 +201,7 @@ export default function PlanPage() {
     } finally {
       setPricesLoading(false);
     }
+    }
 
 
   return (
@@ -464,4 +465,4 @@ export default function PlanPage() {
     </main>
   );
 }
-}
+
