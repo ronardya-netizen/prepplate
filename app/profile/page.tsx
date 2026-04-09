@@ -19,10 +19,6 @@ export default function ProfilePage() {
   const [shareActivity, setShareActivity] = useState(true);
   const [lang, setLang] = useState("en");
   const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
-  const [postalCode, setPostalCode] = useState("");
-  const [location, setLocation] = useState<{ lat: number; lng: number; label: string } | null>(null);
-  const [locationLoading, setLocationLoading] = useState(false);
-  const [locationError, setLocationError] = useState("");
   const [saved, setSaved] = useState(false);
 
 
@@ -37,8 +33,6 @@ export default function ProfilePage() {
     if (settings.shareActivity !== undefined) setShareActivity(settings.shareActivity);
     if (settings.lang) setLang(settings.lang);
     if (settings.dietaryRestrictions) setDietaryRestrictions(settings.dietaryRestrictions);
-    if (settings.postalCode) setPostalCode(settings.postalCode);
-    if (settings.location) setLocation(settings.location);
   }, []);
 
 
@@ -52,28 +46,9 @@ export default function ProfilePage() {
   }
 
 
-  async function geocodePostalCode() {
-    if (!postalCode.trim()) return;
-    setLocationLoading(true);
-    setLocationError("");
-    try {
-      const res = await fetch(`/api/geocode?postalCode=${encodeURIComponent(postalCode.trim())}`);
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setLocationError(lang === "fr" ? "Code postal canadien introuvable." : "Canadian postal code not found.");
-        setLocationLoading(false);
-        return;
-      }
-      setLocation({ lat: data.lat, lng: data.lng, label: data.label });
-    } catch {
-      setLocationError(lang === "fr" ? "Erreur de géocodage." : "Could not geocode postal code.");
-    }
-    setLocationLoading(false);
-  }
-
 
   function saveSettings() {
-    const settings = { nutritionGoal, cuisines, budget, groceryFreq, shareActivity, lang, dietaryRestrictions, postalCode, location };
+    const settings = { nutritionGoal, cuisines, budget, groceryFreq, shareActivity, lang, dietaryRestrictions};
     localStorage.setItem("prepplate-settings", JSON.stringify(settings));
     localStorage.setItem("prepplate-lang", lang);
     setSaved(true);
@@ -118,31 +93,6 @@ export default function ProfilePage() {
           </div>
         </Section>
 
-
-        <Section label={L ? "Code postal" : "Postal code"}>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === "Enter" && geocodePostalCode()}
-              placeholder={L ? "Ex: H1G 4G9" : "e.g. H1G 4G9"}
-              maxLength={7}
-              style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e8d8c8", fontSize: 14, fontFamily: "'Nunito', sans-serif", outline: "none", letterSpacing: "0.1em", fontWeight: 700 }}
-            />
-            <button onClick={geocodePostalCode} disabled={locationLoading || !postalCode.trim()} style={{ padding: "10px 16px", borderRadius: 10, background: "#e8470d", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: locationLoading || !postalCode.trim() ? "not-allowed" : "pointer", fontFamily: "'Nunito', sans-serif", opacity: !postalCode.trim() ? 0.5 : 1 }}>
-              {locationLoading ? "…" : (L ? "Valider" : "Confirm")}
-            </button>
-          </div>
-          {locationError && <p style={{ fontSize: 11, color: "#ef4444", fontWeight: 600, margin: "6px 0 0" }}>{locationError}</p>}
-          {location && !locationError && (
-            <div style={{ marginTop: 8, padding: "8px 12px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, fontSize: 12, color: "#16a34a", fontWeight: 700 }}>
-              📍 {location.label}
-            </div>
-          )}
-          <p style={{ fontSize: 11, color: "#c09878", fontWeight: 600, margin: "6px 0 0" }}>
-            {L ? "Code postal canadien · utilisé pour trouver les épiceries" : "Canadian postal code · used to find nearby stores"}
-          </p>
-        </Section>
 
 
         <Section label={L ? "Objectif nutritionnel" : "Nutrition goal"}>
