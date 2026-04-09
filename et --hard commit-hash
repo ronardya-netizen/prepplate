@@ -1,0 +1,44 @@
+[33md900a0a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix plan page: clean logic + full UI restored
+[33m5d46ed1[m Restore plan page and nearby-stores API
+[33md264bed[m Fix unused variable errors in plan page
+[33m1e899cd[m Fix env var to NEXT_PUBLIC_GOOGLE_PLACES_API_KEY (correct casing)
+[33m8ad018e[m Fix env variable name to match NEXT_PUBLIC_Google_Places_API_Key
+[33m09aa502[m Wire Google Geocoding and SERP API for live location-based prices
+[33m58123cc[m Remove unused imports and fix TypeScript errors in onboarding page
+[33m5d4d38a[m Rebrand onboarding step 1 to PrepPlate with new UI
+[33m7ca8eaf[m Fix recipe page start button position
+[33mb1d4a57[m Fix cook page button position
+[33mf913a4a[m Add cooking mode with step-by-step and timer
+[33m35166af[m Add impact page
+[33mf8bc413[m Fix pantry quantityLevel type
+[33md1dfc04[m Fix pantry API error handling
+[33ma5dbd33[m Fix DB connection with pgbouncer params
+[33m9d0436e[m Fix prisma config direct DB URL
+[33m24af8e3[m Switch to direct DB connection
+[33m6fbc462[m Trigger redeploy
+[33mbd26b73[m Fix home page - connect pantry expiry and settings
+[33m2ba78bc[m Add expiry date tracking to pantry
+[33mb141dd5[m Fix onboarding button width
+[33m8959b67[m Fix onboarding button hidden behind nav
+[33m9058541[m Fix recipes.json and suggestions route
+[33m4649fbf[m Add onboarding redirect and flow
+[33mf1dc9e3[m Build smart suggestion algorithm with expiry boost and meal type spread
+[33mc2e711f[m Fix pantry - clickable ingredients, expiry sections, camera button
+[33mb13a7c9[m Rebuild pantry with expiry alerts
+[33m6e9840e[m Add SVG icons to nav
+[33m363b88a[m Add profile page content
+[33m0b9014f[m Fix nav to 4 tabs
+[33maec3c1d[m Fix trending route conflict
+[33mec80f78[m Fix nav with SVG icons - 5 tabs
+[33m906359c[m Force UTF-8 encoding on layout
+[33m9ea38fa[m Fix navigation tabs
+[33mc4cc12f[m Add Trending and Settings pages
+[33mee45543[m Fix meals page to use real user pantry
+[33m5dbcf17[m Prioritize pantry meals, remove cost from cards
+[33m212194f[m Show only time and calories on meal cards
+[33m3422836[m Add mode selector and calories to meal cards
+[33m4e08071[m Force fresh build - remove cart route
+[33m1c19bba[m Remove Stripe routes for deployment
+[33mc52dcf3[m Add prisma generate to build
+[33m75dcc70[m Fix build config for Vercel
+[33m5b8cd1d[m P'tit Chef MVP v1 - before rebuild
