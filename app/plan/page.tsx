@@ -168,7 +168,7 @@ export default function PlanPage() {
 
   setPricesLoading(true);
     try {
-      const location = `${locationLabel}, Canada`;
+      const location = localStorage.getItem("prepplate-location-label") + ", Canada";
       const priceMap: Record<string, IngredientPriceResult> = {};
 
 
