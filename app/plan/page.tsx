@@ -115,6 +115,27 @@ export default function PlanPage() {
 
 
 
+  function toggleCheck(id: string) {
+    const next = new Set(checkedItems);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setCheckedItems(next);
+  }
+
+
+
+
+  const activeMeals = weekMeals.filter((m) => !removedMeals.has(m.id));
+  const neededIds = new Set<string>();
+  for (const meal of activeMeals) {
+    for (const ing of meal.ingredients ?? []) {
+      if (!pantryIds.has(ing.ingredientId)) neededIds.add(ing.ingredientId);
+    }
+  }
+  const groceryList = INGREDIENTS.filter((i) => neededIds.has(i.id) && !removedItems.has(i.id));
+  const unchecked = groceryList.filter((i) => !checkedItems.has(i.id));
+  const checked = groceryList.filter((i) => checkedItems.has(i.id));
+  const addableMeals = RECIPES.filter((r) => !weekMeals.find((m) => m.id === r.id) && !removedMeals.has(r.id)).slice(0, 4);
+  const L = lang === "fr";
 
   async function searchStoresAndPrices() {
     const cleaned = postalCode.trim().toUpperCase().replace(/\s/g, "");
@@ -151,61 +172,41 @@ export default function PlanPage() {
     if (groceryList.length === 0) return;
 
 
-    setPricesLoading(true);
+  setPricesLoading(true);
     try {
-      const ingredientNames = groceryList.map((i) => i.name).join(",");
-      const res = await fetch(
-        `/api/nearby-prices?postalCode=${encodeURIComponent(postalCode.trim())}&radius=${radius}&ingredients=${encodeURIComponent(ingredientNames)}`
-      );
-      const data = await res.json();
-
-
-      // Map results back to ingredient IDs
-      const stores: NearbyStore[] = data.stores ?? [];
-      setNearbyStores(stores);
-
-
+      const location = `${locationLabel}, Canada`;
       const priceMap: Record<string, IngredientPriceResult> = {};
-      for (const result of (data.results ?? [])) {
-        const ing = groceryList.find((i) => i.name.toLowerCase() === result.ingredient?.toLowerCase());
-        if (ing) {
-          priceMap[ing.id] = result;
-        }
-      }
+
+
+      // Call API once per ingredient
+      await Promise.all(
+        groceryList.map(async (ing) => {
+          try {
+            const res = await fetch(
+              `/api/nearby-prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}`
+            );
+            const data = await res.json();
+            const stores = (data.results ?? []).map((r: { store: string; price: number }) => ({
+              storeName: r.store,
+              address: "",
+              price: r.price,
+            }));
+            priceMap[ing.id] = {
+              ingredient: ing.name,
+              stores,
+              cheapest: stores[0] ?? null,
+            };
+          } catch {}
+        })
+      );
+
+
       setIngredientPrices(priceMap);
     } catch {
       setPricesError(L ? "Impossible de charger les prix." : "Could not load prices.");
     } finally {
       setPricesLoading(false);
     }
-  }
-
-
-
-
-  function toggleCheck(id: string) {
-    const next = new Set(checkedItems);
-    next.has(id) ? next.delete(id) : next.add(id);
-    setCheckedItems(next);
-  }
-
-
-
-
-  const activeMeals = weekMeals.filter((m) => !removedMeals.has(m.id));
-  const neededIds = new Set<string>();
-  for (const meal of activeMeals) {
-    for (const ing of meal.ingredients ?? []) {
-      if (!pantryIds.has(ing.ingredientId)) neededIds.add(ing.ingredientId);
-    }
-  }
-  const groceryList = INGREDIENTS.filter((i) => neededIds.has(i.id) && !removedItems.has(i.id));
-  const unchecked = groceryList.filter((i) => !checkedItems.has(i.id));
-  const checked = groceryList.filter((i) => checkedItems.has(i.id));
-  const addableMeals = RECIPES.filter((r) => !weekMeals.find((m) => m.id === r.id) && !removedMeals.has(r.id)).slice(0, 4);
-  const L = lang === "fr";
-
-
 
 
   return (
