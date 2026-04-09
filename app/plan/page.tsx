@@ -162,8 +162,8 @@ export default function PlanPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <Image src="/logo-icon.png" alt="PrepPlate" width={36} height={36} style={{ borderRadius: 10, objectFit: "cover" }} />
             <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</span>
-          </div>
-          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>
+            </div>
+          <a href="/profile" style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, textDecoration: "none", cursor: "pointer" }}>👤</a>
         </div>
         <div style={{ padding: "0 20px 4px", textAlign: "center" }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>
