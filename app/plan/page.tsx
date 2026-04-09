@@ -6,8 +6,6 @@ import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
 
 
-
-
 interface Recipe { id: string; title: string; description: string; prepTimeMin: number; calories: number; cuisine: string; emoji: string; mealType: string; mode: string[]; dietTags: string[]; ingredients: { ingredientId: string; quantity: number; unit: string }[]; }
 interface IngredientData { id: string; name: string; nameFr?: string; emoji?: string; category: string; unit: string; basePrice: number; defaultShelfDays: number; }
 interface NearbyStore { name: string; address: string; placeId: string; }
@@ -15,12 +13,8 @@ interface StorePrice { storeName: string; address: string; price: number; }
 interface IngredientPriceResult { ingredient: string; stores: StorePrice[]; cheapest: StorePrice | null; }
 
 
-
-
 const RECIPES = recipesData as Recipe[];
 const INGREDIENTS = ingredientsData as IngredientData[];
-
-
 
 
 export default function PlanPage() {
