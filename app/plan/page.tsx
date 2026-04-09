@@ -141,13 +141,14 @@ export default function PlanPage() {
     setPricesError("");
 
 
-    try {
+try {
       // Step 1: Geocode postal code for display label
       const locRes = await fetch(`/api/location?postalCode=${encodeURIComponent(cleaned)}`);
       const locData = await locRes.json();
       if (!locRes.ok) throw new Error(locData.error ?? "Could not find postal code");
       const label = `${locData.city}, ${locData.province}`;
       setLocationLabel(label);
+
 
 
       // Save to localStorage
@@ -177,7 +178,7 @@ export default function PlanPage() {
         groceryList.map(async (ing) => {
           try {
             const res = await fetch(
-              `/api/nearby-prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}`
+              `/api/nearby-prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}&postalCode=${encodeURIComponent(postalCode.trim())}&radius=${radius}`
             );
            const data = await res.json();
             const mapStore = (r: { store: string; price: number; type: string; link?: string }) => ({
