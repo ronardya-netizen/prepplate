@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { getUserId } from "@/lib/user";
 
 interface ImpactData {
@@ -44,9 +43,12 @@ export default function ImpactPage() {
       <div style={{ background: "linear-gradient(180deg, #1a3d2a 0%, #2d6a3f 60%, #3d8a52 100%)", paddingBottom: 24 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Image src="/logo.png" alt="P'tit Chef" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
+            <svg width={36} height={36} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="13" cy="13" r="9" fill="white"/><circle cx="27" cy="13" r="9" fill="white"/>
+              <circle cx="13" cy="27" r="9" fill="white"/><circle cx="27" cy="27" r="9" fill="white"/>
+            </svg>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>P&apos;tit Chef</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Eat smart. Save more. Share more.</div>
             </div>
           </div>
@@ -93,7 +95,7 @@ export default function ImpactPage() {
         <div style={{ margin: "0 16px 16px", padding: "14px", background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: 14 }}>
           <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#7c3aed", marginBottom: 8 }}>Our mission</div>
           <div style={{ fontSize: 13, color: "#4c1d95", fontWeight: 600, lineHeight: 1.6 }}>
-            Every meal cooked with what you already have reduces food waste and helps feed someone in need. P&apos;tit Chef donates a portion of every subscription to local food banks in Montreal.
+            Every meal cooked with what you already have reduces food waste and helps feed someone in need. PrepPlate donates a portion of every subscription to local food banks in Montreal.
           </div>
           <div style={{ marginTop: 10, padding: "8px 12px", background: "#ede9fe", borderRadius: 8, fontSize: 12, fontWeight: 700, color: "#7c3aed" }}>
             🤝 Partner: Montreal Food Bank

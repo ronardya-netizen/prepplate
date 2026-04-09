@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { getUserId } from "@/lib/user";
 
 interface TrendingRecipe { id: string; title: string; description: string; prepTimeMin: number; cuisine: string; emoji: string; calories: number; bookmarks: number; }
@@ -32,9 +31,12 @@ export default function TrendingPage() {
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Image src="/logo.png" alt="P'tit Chef" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
+            <svg width={36} height={36} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="13" cy="13" r="9" fill="white"/><circle cx="27" cy="13" r="9" fill="white"/>
+              <circle cx="13" cy="27" r="9" fill="white"/><circle cx="27" cy="27" r="9" fill="white"/>
+            </svg>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>P&apos;tit Chef</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>PrepPlate</div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>Eat smart. Save more. Share more.</div>
             </div>
           </div>

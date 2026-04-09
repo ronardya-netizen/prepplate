@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 const MOCK_USER_ID = "user-001";
@@ -77,10 +76,13 @@ export default function CartPage() {
       <div style={{ background: "linear-gradient(180deg, #6b3a1f 0%, #8B5E3C 40%, #a0724a 70%, #7a4a28 100%)", paddingBottom: 20 }}>
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Image src="/logo.png" alt="P'tit Chef" width={44} height={44} style={{ borderRadius: 12, objectFit: "cover" }} />
+            <svg width={36} height={36} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="13" cy="13" r="9" fill="white"/><circle cx="27" cy="13" r="9" fill="white"/>
+              <circle cx="13" cy="27" r="9" fill="white"/><circle cx="27" cy="27" r="9" fill="white"/>
+            </svg>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Nunito', sans-serif" }}>P&apos;tit Chef</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700, fontFamily: "'Nunito', sans-serif" }}>Eat Smarter. Save more. Share more.</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Nunito', sans-serif" }}>PrepPlate</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700, fontFamily: "'Nunito', sans-serif" }}>Eat smart. Save more. Share more.</div>
             </div>
           </div>
           <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fde8d8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#e8470d" }}>M</div>

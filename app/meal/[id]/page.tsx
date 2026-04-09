@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import recipesData from "@/data/recipes.json";
 import ingredientsData from "@/data/ingredients.json";
 import { getUserId } from "@/lib/user";
@@ -38,7 +37,10 @@ export default function MealPage() {
         <div style={{ padding: "14px 20px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <button onClick={() => router.back()} style={{ background: "rgba(255,255,255,.2)", border: "none", borderRadius: 10, padding: "6px 12px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>Back</button>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Image src="/logo.png" alt="P'tit Chef" width={32} height={32} style={{ borderRadius: 8, objectFit: "cover" }} />
+            <svg width={28} height={28} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="13" cy="13" r="9" fill="white"/><circle cx="27" cy="13" r="9" fill="white"/>
+              <circle cx="13" cy="27" r="9" fill="white"/><circle cx="27" cy="27" r="9" fill="white"/>
+            </svg>
           </div>
         </div>
         <div style={{ padding: "8px 20px 0", textAlign: "center" }}>
