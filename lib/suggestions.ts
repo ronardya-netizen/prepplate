@@ -23,6 +23,7 @@ export interface SuggestionInput {
   dietPrefs: string[];
   cuisine?: string;
   mode?: string;
+  mealType?: string;
 }
 
 export interface SuggestionResult {
@@ -36,7 +37,7 @@ export interface SuggestionResult {
 }
 
 export function getSuggestions(input: SuggestionInput): SuggestionResult[] {
-  const { pantryIngredientIds, expiringIngredientIds, timeMin, budgetUSD, dietPrefs, cuisine, mode } = input;
+  const { pantryIngredientIds, expiringIngredientIds, timeMin, budgetUSD, dietPrefs, cuisine, mode,mealType} = input;
   const pantrySet = new Set(pantryIngredientIds);
   const expirySet = new Set(expiringIngredientIds);
   const recipes = recipesData as RecipeData[];
@@ -53,6 +54,7 @@ export function getSuggestions(input: SuggestionInput): SuggestionResult[] {
     if (coveragePct < 60) continue;
     if (recipe.prepTimeMin > timeMin) continue;
     if (cuisine && cuisine !== "all" && recipe.cuisine !== cuisine) continue;
+    if (mealType && mealType !== "all" && recipe.mealType !== mealType) continue;
 
     const pricing = computeMealCost(recipe.ingredients);
     if (pricing.totalCost > budgetUSD) continue;

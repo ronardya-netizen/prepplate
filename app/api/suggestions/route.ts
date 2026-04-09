@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   const budgetUSD = parseFloat(searchParams.get("budget") ?? "50");
   const cuisine = searchParams.get("cuisine") ?? "all";
   const mode = searchParams.get("mode") ?? "all";
+  const mealType = searchParams.get("mealType") ?? "all";
 
   if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });
 

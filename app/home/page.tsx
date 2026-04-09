@@ -5,6 +5,7 @@ import Image from "next/image";
 import MealCard from "@/components/MealCard";
 import { SuggestionResult } from "@/lib/suggestions";
 import { getLang, t } from "@/lib/i18n";
+import Link from "next/link";
 
 export default function HomePage() {
   const [suggestions, setSuggestions] = useState<SuggestionResult[]>([]);
@@ -15,6 +16,7 @@ export default function HomePage() {
   const [pantryItems, setPantryItems] = useState<{ingredientId: string; expiryDays?: number}[]>([]);
   const [userId, setUserId] = useState("user-001");
   const [lang, setLang] = useState<"en" | "fr">("en");
+  const [mealType, setMealType] = useState("all");
 
   const T = t[lang].home;
 
@@ -31,7 +33,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (userId) fetchSuggestions(cuisine, mode);
-  }, [cuisine, mode, userId, pantryItems]);
+  }, [cuisine, mode,mealType,pantryItems]);
 
   async function fetchSuggestions(c: string, m: string) {
     setLoading(true);
@@ -42,7 +44,7 @@ export default function HomePage() {
         .filter((i) => i.expiryDays !== undefined && i.expiryDays <= 2)
         .map((i) => i.ingredientId)
         .join(",");
-      const res = await fetch(`/api/suggestions?userId=${id}&time=60&budget=${settings.budget ?? 50}&cuisine=${c}&mode=${m}&expiring=${expiring}`);
+      const res = await fetch(`/api/suggestions?userId=${id}&time=60&budget=${settings.budget ?? 50}&cuisine=${c}&mode=${m}&mealType=${mealType}&expiring=${expiring}`);
       const data = await res.json();
       setSuggestions(data.suggestions ?? []);
     } catch (err) { console.error(err); }
@@ -91,7 +93,7 @@ export default function HomePage() {
 
         <div style={{ padding: "0 20px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>{T.mode}</div>
         <div style={{ display: "flex", gap: 6, padding: "0 16px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
-          {T.modes.map((m) => (
+          {T.modes.filter((m) => m.id !== "all").map((m) => (
             <button key={m.id} onClick={() => setMode(m.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: mode === m.id ? "#e8470d" : "#e8d8c8", background: mode === m.id ? "#e8470d" : "#fff", color: mode === m.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
               {m.id === "all" ? "🍽️" : m.id === "quick" ? "⚡" : m.id === "low-cal" ? "🥗" : m.id === "high-protein" ? "💪" : m.id === "comfort" ? "🍝" : "🌿"} {m.label}
             </button>
@@ -100,12 +102,28 @@ export default function HomePage() {
 
         <div style={{ padding: "0 20px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>{T.cuisine}</div>
         <div style={{ display: "flex", gap: 6, padding: "0 16px 12px", overflowX: "auto", scrollbarWidth: "none" }}>
-          {T.cuisines.map((c) => (
+          {T.cuisines.filter((c) => c.id !== "all").map((c) => (
             <button key={c.id} onClick={() => setCuisine(c.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: cuisine === c.id ? "#e8470d" : "#e8d8c8", background: cuisine === c.id ? "#e8470d" : "#fff", color: cuisine === c.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
               {c.id === "all" ? "🍽️" : c.id === "italian" ? "🍕" : c.id === "french" ? "🥐" : c.id === "indian" ? "🍛" : c.id === "mexican" ? "🌮" : c.id === "haitian" ? "🇭🇹" : c.id === "asian" ? "🥢" : c.id === "middle-eastern" ? "🧆" : "🍔"} {c.label}
             </button>
           ))}
         </div>
+
+      <div style={{ padding: "0 20px 6px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>{lang === "fr" ? "Type de repas" : "Meal type"}</div>
+        <div style={{ display: "flex", gap: 6, padding: "0 16px 12px", overflowX: "auto", scrollbarWidth: "none"}}>
+                   {[
+            { id: "breakfast", label: lang === "fr" ? "Déjeuner" : "Breakfast", icon: "🍳" },
+            { id: "lunch", label: lang === "fr" ? "Dîner" : "Lunch", icon: "🥪" },
+            { id: "dinner", label: lang === "fr" ? "Souper" : "Dinner", icon: "🍲" },
+            { id: "snack", label: lang === "fr" ? "Collation" : "Snack", icon: "🥜" },
+            { id: "dessert", label: lang === "fr" ? "Dessert" : "Dessert", icon: "🍰" },
+          ].map((mt) => (
+            <button key={mt.id} onClick={() => setMealType(mt.id === mealType ? "all" : mt.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700, border: "1.5px solid", borderColor: mealType === mt.id ? "#e8470d" : "#e8d8c8", background: mealType === mt.id ? "#e8470d" : "#fff", color: mealType === mt.id ? "#fff" : "#a08060", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "'Nunito', sans-serif" }}>
+              {mt.icon} {mt.label}
+            </button>
+          ))}
+        </div>
+
 
         <div style={{ padding: "0 20px 8px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "#c09878" }}>
           {loading ? T.finding : T.suggestions(suggestions.length)}
