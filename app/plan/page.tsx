@@ -9,8 +9,8 @@ import { getUserId } from "@/lib/user";
 interface Recipe { id: string; title: string; description: string; prepTimeMin: number; calories: number; cuisine: string; emoji: string; mealType: string; mode: string[]; dietTags: string[]; ingredients: { ingredientId: string; quantity: number; unit: string }[]; }
 interface IngredientData { id: string; name: string; nameFr?: string; emoji?: string; category: string; unit: string; basePrice: number; defaultShelfDays: number; }
 interface NearbyStore { name: string; address: string; placeId: string; }
-interface StorePrice { storeName: string; address: string; price: number; }
-interface IngredientPriceResult { ingredient: string; stores: StorePrice[]; cheapest: StorePrice | null; }
+interface StorePrice { storeName: string; address: string; price: number; type?: string; link?: string; }
+interface IngredientPriceResult { ingredient: string; stores: StorePrice[]; inStore?: StorePrice[]; online?: StorePrice[]; cheapest: StorePrice | null; }
 
 
 const RECIPES = recipesData as Recipe[];
@@ -179,16 +179,23 @@ export default function PlanPage() {
             const res = await fetch(
               `/api/nearby-prices?ingredient=${encodeURIComponent(ing.name)}&location=${encodeURIComponent(location)}`
             );
-            const data = await res.json();
-            const stores = (data.results ?? []).map((r: { store: string; price: number }) => ({
+           const data = await res.json();
+            const mapStore = (r: { store: string; price: number; type: string; link?: string }) => ({
               storeName: r.store,
               address: "",
               price: r.price,
-            }));
+              type: r.type,
+              link: r.link,
+            });
+            const inStore = (data.inStore ?? []).map(mapStore);
+            const online = (data.online ?? []).map(mapStore);
+            const all = [...inStore, ...online];
             priceMap[ing.id] = {
               ingredient: ing.name,
-              stores,
-              cheapest: stores[0] ?? null,
+              stores: all,
+              inStore,
+              online,
+              cheapest: inStore[0] ?? online[0] ?? null,
             };
           } catch {}
         })
@@ -425,16 +432,45 @@ export default function PlanPage() {
                                 ? (L ? "Aucun prix trouvé." : "No prices found. Try searching above.")
                                 : (L ? "Entrez un code postal pour voir les prix." : "Enter a postal code above to see prices.")}
                             </div>
-                          ) : storeList.map((p, i) => (
-                            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "0.5px solid #f0e8de", background: i === 0 ? "#f0fdf4" : "transparent" }}>
-                              <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#3a1f0d" }}>
-                                {i === 0 ? "🏆 " : ""}{p.storeName}
-                              </span>
-                              <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#c09878" }}>
-                                ${p.price.toFixed(2)}
-                              </span>
-                            </div>
-                          ))}
+                       ) : (
+                            <>
+                              {(priceData?.inStore ?? []).length > 0 && (
+                                <>
+                                  <div style={{ padding: "6px 14px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", color: "#16a34a", background: "#f0fdf4" }}>
+                                    🏪 {L ? "En magasin" : "In-store"}
+                                  </div>
+                                  {(priceData?.inStore ?? []).map((p, i) => (
+                                    <div key={"s" + i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "0.5px solid #f0e8de" }}>
+                                      <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#3a1f0d" }}>
+                                        {i === 0 ? "🏆 " : ""}{p.storeName}
+                                      </span>
+                                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                        <span style={{ fontSize: 13, fontWeight: i === 0 ? 800 : 600, color: i === 0 ? "#16a34a" : "#c09878" }}>${p.price.toFixed(2)}</span>
+                                        {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: "#e8470d", fontWeight: 700, textDecoration: "none" }}>→</a>}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </>
+                              )}
+                              {(priceData?.online ?? []).length > 0 && (
+                                <>
+                                  <div style={{ padding: "6px 14px", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", color: "#a08060", background: "#faf8f5" }}>
+                                    🌐 {L ? "En ligne" : "Online"}
+                                  </div>
+                                  {(priceData?.online ?? []).map((p, i) => (
+                                    <div key={"o" + i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: "0.5px solid #f0e8de" }}>
+                                      <span style={{ fontSize: 13, fontWeight: 600, color: "#3a1f0d" }}>{p.storeName}</span>
+                                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                        <span style={{ fontSize: 13, fontWeight: 600, color: "#c09878" }}>${p.price.toFixed(2)}</span>
+                                        {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: "#e8470d", fontWeight: 700, textDecoration: "none" }}>→</a>}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </>
+                              )}
+                            </>
+                          )}
+
                         </div>
                       )}
                     </div>
