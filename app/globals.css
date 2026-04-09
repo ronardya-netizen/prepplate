@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fff8f4;
+  --foreground: #3a1f0d;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
+
+
+/* ── Page fade-in ── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+main {
+  animation: pageFadeIn 0.3s ease-out;
+}
+
+
+/* ── Button press effect ── */
+button, a {
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+
+button:active, a:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+
+/* ── Card tap effect ── */
+@keyframes cardPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+
+.card-tap:active {
+  animation: cardPop 0.2s ease;
+}
+
+
+/* ── Fade-in for list items (staggered) ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.animate-item {
+  animation: slideUp 0.3s ease-out both;
+}
+
+
+.animate-item:nth-child(1) { animation-delay: 0.05s; }
+.animate-item:nth-child(2) { animation-delay: 0.1s; }
+.animate-item:nth-child(3) { animation-delay: 0.15s; }
+.animate-item:nth-child(4) { animation-delay: 0.2s; }
+.animate-item:nth-child(5) { animation-delay: 0.25s; }
+
+
+/* ── Skeleton loading pulse ── */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+
+.skeleton {
+  background: linear-gradient(90deg, #f0e8de 25%, #fdf7f2 50%, #f0e8de 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+
+/* ── Smooth expand/collapse ── */
+.expand-enter {
+  animation: expandIn 0.25s ease-out;
+}
+
+
+@keyframes expandIn {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+
+/* ── Nav tab highlight ── */
+nav a {
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+
+nav a:hover {
+  color: #e8470d;
+}
+
+
+/* ── Pill/chip hover ── */
+button[style*="borderRadius: 20"], button[style*="borderRadius: 22"] {
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+
+/* ── Remove dark mode override ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #fff8f4;
+    --foreground: #3a1f0d;
+  }
+}
+
+

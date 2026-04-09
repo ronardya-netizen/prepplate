@@ -139,8 +139,11 @@ export default function HomePage() {
               <p style={{ color: "#d0c0b0", fontSize: 12, fontWeight: 600, marginTop: 4 }}>{T.noMealsSub}</p>
             </div>
           ) : (
-            suggestions.slice(0, 3).map((s) => (
-              <MealCard key={s.recipe.id} suggestion={s} isSaved={savedMeals.has(s.recipe.id)} onToggleSave={toggleSave} />
+            suggestions.slice(0, 3).map((s, i) => (
+              <div key={s.recipe.id} className="animate-item">
+                <MealCard suggestion={s} isSaved={savedMeals.has(s.recipe.id)} onToggleSave={toggleSave} />
+              </div>
+
             ))
           )}
         </div>
