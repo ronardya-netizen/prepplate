@@ -243,13 +243,13 @@ export default function PlanPage() {
             </div>
           ) : (
             <>
-              {activeMeals.map((meal) => {
+                         {activeMeals.map((meal) => {
                 const missing = (meal.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).length;
                 const isPinned = pinnedIds.has(meal.id);
                 const hasExpiring = (meal.ingredients ?? []).some((i) => expiringIds.has(i.ingredientId));
                 const isSwiped = swipedMeal === meal.id;
                 return (
-                  <div key={meal.id} style={{ position: "relative", marginBottom: 8, borderRadius: 12, overflow: "hidden" }}>
+                  <div key={meal.id} className="animate-item" style={{ position: "relative", marginBottom: 8, borderRadius: 12, overflow: "hidden" }}>
                     <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 80, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <button onClick={() => { setRemovedMeals((p) => new Set([...p, meal.id])); setSwipedMeal(null); }} style={{ background: "none", border: "none", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>
                         {L ? "Retirer" : "Remove"}
@@ -263,7 +263,7 @@ export default function PlanPage() {
                           {isPinned && <span style={{ fontSize: 10, background: "#fff0ec", color: "#e8470d", padding: "1px 6px", borderRadius: 20, fontWeight: 700 }}>📌 {L ? "Épinglé" : "Pinned"}</span>}
                           {hasExpiring && <span style={{ fontSize: 10, background: "#fff7ed", color: "#f59e0b", padding: "1px 6px", borderRadius: 20, fontWeight: 700 }}>⏰ {L ? "Ingrédients expirent" : "Uses expiring"}</span>}
                           {missing > 0
-                            ? <span style={{ fontSize: 10, background: "#f5f5f5", color: "#888", padding: "1px 6px", borderRadius: 20, fontWeight: 700 }}>🛒 {missing} {L ? "à acheter" : "to buy"}</span>
+                            ? <span style={{ fontSize: 10, background: "#f5f5f5", color: "#888", padding: "1px 6px", borderRadius: 20, fontWeight: 700 }}>🛒 {L ? "Manque" : "Need"}: {(meal.ingredients ?? []).filter((i) => !pantryIds.has(i.ingredientId)).map((i) => { const ing = INGREDIENTS.find((x) => x.id === i.ingredientId); return ing ? (L && ing.nameFr ? ing.nameFr : ing.name) : i.ingredientId; }).join(", ")}</span>
                             : <span style={{ fontSize: 10, background: "#f0fdf4", color: "#22c55e", padding: "1px 6px", borderRadius: 20, fontWeight: 700 }}>✓ {L ? "Tout en stock" : "All in pantry"}</span>}
                         </div>
                       </div>
